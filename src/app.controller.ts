@@ -93,7 +93,7 @@ export class AppController {
      }
     try {
       const parsedUrl = new URL(url);
-      if (!allowedDomains.includes(parsedUrl.hostname)) {
+     if (!allowedDomains.some(domain => parsedUrl.hostname.endsWith(domain))) {
         throw new HttpException('Invalid redirect URL', HttpStatus.BAD_REQUEST);
       }
     } catch (error) {
