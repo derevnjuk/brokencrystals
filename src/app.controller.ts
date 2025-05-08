@@ -87,7 +87,10 @@ export class AppController {
   })
   @Redirect()
   async redirect(@Query('url') url: string) {
-    const allowedDomains = ['google.com', 'example.com']; // Define allowed domains
+     const allowedDomains = ['google.com', 'example.com']; // Define allowed domains
+     if (!url) {
+       throw new HttpException('URL parameter is missing', HttpStatus.BAD_REQUEST);
+     }
     try {
       const parsedUrl = new URL(url);
       if (!allowedDomains.includes(parsedUrl.hostname)) {
