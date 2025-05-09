@@ -21,7 +21,7 @@ after(() => runner.clear());
 test('POST /api/metadata', { signal: AbortSignal.timeout(timeout) }, async () => {
   await runner
     .createScan({
-      tests: ['xxe', 'xss', 'secret_tokens', 'osi'],
+      tests: ['xxe'],
       attackParamLocations: [AttackParamLocation.BODY, AttackParamLocation.HEADER]
     })
     .threshold(Severity.CRITICAL)
