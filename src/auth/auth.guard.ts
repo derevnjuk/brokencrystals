@@ -49,7 +49,7 @@ export class AuthGuard implements CanActivate {
       token = request.cookies[AuthGuard.AUTH_HEADER];
     }
 
-    if (this.checkIsBearer(token)) {
+    if (token && this.checkIsBearer(token)) {
       token = token.substring(AuthGuard.BEARER_PREFIX.length).trim();
     }
 
@@ -71,14 +71,10 @@ export class AuthGuard implements CanActivate {
       context.getHandler()
     );
 
-    try {
-      return !!(await this.authService.validateToken(token, processorType));
-    } catch {
-      return !!(await this.authService.validateToken(
-        token,
-        JwtProcessorType.BEARER
-      ));
+    if (!processorType) {
+      throw new UnauthorizedException('Invalid JWT processor type');
     }
+    return !!(await this.authService.validateToken(token, processorType));
   }
 
   private checkIsBearer(bearer: string): boolean {

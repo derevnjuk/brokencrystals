@@ -677,16 +677,17 @@ export class AuthController {
         token: `${token_type} ${access_token}`
       };
     } catch (err) {
+      this.logger.error('Error during OIDC login', err);
       if (err.response?.status === 401) {
         throw new UnauthorizedException({
           error: 'Invalid credentials',
-          location: __filename
+          location: 'AuthController:loginOidc'
         });
       }
 
       throw new InternalServerErrorException({
         error: err.message,
-        location: __filename
+        location: 'AuthController:loginOidc'
       });
     }
   }
@@ -697,23 +698,24 @@ export class AuthController {
     try {
       user = await this.usersService.findByEmail(req.user);
     } catch (err) {
+      this.logger.error('Error finding user by email', err);
       throw new InternalServerErrorException({
         error: err.message,
-        location: __filename
+        location: 'AuthController:loginBasic'
       });
     }
 
     if (!user || !(await passwordMatches(req.password, user.password))) {
       throw new UnauthorizedException({
         error: 'Invalid credentials',
-        location: __filename
+        location: 'AuthController:loginBasic'
       });
     }
 
     if (!user.isBasic) {
       throw new ForbiddenException({
         error: 'Invalid authentication method for this user',
-        location: __filename
+        location: 'AuthController:loginBasic'
       });
     }
 

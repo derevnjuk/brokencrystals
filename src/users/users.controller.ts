@@ -74,6 +74,7 @@ export class UsersController {
 
   constructor(
     private readonly usersService: UsersService,
+    private readonly authGuard: AuthGuard
     private readonly keyCloakService: KeyCloakService
   ) {}
 
@@ -121,6 +122,7 @@ export class UsersController {
   @ApiOperation({
     description: SWAGGER_DESC_FIND_USER
   })
+  @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: UserDto,
     description: 'Returns basic user info if it exists'
@@ -138,7 +140,14 @@ export class UsersController {
   async getById(@Param('id') id: number): Promise<UserDto> {
     try {
       this.logger.debug(`Find a user by id: ${id}`);
-      return new UserDto(await this.usersService.findById(id));
+      const user = await this.usersService.findById(id);
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+      if (this.originEmail(req) !== user.email) {
+        throw new ForbiddenException();
+      }
+      return new UserDto(user);
     } catch (err) {
       throw new HttpException(err.message, err.status);
     }
