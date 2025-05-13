@@ -205,6 +205,9 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    if (!path.startsWith('/allowed/path/')) {
+      throw new BadRequestException(`Invalid path: ${path}`);
+    }
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.AZURE,
       path

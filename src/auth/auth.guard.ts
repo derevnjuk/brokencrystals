@@ -17,6 +17,9 @@ export class AuthGuard implements CanActivate {
   private static readonly BEARER_PREFIX = 'bearer';
   private readonly logger = new Logger(AuthGuard.name);
 
+  private static readonly ALLOWED_ALGORITHMS = [JwtProcessorType.RSA, JwtProcessorType.RSA_SIGNATURE];
+  private static readonly ALLOWED_ALGORITHMS = [JwtProcessorType.RSA, JwtProcessorType.RSA_SIGNATURE];
+
   constructor(
     private readonly authService: AuthService,
     private readonly reflector: Reflector
@@ -27,6 +30,23 @@ export class AuthGuard implements CanActivate {
       this.logger.debug('Called canActivate');
       const request = this.getRequest(context);
       const token = this.extractToken(request);
+
+      const processorType = this.reflector.get<JwtProcessorType>(
+        JwTypeMetadataField,
+        context.getHandler()
+      ) || JwtProcessorType.RSA; // Default to RSA if no specific processor is set
+
+      if (!AuthGuard.ALLOWED_ALGORITHMS.includes(processorType)) {
+        throw new UnauthorizedException('Invalid token algorithm');
+      }
+      const processorType = this.reflector.get<JwtProcessorType>(
+        JwTypeMetadataField,
+        context.getHandler()
+      ) || JwtProcessorType.RSA; // Default to RSA if no specific processor is set
+
+      if (!AuthGuard.ALLOWED_ALGORITHMS.includes(processorType)) {
+        throw new UnauthorizedException('Invalid token algorithm');
+      }
 
       if (!token) {
       throw new UnauthorizedException('Token not found');
@@ -66,6 +86,7 @@ export class AuthGuard implements CanActivate {
     token: string,
     context: ExecutionContext
   ): Promise<boolean> {
+
     const processorType = this.reflector.get<JwtProcessorType>(
       JwTypeMetadataField,
       context.getHandler()

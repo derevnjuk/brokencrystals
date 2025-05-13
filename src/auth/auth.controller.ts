@@ -86,6 +86,13 @@ export class AuthController {
     this.logger.error(`Error: ${err.message}`);
     throw new InternalServerErrorException(this.GENERIC_ERROR_MESSAGE);
   }
+  private handleError(err: any): never {
+    if (err.response?.status === 401) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+    this.logger.error(`Error: ${err.message}`);
+    throw new InternalServerErrorException(this.GENERIC_ERROR_MESSAGE);
+  }
   @Post('/admin/login')
   @ApiCreatedResponse({
     type: LoginResponse
@@ -302,8 +309,8 @@ export class AuthController {
     schema: {
       type: 'object',
       properties: {
-        error: { type: 'string' },
-        location: { type: 'string' }
+        error: { type: 'string', example: 'Unauthorized' },
+        message: { type: 'string', example: this.GENERIC_ERROR_MESSAGE }
       }
     }
   })
@@ -311,9 +318,18 @@ export class AuthController {
     description: SWAGGER_DESC_VALIDATE_WITH_KID_SQL_JWT
   })
   async validateWithKIDSqlJwt(): Promise<JwtValidationResponse> {
-    return {
-      secret: 'this is our secret'
-    };
+    try {
+      // Simulate some validation logic
+      const isValid = true; // Replace with actual validation logic
+      if (!isValid) {
+        throw new UnauthorizedException('Invalid token');
+      }
+      return {
+        secret: 'this is our secret'
+      };
+    } catch (err) {
+      this.handleError(err);
+    }
   }
 
   @Post('jwt/weak-key/login')

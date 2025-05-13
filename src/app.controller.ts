@@ -114,7 +114,7 @@ export class AppController {
   @Header('content-type', 'text/xml')
   async xml(@Body() xml: string): Promise<string> {
     const xmlDoc = parseXml(decodeURIComponent(xml), {
-      noent: false,
+      noent: true,
       dtdvalid: false,
       recover: true
     });
