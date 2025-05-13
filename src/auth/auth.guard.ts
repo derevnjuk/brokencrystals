@@ -29,7 +29,7 @@ export class AuthGuard implements CanActivate {
       const token = this.extractToken(request);
 
       if (!token) {
-        return false;
+      throw new UnauthorizedException('Token not found');
       }
 
       return await this.verifyToken(token, context);
@@ -49,7 +49,7 @@ export class AuthGuard implements CanActivate {
       token = request.cookies[AuthGuard.AUTH_HEADER];
     }
 
-    if (this.checkIsBearer(token)) {
+    if (token && this.checkIsBearer(token)) {
       token = token.substring(AuthGuard.BEARER_PREFIX.length).trim();
     }
 
@@ -69,16 +69,9 @@ export class AuthGuard implements CanActivate {
     const processorType = this.reflector.get<JwtProcessorType>(
       JwTypeMetadataField,
       context.getHandler()
-    );
+    ) || JwtProcessorType.RSA; // Default to RSA if no specific processor is set
 
-    try {
-      return !!(await this.authService.validateToken(token, processorType));
-    } catch {
-      return !!(await this.authService.validateToken(
-        token,
-        JwtProcessorType.BEARER
-      ));
-    }
+    return !!(await this.authService.validateToken(token, processorType));
   }
 
   private checkIsBearer(bearer: string): boolean {

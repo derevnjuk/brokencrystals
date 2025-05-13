@@ -58,10 +58,11 @@ export class TestimonialsService {
     try {
       this.logger.debug(`Saved new testimonial`);
 
-      return (await this.em.getConnection().execute(query))[0].count as number;
+      const result = await this.em.getConnection().execute('SELECT COUNT(*) as count FROM testimonial');
+      return result[0]?.count ?? 0;
     } catch (err) {
       this.logger.warn(`Failed to execute query. Error: ${err.message}`);
-      return err.message;
+      throw new Error('Failed to execute query. Please check your query syntax.');
     }
   }
 }

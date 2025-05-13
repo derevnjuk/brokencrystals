@@ -86,6 +86,10 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    if (!path.startsWith('/allowed/path/')) {
+      throw new BadRequestException(`Invalid path: ${path}`);
+    }
+
     const file: Stream = await this.fileService.getFile(path);
     const type = this.getContentType(contentType);
     res.type(type);
@@ -121,6 +125,9 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    if (!path.startsWith('/allowed/path/')) {
+      throw new BadRequestException(`Invalid path: ${path}`);
+    }
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.GOOGLE,
       path
@@ -159,10 +166,11 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
-    const file: Stream = await this.loadCPFile(
-      CloudProvidersMetaData.AWS,
-      path
-    );
+    if (!path.startsWith('/allowed/path/')) {
+      throw new BadRequestException(`Invalid path: ${path}`);
+    }
+
+    const file: Stream = await this.fileService.getFile(path);
     const type = this.getContentType(contentType);
     res.type(type);
 

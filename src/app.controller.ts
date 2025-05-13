@@ -114,8 +114,8 @@ export class AppController {
   @Header('content-type', 'text/xml')
   async xml(@Body() xml: string): Promise<string> {
     const xmlDoc = parseXml(decodeURIComponent(xml), {
-      noent: true,
-      dtdvalid: true,
+      noent: false,
+      dtdvalid: false,
       recover: true
     });
     this.logger.debug(xmlDoc);
@@ -152,10 +152,8 @@ export class AppController {
     try {
       return await this.appService.launchCommand(command);
     } catch (err) {
-      throw new InternalServerErrorException({
-        error: err.message || err,
-        location: __filename
-      });
+      this.logger.error('Error executing command', err.stack);
+      throw new InternalServerErrorException('An error occurred while processing your request.');
     }
   }
 

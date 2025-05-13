@@ -72,12 +72,20 @@ export class AuthController {
   private readonly logger = new Logger(AuthController.name);
   private readonly CSRF_COOKIE_HEADER = '_csrf';
 
+  private readonly GENERIC_ERROR_MESSAGE = 'An unexpected error occurred. Please try again later.';
   constructor(
     private readonly usersService: UsersService,
     private readonly keyCloakService: KeyCloakService,
     private readonly authService: AuthService
   ) {}
 
+  private handleError(err: any): never {
+    if (err.response?.status === 401) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+    this.logger.error(`Error: ${err.message}`);
+    throw new InternalServerErrorException(this.GENERIC_ERROR_MESSAGE);
+  }
   @Post('/admin/login')
   @ApiCreatedResponse({
     type: LoginResponse
@@ -265,7 +273,12 @@ export class AuthController {
     @Res({ passthrough: true }) res: FastifyReply
   ): Promise<LoginResponse> {
     this.logger.debug('Call loginWithKIDSqlJwt');
-    const profile = await this.loginBasic(req);
+    let profile: LoginData;
+    try {
+      profile = await this.loginBasic(req);
+    } catch (err) {
+      this.handleError(err);
+    }
 
     res.header(
       'authorization',
@@ -677,17 +690,7 @@ export class AuthController {
         token: `${token_type} ${access_token}`
       };
     } catch (err) {
-      if (err.response?.status === 401) {
-        throw new UnauthorizedException({
-          error: 'Invalid credentials',
-          location: __filename
-        });
-      }
-
-      throw new InternalServerErrorException({
-        error: err.message,
-        location: __filename
-      });
+      this.handleError(err);
     }
   }
 
@@ -697,24 +700,15 @@ export class AuthController {
     try {
       user = await this.usersService.findByEmail(req.user);
     } catch (err) {
-      throw new InternalServerErrorException({
-        error: err.message,
-        location: __filename
-      });
+      this.handleError(err);
     }
 
     if (!user || !(await passwordMatches(req.password, user.password))) {
-      throw new UnauthorizedException({
-        error: 'Invalid credentials',
-        location: __filename
-      });
+      throw new UnauthorizedException('Invalid credentials');
     }
 
     if (!user.isBasic) {
-      throw new ForbiddenException({
-        error: 'Invalid authentication method for this user',
-        location: __filename
-      });
+      throw new ForbiddenException('Invalid authentication method for this user');
     }
 
     const token = await this.authService.createToken(

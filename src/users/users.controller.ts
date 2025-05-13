@@ -135,10 +135,19 @@ export class UsersController {
       }
     }
   })
+  @UseGuards(AuthGuard)
   async getById(@Param('id') id: number): Promise<UserDto> {
     try {
       this.logger.debug(`Find a user by id: ${id}`);
-      return new UserDto(await this.usersService.findById(id));
+      const requestingUserEmail = this.originEmail(req);
+      const user = await this.usersService.findById(id);
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+      if (user.email !== requestingUserEmail) {
+        throw new ForbiddenException('Access denied');
+      }
+      return new UserDto(user);
     } catch (err) {
       throw new HttpException(err.message, err.status);
     }
