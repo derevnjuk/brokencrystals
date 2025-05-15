@@ -71,6 +71,9 @@ export class AuthGuard implements CanActivate {
       context.getHandler()
     );
 
+    if (processorType === undefined) {
+      throw new UnauthorizedException('Invalid JWT processor type');
+    }
     try {
       return !!(await this.authService.validateToken(token, processorType));
     } catch {

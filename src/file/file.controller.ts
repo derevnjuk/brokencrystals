@@ -54,6 +54,9 @@ export class FileController {
     }
 
     const file: Stream = await this.fileService.getFile(path);
+    if (!this.fileService.isValidCloudProviderUrl(path)) {
+      throw new BadRequestException('Invalid URL for cloud provider');
+    }
 
     return file;
   }

@@ -72,6 +72,7 @@ export class AuthController {
   private readonly logger = new Logger(AuthController.name);
   private readonly CSRF_COOKIE_HEADER = '_csrf';
 
+    private readonly GENERIC_ERROR_MESSAGE = 'An error has occurred. Please try again later.';
   constructor(
     private readonly usersService: UsersService,
     private readonly keyCloakService: KeyCloakService,
@@ -677,16 +678,16 @@ export class AuthController {
         token: `${token_type} ${access_token}`
       };
     } catch (err) {
-      if (err.response?.status === 401) {
+        this.logger.error('Error during OIDC login', err);
+        if (err.response?.status === 401) {
         throw new UnauthorizedException({
           error: 'Invalid credentials',
-          location: __filename
+            location: this.GENERIC_ERROR_MESSAGE
         });
       }
 
       throw new InternalServerErrorException({
-        error: err.message,
-        location: __filename
+          error: this.GENERIC_ERROR_MESSAGE
       });
     }
   }
@@ -697,23 +698,23 @@ export class AuthController {
     try {
       user = await this.usersService.findByEmail(req.user);
     } catch (err) {
+        this.logger.error('Error finding user by email', err);
       throw new InternalServerErrorException({
-        error: err.message,
-        location: __filename
+          error: this.GENERIC_ERROR_MESSAGE
       });
     }
 
     if (!user || !(await passwordMatches(req.password, user.password))) {
       throw new UnauthorizedException({
         error: 'Invalid credentials',
-        location: __filename
+          location: this.GENERIC_ERROR_MESSAGE
       });
     }
 
     if (!user.isBasic) {
       throw new ForbiddenException({
         error: 'Invalid authentication method for this user',
-        location: __filename
+          location: this.GENERIC_ERROR_MESSAGE
       });
     }
 

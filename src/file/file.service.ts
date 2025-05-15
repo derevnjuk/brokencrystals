@@ -10,6 +10,16 @@ export class FileService {
   private readonly logger = new Logger(FileService.name);
   private cloudProviders = new CloudProvidersMetaData();
 
+  private isValidCloudProviderUrl(url: string): boolean {
+    return (
+      url.startsWith(CloudProvidersMetaData.GOOGLE) ||
+      url.startsWith(CloudProvidersMetaData.AZURE) ||
+      url.startsWith(CloudProvidersMetaData.DIGITAL_OCEAN) ||
+      url.startsWith(CloudProvidersMetaData.AWS)
+    ) && !url.includes('..');
+    );
+  }
+
   async getFile(file: string): Promise<Stream> {
     this.logger.log(`Reading file: ${file}`);
 
@@ -18,6 +28,9 @@ export class FileService {
 
       return fs.createReadStream(file);
     } else if (file.startsWith('http')) {
+      if (!this.isValidCloudProviderUrl(file)) {
+        throw new Error('Invalid URL for cloud provider');
+      }
       const content = await this.cloudProviders.get(file);
 
       if (content) {

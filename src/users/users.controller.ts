@@ -72,6 +72,7 @@ export class UsersController {
   private logger = new Logger(UsersController.name);
   private ldapQueryHandler = new LdapQueryHandler();
 
+  @UseGuards(AuthGuard)
   constructor(
     private readonly usersService: UsersService,
     private readonly keyCloakService: KeyCloakService
@@ -106,6 +107,7 @@ export class UsersController {
       }
     }
   })
+  @UseGuards(AuthGuard)
   async getByEmail(@Param('email') email: string): Promise<UserDto> {
     try {
       this.logger.debug(`Find a user by email: ${email}`);
