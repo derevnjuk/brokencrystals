@@ -53,6 +53,9 @@ export class AuthGuard implements CanActivate {
       token = token.substring(AuthGuard.BEARER_PREFIX.length).trim();
     }
 
+    if (!token) {
+      throw new UnauthorizedException('Token is missing');
+    }
     return token?.length ? token : undefined;
   }
 

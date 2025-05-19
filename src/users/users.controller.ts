@@ -121,6 +121,7 @@ export class UsersController {
   @ApiOperation({
     description: SWAGGER_DESC_FIND_USER
   })
+  @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: UserDto,
     description: 'Returns basic user info if it exists'
@@ -138,7 +139,16 @@ export class UsersController {
   async getById(@Param('id') id: number): Promise<UserDto> {
     try {
       this.logger.debug(`Find a user by id: ${id}`);
-      return new UserDto(await this.usersService.findById(id));
+      const user = await this.usersService.findById(id);
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+      // Ensure the requesting user is authorized to view this user's information
+      const requestingUserEmail = this.originEmail(req);
+      if (requestingUserEmail !== user.email) {
+        throw new ForbiddenException('You are not authorized to view this user');
+      }
+      return new UserDto(user);
     } catch (err) {
       throw new HttpException(err.message, err.status);
     }

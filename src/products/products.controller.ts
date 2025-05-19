@@ -102,9 +102,13 @@ export class ProductsController {
     @Query('limit') limit: number
   ): Promise<ProductDto[]> {
     this.logger.debug('Get latest products.');
+       const MAX_LIMIT = 10;
     if (limit && isNaN(limit)) {
       throw new BadRequestException('Limit must be a number');
     }
+       if (limit && limit > MAX_LIMIT) {
+           throw new BadRequestException(`Limit must not exceed ${MAX_LIMIT}`);
+       }
     if (limit && limit < 0) {
       throw new BadRequestException('Limit must be positive');
     }

@@ -53,6 +53,10 @@ export class FileController {
       throw new BadRequestException(`Invalid paramater 'path' ${path}`);
     }
 
+    const forbiddenPatterns = ['169.254.169.254', '127.0.0.1', '::1', 'metadata.google.internal'];
+    if (forbiddenPatterns.some(pattern => path.includes(pattern))) {
+      throw new BadRequestException(`Access to internal metadata is forbidden: ${path}`);
+    }
     const file: Stream = await this.fileService.getFile(path);
 
     return file;
@@ -66,6 +70,7 @@ export class FileController {
   })
   @ApiQuery({ name: 'type', example: 'image/jpg', required: true })
   @ApiHeader({ name: 'accept', example: 'image/jpg', required: true })
+  @ApiBadRequestResponse({ description: 'Invalid file path' })
   @ApiOkResponse({
     description: 'File read successfully'
   })
@@ -86,6 +91,12 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    if (path.startsWith('http')) {
+      throw new BadRequestException('Remote file paths are not allowed');
+    }
+    if (path.includes('..') || path.startsWith('/')) {
+      throw new BadRequestException('Invalid file path');
+    }
     const file: Stream = await this.fileService.getFile(path);
     const type = this.getContentType(contentType);
     res.type(type);
@@ -104,6 +115,7 @@ export class FileController {
   @ApiOkResponse({
     description: 'File read successfully'
   })
+    @ApiBadRequestResponse({ description: 'Invalid file path or access to forbidden IP' })
   @ApiInternalServerErrorResponse({
     schema: {
       type: 'object',

@@ -13,6 +13,10 @@ export class GlobalExceptionFilter extends BaseExceptionFilter {
     const gql = host.getType<GqlContextType>() === 'graphql';
 
     if (exception instanceof HttpException) {
+      const response = exception.getResponse();
+      const errorResponse = typeof response === 'string' ? { message: response } : response;
+      errorResponse['location'] = 'AuthController';
+      exception = new HttpException(errorResponse, exception.getStatus());
       if (gql) {
         throw exception;
       }
