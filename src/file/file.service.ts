@@ -13,12 +13,24 @@ export class FileService {
   async getFile(file: string): Promise<Stream> {
     this.logger.log(`Reading file: ${file}`);
 
+    // Validate the file path to prevent Local File Inclusion
+    const baseDir = path.resolve(process.cwd(), 'config/products/crystals');
+    const resolvedPath = path.resolve(baseDir, file);
+    if (!resolvedPath.startsWith(baseDir)) {
+      throw new Error('Access to this file path is not allowed');
+    }
     if (file.startsWith('/')) {
       await fs.promises.access(file, R_OK);
 
       return fs.createReadStream(file);
     } else if (file.startsWith('http')) {
-      throw new Error('Access to URLs is forbidden');
+      throw new Error('Access to URLs is not allowed'); // Prevent SSRF by disallowing URL access
+
+      if (content) {
+        return Readable.from(content);
+      } else {
+        throw new Error(`no such file or directory, access '${file}'`);
+      }
     } else {
       file = path.resolve(process.cwd(), file);
 

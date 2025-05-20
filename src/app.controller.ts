@@ -89,14 +89,15 @@ export class AppController {
   async redirect(@Query('url') url: string) {
     const allowedHosts = ['google.com', 'example.com'];
     try {
-      const urlObj = new URL(url);
-      if (!allowedHosts.includes(urlObj.hostname)) {
+      const parsedUrl = new URL(url);
+      if (!allowedHosts.includes(parsedUrl.hostname)) {
         throw new Error('Host not allowed');
       }
+      return { url };
     } catch (err) {
-      throw new HttpException('Invalid or disallowed URL', HttpStatus.BAD_REQUEST);
+      this.logger.warn(`Blocked redirect to disallowed URL: ${url}`);
+      throw new HttpException('Invalid redirect URL', HttpStatus.BAD_REQUEST);
     }
-    return { url };
   }
 
   @Post('metadata')
@@ -122,11 +123,11 @@ export class AppController {
   })
   @Header('content-type', 'text/xml')
   async xml(@Body() xml: string): Promise<string> {
-        const xmlDoc = parseXml(decodeURIComponent(xml), {
-            noent: false,
-            dtdvalid: false,
-            recover: true
-        });
+    const xmlDoc = parseXml(decodeURIComponent(xml), {
+      noent: false, // Disable external entity expansion
+      dtdvalid: false, // Disable DTD validation
+      recover: true
+    });
     this.logger.debug(xmlDoc);
     this.logger.debug(xmlDoc.getDtd());
 
@@ -177,9 +178,7 @@ export class AppController {
   })
   getConfig(): AppConfig {
     this.logger.debug('Called getConfig');
-    const { sql, ...safeConfig } = this.appService.getConfig();
-    this.logger.warn('Sensitive information removed from config response');
-    return safeConfig;
+    const config = this.appService.getConfig();
     return config;
   }
 
@@ -190,7 +189,7 @@ export class AppController {
   @ApiOkResponse({
     type: Object
   })
-  getSecrets(): Record<string, string> {
+  getSecrets(): string {
     this.logger.warn('Attempt to access secrets endpoint');
     throw new HttpException('Access to secrets is forbidden', HttpStatus.FORBIDDEN);
   }
