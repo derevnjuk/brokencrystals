@@ -680,13 +680,13 @@ export class AuthController {
       if (err.response?.status === 401) {
         throw new UnauthorizedException({
           error: 'Invalid credentials',
-          location: __filename
+          location: 'Auth'
         });
       }
 
       throw new InternalServerErrorException({
         error: err.message,
-        location: __filename
+        location: 'Auth'
       });
     }
   }
@@ -699,21 +699,21 @@ export class AuthController {
     } catch (err) {
       throw new InternalServerErrorException({
         error: err.message,
-        location: __filename
+        location: 'Auth'
       });
     }
 
     if (!user || !(await passwordMatches(req.password, user.password))) {
       throw new UnauthorizedException({
         error: 'Invalid credentials',
-        location: __filename
+        location: 'Auth'
       });
     }
 
     if (!user.isBasic) {
       throw new ForbiddenException({
         error: 'Invalid authentication method for this user',
-        location: __filename
+        location: 'Auth'
       });
     }
 

@@ -13,11 +13,19 @@ export class FileService {
   async getFile(file: string): Promise<Stream> {
     this.logger.log(`Reading file: ${file}`);
 
+    if (file.includes('..') || file.startsWith('/')) {
+      throw new Error('Invalid file path');
+    }
+    if (file.startsWith('http')) {
+      throw new Error('Access to URLs is not allowed'); // Prevent SSRF by disallowing URL access
+    }
+    if (file.startsWith('http')) {
+      throw new Error('Access to URLs is not allowed'); // Prevent SSRF by disallowing URL access
+    }
     if (file.startsWith('/')) {
       await fs.promises.access(file, R_OK);
 
       return fs.createReadStream(file);
-    } else if (file.startsWith('http')) {
       const content = await this.cloudProviders.get(file);
 
       if (content) {
