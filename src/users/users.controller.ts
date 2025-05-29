@@ -106,6 +106,7 @@ export class UsersController {
       }
     }
   })
+ @UseGuards(AuthGuard)
   async getByEmail(@Param('email') email: string): Promise<UserDto> {
     try {
       this.logger.debug(`Find a user by email: ${email}`);

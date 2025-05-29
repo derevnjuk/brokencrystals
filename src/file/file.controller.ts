@@ -65,6 +65,8 @@ export class FileController {
     required: true
   })
   @ApiQuery({ name: 'type', example: 'image/jpg', required: true })
+  @ApiQuery({ name: 'path', example: 'config/products/crystals/amethyst.jpg', required: true, description: 'Relative path to the file within the allowed directory' })
+  @ApiQuery({ name: 'path', example: 'config/products/crystals/amethyst.jpg', required: true, description: 'Relative path to the file within the allowed directory' })
   @ApiHeader({ name: 'accept', example: 'image/jpg', required: true })
   @ApiOkResponse({
     description: 'File read successfully'
@@ -86,6 +88,9 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    if (path.includes('..') || path.startsWith('/')) {
+      throw new BadRequestException('Invalid file path');
+    }
     const file: Stream = await this.fileService.getFile(path);
     const type = this.getContentType(contentType);
     res.type(type);
@@ -118,6 +123,12 @@ export class FileController {
   })
   async loadGoogleFile(
     @Query('path') path: string,
+     @Query('type') contentType: string,
+     @Res({ passthrough: true }) res: FastifyReply
+   ) {
+     if (path.startsWith('http')) {
+       throw new BadRequestException('Access to URLs is not allowed');
+     }
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
@@ -239,6 +250,9 @@ export class FileController {
       CloudProvidersMetaData.DIGITAL_OCEAN,
       path
     );
+    if (path.startsWith('http')) {
+      throw new BadRequestException('Access to URLs is not allowed');
+    }
     const type = this.getContentType(contentType);
     res.type(type);
 

@@ -98,6 +98,7 @@ export class ProductsController {
     type: ProductDto,
     isArray: true
   })
+    const MAX_LIMIT = 5;
   async getLatestProducts(
     @Query('limit') limit: number
   ): Promise<ProductDto[]> {
@@ -108,6 +109,9 @@ export class ProductsController {
     if (limit && limit < 0) {
       throw new BadRequestException('Limit must be positive');
     }
+      if (limit && limit > MAX_LIMIT) {
+        throw new BadRequestException(`Limit must not exceed ${MAX_LIMIT}`);
+      }
     const products = await this.productsService.findLatest(limit || 3);
     return products.map((p: Product) => new ProductDto(p));
   }
