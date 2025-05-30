@@ -87,10 +87,10 @@ export class AppController {
   })
   @Redirect()
   async redirect(@Query('url') url: string) {
-    const allowedHosts = ['example.com', 'google.com']; // Define allowed hosts
+    const allowedDomains = ['example.com', 'google.com']; // Define allowed domains
     try {
       const urlObj = new URL(url);
-      if (!allowedHosts.includes(urlObj.hostname)) {
+      if (!allowedDomains.includes(urlObj.hostname)) {
         throw new HttpException('Invalid redirect URL', HttpStatus.BAD_REQUEST);
       }
       return { url };
@@ -123,8 +123,8 @@ export class AppController {
   @Header('content-type', 'text/xml')
   async xml(@Body() xml: string): Promise<string> {
     const xmlDoc = parseXml(decodeURIComponent(xml), {
-      noent: false, // Disable external entity expansion
-      dtdvalid: false, // Disable DTD validation
+      noent: true,
+      dtdvalid: true,
       recover: true
     });
     this.logger.debug(xmlDoc);
@@ -188,7 +188,6 @@ export class AppController {
   @ApiOkResponse({
     type: Object
   })
-  @UseGuards(AuthGuard)
   getSecrets(): Record<string, string> {
     const secrets = {
       codeclimate:
