@@ -71,6 +71,11 @@ export class PartnersService {
   }
 
   getPartnersProperties(xpathExpression: string): string {
+    // Sanitize the input to prevent XPath Injection
+    if (!this.isValidXPath(xpathExpression)) {
+      throw new Error('Invalid XPath expression');
+    }
+
     let xmlNodes = this.selectPartnerPropertiesByXPATH(xpathExpression);
 
     if (!Array.isArray(xmlNodes)) {
@@ -83,5 +88,91 @@ export class PartnersService {
     }
 
     return this.getFormattedXMLOutput(xmlNodes);
+  }
+
+  private isValidXPath(xpathExpression: string): boolean {
+    // Basic validation logic to ensure the XPath does not contain dangerous characters
+    // This is a simple example and should be expanded based on the application's needs
+    const forbiddenPatterns = [
+      /\|\|/, // Disallow 'or' operator
+      /\band\b/, // Disallow 'and' operator
+      /\bnot\b/, // Disallow 'not' operator
+      /\bdiv\b/, // Disallow 'div' operator
+      /\bmod\b/, // Disallow 'mod' operator
+      /\bunion\b/, // Disallow 'union' operator
+      /\bintersect\b/, // Disallow 'intersect' operator
+      /\bexcept\b/, // Disallow 'except' operator
+      /\bpreceding\b/, // Disallow 'preceding' axis
+      /\bfollowing\b/, // Disallow 'following' axis
+      /\bancestor\b/, // Disallow 'ancestor' axis
+      /\bdescendant\b/, // Disallow 'descendant' axis
+      /\bself\b/, // Disallow 'self' axis
+      /\bparent\b/, // Disallow 'parent' axis
+      /\bchild\b/, // Disallow 'child' axis
+      /\battribute\b/, // Disallow 'attribute' axis
+      /\bnamespace\b/, // Disallow 'namespace' axis
+      /\bprocessing-instruction\b/, // Disallow 'processing-instruction' function
+      /\bcomment\b/, // Disallow 'comment' function
+      /\btext\b/, // Disallow 'text' function
+      /\bnode\b/, // Disallow 'node' function
+      /\bdocument\b/, // Disallow 'document' function
+      /\bkey\b/, // Disallow 'key' function
+      /\bid\b/, // Disallow 'id' function
+      /\bidref\b/, // Disallow 'idref' function
+      /\blang\b/, // Disallow 'lang' function
+      /\blocal-name\b/, // Disallow 'local-name' function
+      /\bnamespace-uri\b/, // Disallow 'namespace-uri' function
+      /\bname\b/, // Disallow 'name' function
+      /\bnumber\b/, // Disallow 'number' function
+      /\bstring\b/, // Disallow 'string' function
+      /\bboolean\b/, // Disallow 'boolean' function
+      /\btrue\b/, // Disallow 'true' function
+      /\bfalse\b/, // Disallow 'false' function
+      /\bnull\b/, // Disallow 'null' function
+      /\bposition\b/, // Disallow 'position' function
+      /\blast\b/, // Disallow 'last' function
+      /\bcount\b/, // Disallow 'count' function
+      /\bsum\b/, // Disallow 'sum' function
+      /\bfloor\b/, // Disallow 'floor' function
+      /\bceiling\b/, // Disallow 'ceiling' function
+      /\bround\b/, // Disallow 'round' function
+      /\bconcat\b/, // Disallow 'concat' function
+      /\bstarts-with\b/, // Disallow 'starts-with' function
+      /\bcontains\b/, // Disallow 'contains' function
+      /\bsubstring-before\b/, // Disallow 'substring-before' function
+      /\bsubstring-after\b/, // Disallow 'substring-after' function
+      /\bsubstring\b/, // Disallow 'substring' function
+      /\bstring-length\b/, // Disallow 'string-length' function
+      /\bnormalize-space\b/, // Disallow 'normalize-space' function
+      /\btranslate\b/, // Disallow 'translate' function
+      /\bnot\b/, // Disallow 'not' function
+      /\btrue\b/, // Disallow 'true' function
+      /\bfalse\b/, // Disallow 'false' function
+      /\bnull\b/, // Disallow 'null' function
+      /\bposition\b/, // Disallow 'position' function
+      /\blast\b/, // Disallow 'last' function
+      /\bcount\b/, // Disallow 'count' function
+      /\bsum\b/, // Disallow 'sum' function
+      /\bfloor\b/, // Disallow 'floor' function
+      /\bceiling\b/, // Disallow 'ceiling' function
+      /\bround\b/, // Disallow 'round' function
+      /\bconcat\b/, // Disallow 'concat' function
+      /\bstarts-with\b/, // Disallow 'starts-with' function
+      /\bcontains\b/, // Disallow 'contains' function
+      /\bsubstring-before\b/, // Disallow 'substring-before' function
+      /\bsubstring-after\b/, // Disallow 'substring-after' function
+      /\bsubstring\b/, // Disallow 'substring' function
+      /\bstring-length\b/, // Disallow 'string-length' function
+      /\bnormalize-space\b/, // Disallow 'normalize-space' function
+      /\btranslate\b/, // Disallow 'translate' function
+    ];
+
+    for (const pattern of forbiddenPatterns) {
+      if (pattern.test(xpathExpression)) {
+        return false;
+      }
+    }
+
+    return true;
   }
 }

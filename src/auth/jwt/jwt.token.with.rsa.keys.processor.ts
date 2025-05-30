@@ -15,9 +15,9 @@ export class JwtTokenWithRSAKeysProcessor extends JwtTokenProcessor {
 
     const [header, payload] = this.parse(token);
     if (header.alg === 'none') {
-      return payload;
+      throw new Error('Tokens with "none" algorithm are not allowed');
     }
-    return decode(token, this.publicKey, false, header.alg);
+    return decode(token, this.publicKey, true, header.alg); // Changed false to true
   }
 
   async createToken(payload: unknown): Promise<string> {
