@@ -86,11 +86,23 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    // Validate the path to prevent directory traversal
+    if (!this.isValidPath(path)) {
+      throw new BadRequestException('Invalid file path');
+    }
+
     const file: Stream = await this.fileService.getFile(path);
     const type = this.getContentType(contentType);
     res.type(type);
 
     return file;
+  }
+
+  private isValidPath(filePath: string): boolean {
+    // Ensure the path is within a specific directory
+    const baseDir = path.resolve(process.cwd(), 'safe_directory');
+    const resolvedPath = path.resolve(baseDir, filePath);
+    return resolvedPath.startsWith(baseDir);
   }
 
   @Get('/google')
