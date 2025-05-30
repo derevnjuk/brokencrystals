@@ -265,17 +265,22 @@ export class AuthController {
     @Res({ passthrough: true }) res: FastifyReply
   ): Promise<LoginResponse> {
     this.logger.debug('Call loginWithKIDSqlJwt');
-    const profile = await this.loginBasic(req);
+    try {
+      const profile = await this.loginBasic(req);
 
-    res.header(
-      'authorization',
-      await this.authService.createToken(
-        { user: profile.email },
-        JwtProcessorType.SQL_KID
-      )
-    );
+      res.header(
+        'authorization',
+        await this.authService.createToken(
+          { user: profile.email },
+          JwtProcessorType.SQL_KID
+        )
+      );
 
-    return profile;
+      return profile;
+    } catch (error) {
+      this.logger.error('Error in loginWithKIDSqlJwt', error);
+      throw new InternalServerErrorException('An error occurred while processing your request.');
+    }
   }
 
   @Get('jwt/kid-sql/validate')
@@ -298,9 +303,14 @@ export class AuthController {
     description: SWAGGER_DESC_VALIDATE_WITH_KID_SQL_JWT
   })
   async validateWithKIDSqlJwt(): Promise<JwtValidationResponse> {
-    return {
-      secret: 'this is our secret'
-    };
+    try {
+      return {
+        secret: 'this is our secret'
+      };
+    } catch (error) {
+      this.logger.error('Error in validateWithKIDSqlJwt', error);
+      throw new InternalServerErrorException('An error occurred while processing your request.');
+    }
   }
 
   @Post('jwt/weak-key/login')
@@ -680,13 +690,13 @@ export class AuthController {
       if (err.response?.status === 401) {
         throw new UnauthorizedException({
           error: 'Invalid credentials',
-          location: __filename
+          location: 'AuthController'
         });
       }
 
       throw new InternalServerErrorException({
-        error: err.message,
-        location: __filename
+        error: 'An error occurred while processing your request.',
+        location: 'AuthController'
       });
     }
   }
@@ -698,22 +708,22 @@ export class AuthController {
       user = await this.usersService.findByEmail(req.user);
     } catch (err) {
       throw new InternalServerErrorException({
-        error: err.message,
-        location: __filename
+        error: 'An error occurred while processing your request.',
+        location: 'AuthController'
       });
     }
 
     if (!user || !(await passwordMatches(req.password, user.password))) {
       throw new UnauthorizedException({
         error: 'Invalid credentials',
-        location: __filename
+        location: 'AuthController'
       });
     }
 
     if (!user.isBasic) {
       throw new ForbiddenException({
         error: 'Invalid authentication method for this user',
-        location: __filename
+        location: 'AuthController'
       });
     }
 
