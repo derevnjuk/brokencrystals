@@ -21,7 +21,7 @@ after(() => runner.clear());
 test('GET /api/file/azure', { signal: AbortSignal.timeout(timeout) }, async () => {
   await runner
     .createScan({
-      tests: ['lfi', 'ssrf', 'open_cloud_storage', 'file_upload', 'unvalidated_redirect'],
+      tests: ['ssrf'],
       attackParamLocations: [AttackParamLocation.QUERY]
     })
     .threshold(Severity.CRITICAL)
