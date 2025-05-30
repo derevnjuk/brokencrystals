@@ -102,11 +102,15 @@ export class ProductsController {
     @Query('limit') limit: number
   ): Promise<ProductDto[]> {
     this.logger.debug('Get latest products.');
+    const MAX_LIMIT = 5; // Define a maximum limit for the number of products
     if (limit && isNaN(limit)) {
       throw new BadRequestException('Limit must be a number');
     }
     if (limit && limit < 0) {
       throw new BadRequestException('Limit must be positive');
+    }
+    if (limit && limit > MAX_LIMIT) {
+      throw new BadRequestException(`Limit must not exceed ${MAX_LIMIT}`);
     }
     const products = await this.productsService.findLatest(limit || 3);
     return products.map((p: Product) => new ProductDto(p));
@@ -131,8 +135,8 @@ export class ProductsController {
     @Headers('x-product-name') productName: string
   ): Promise<void> {
     try {
-      const query = `UPDATE product SET views_count = views_count + 1 WHERE name = '${productName}'`;
-      return await this.productsService.updateProduct(query);
+      // Use parameterized query to prevent SQL injection
+      return await this.productsService.updateProductWithName(productName);
     } catch (err) {
       throw new InternalServerErrorException({
         error: err.message,

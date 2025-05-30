@@ -58,6 +58,32 @@ export class FileController {
     return file;
   }
 
+  private isValidPath(path: string): boolean {
+    // Basic validation to ensure the path is not a URL
+    try {
+      new URL(path);
+      return false;
+    } catch (_) {
+      return true;
+    }
+  }
+
+  private isSafePath(filePath: string): boolean {
+    // Ensure the path is within a specific directory
+    const basePath = path.resolve('config/products/crystals');
+    const resolvedPath = path.resolve(filePath);
+    return resolvedPath.startsWith(basePath);
+  }
+
+  private isWhitelistedPath(path: string): boolean {
+    // Define a whitelist of allowed paths
+    const allowedPaths = [
+      'config/products/crystals/amethyst.jpg',
+      // Add more allowed paths as needed
+    ];
+    return allowedPaths.includes(path);
+  }
+
   @Get()
   @ApiQuery({
     name: 'path',
@@ -86,6 +112,10 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    if (!this.isValidPath(path) || !this.isSafePath(path) || !this.isWhitelistedPath(path)) {
+      throw new BadRequestException('Invalid path parameter');
+    }
+
     const file: Stream = await this.fileService.getFile(path);
     const type = this.getContentType(contentType);
     res.type(type);
@@ -121,6 +151,10 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    if (!this.isValidPath(path) || !this.isSafePath(path) || !this.isWhitelistedPath(path)) {
+      throw new BadRequestException('Invalid path parameter');
+    }
+
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.GOOGLE,
       path
@@ -159,6 +193,10 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    if (!this.isValidPath(path) || !this.isSafePath(path) || !this.isWhitelistedPath(path)) {
+      throw new BadRequestException('Invalid path parameter');
+    }
+
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.AWS,
       path
@@ -197,6 +235,10 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    if (!this.isValidPath(path) || !this.isSafePath(path) || !this.isWhitelistedPath(path)) {
+      throw new BadRequestException('Invalid path parameter');
+    }
+
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.AZURE,
       path
@@ -235,6 +277,10 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    if (!this.isValidPath(path) || !this.isSafePath(path) || !this.isWhitelistedPath(path)) {
+      throw new BadRequestException('Invalid path parameter');
+    }
+
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.DIGITAL_OCEAN,
       path
@@ -316,6 +362,9 @@ export class FileController {
     @Res({ passthrough: true }) res: FastifyReply
   ) {
     try {
+      if (!this.isSafePath(file)) {
+        throw new BadRequestException('Invalid path parameter');
+      }
       const stream = await this.fileService.getFile(file);
       res.type('application/octet-stream');
 
