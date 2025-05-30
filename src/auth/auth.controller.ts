@@ -694,10 +694,7 @@ export class AuthController {
         });
       }
 
-      throw new InternalServerErrorException({
-        error: 'An error occurred while processing your request.',
-        location: 'AuthController'
-      });
+      throw new InternalServerErrorException('An error occurred while processing your request.');
     }
   }
 
@@ -707,10 +704,7 @@ export class AuthController {
     try {
       user = await this.usersService.findByEmail(req.user);
     } catch (err) {
-      throw new InternalServerErrorException({
-        error: 'An error occurred while processing your request.',
-        location: 'AuthController'
-      });
+      throw new InternalServerErrorException('An error occurred while processing your request.');
     }
 
     if (!user || !(await passwordMatches(req.password, user.password))) {
