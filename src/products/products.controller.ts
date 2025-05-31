@@ -4,7 +4,7 @@ import {
   Logger,
   UseGuards,
   Headers,
-  InternalServerErrorErrorException,
+  InternalServerErrorException,
   Query,
   BadRequestException
 } from '@nestjs/common';
