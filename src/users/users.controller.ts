@@ -135,10 +135,12 @@ export class UsersController {
       }
     }
   })
-  async getById(@Param('id') id: number): Promise<UserDto> {
+  @UseGuards(AuthGuard)
+  async getById(@Param('id') id: number, @Req() req: FastifyRequest): Promise<UserDto> {
     try {
       this.logger.debug(`Find a user by id: ${id}`);
-      return new UserDto(await this.usersService.findById(id));
+      const requestingUserId = this.extractUserIdFromRequest(req);
+      return new UserDto(await this.usersService.findById(id, requestingUserId));
     } catch (err) {
       throw new HttpException(err.message, err.status);
     }
@@ -463,8 +465,7 @@ export class UsersController {
       type: 'object',
       properties: {
         statusCode: { type: 'number' },
-        message: { type: 'string' },
-        error: { type: 'string' }
+        message: { type: 'string' }
       }
     }
   })
@@ -582,5 +583,14 @@ export class UsersController {
         err.status ?? HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
+  }
+
+  private extractUserIdFromRequest(request: FastifyRequest): number {
+    return JSON.parse(
+      Buffer.from(
+        request.headers.authorization.split('.')[1],
+        'base64'
+      ).toString()
+    ).userId;
   }
 }

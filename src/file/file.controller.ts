@@ -121,6 +121,9 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    if (!path.startsWith(CloudProvidersMetaData.GOOGLE)) {
+      throw new BadRequestException(`Invalid parameter 'path' ${path}`);
+    }
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.GOOGLE,
       path
