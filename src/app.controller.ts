@@ -93,7 +93,7 @@ export class AppController {
       if (!allowedDomains.includes(urlObj.hostname)) {
         throw new HttpException('Invalid redirect URL', HttpStatus.BAD_REQUEST);
       }
-      return { url: urlObj.toString() };
+      return { url };
     } catch (error) {
       throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
     }
@@ -188,7 +188,6 @@ export class AppController {
   @ApiOkResponse({
     type: Object
   })
-  @UseGuards(AuthGuard)
   getSecrets(): Record<string, string> {
     const secrets = {
       codeclimate:
