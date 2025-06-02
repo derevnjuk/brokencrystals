@@ -87,7 +87,16 @@ export class AppController {
   })
   @Redirect()
   async redirect(@Query('url') url: string) {
-    return { url };
+    const allowedDomains = ['example.com', 'google.com']; // Define allowed domains
+    try {
+      const urlObj = new URL(url);
+      if (!allowedDomains.includes(urlObj.hostname)) {
+        throw new HttpException('Invalid redirect URL', HttpStatus.BAD_REQUEST);
+      }
+      return { url };
+    } catch (error) {
+      throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
+    }
   }
 
   @Post('metadata')
@@ -179,6 +188,7 @@ export class AppController {
   @ApiOkResponse({
     type: Object
   })
+  @UseGuards(AuthGuard)
   getSecrets(): Record<string, string> {
     const secrets = {
       codeclimate:
