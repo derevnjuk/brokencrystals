@@ -122,6 +122,9 @@ export class AuthService {
   }
 
   validateToken(token: string, processor: JwtProcessorType): Promise<unknown> {
+    if (processor === JwtProcessorType.NONE) {
+      throw new Error('None algorithm is not allowed');
+    }
     return this.processors.get(processor).validateToken(token);
   }
 

@@ -3,7 +3,7 @@ import { JwtHeader } from './jwt.header';
 
 export abstract class JwtTokenProcessor {
   private static readonly END_CERTIFICATE_MARK = '-----END CERTIFICATE-----';
-  private static readonly END_PUBLIC_KEY_MARK = '-----END PUBLIC KEY-----';
+  private static readonly END_PUBLIC KEY_MARK = '-----END PUBLIC KEY-----';
   protected log: Logger = new Logger(JwtTokenProcessor.name);
 
   constructor(log: Logger) {
@@ -21,8 +21,13 @@ export abstract class JwtTokenProcessor {
     this.log.debug(`Jwt token header is ${headerStr}`);
     const header: JwtHeader = JSON.parse(headerStr);
 
+    // Check if the algorithm is set to 'none'
+    if (header.alg === 'none') {
+      throw new Error('JWT with "none" algorithm is not allowed');
+    }
+
     const payloadStr = Buffer.from(parts[1], 'base64').toString('ascii');
-    this.log.debug(`Jwt token (None alg) payload is ${payloadStr}`);
+    this.log.debug(`Jwt token payload is ${payloadStr}`);
     const payload = JSON.parse(payloadStr);
 
     return [header, payload];

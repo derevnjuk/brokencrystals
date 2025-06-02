@@ -87,7 +87,16 @@ export class AppController {
   })
   @Redirect()
   async redirect(@Query('url') url: string) {
-    return { url };
+    const allowedHosts = ['example.com', 'google.com']; // Define allowed hosts
+    try {
+      const parsedUrl = new URL(url);
+      if (!allowedHosts.includes(parsedUrl.hostname)) {
+        throw new HttpException('Invalid redirect URL', HttpStatus.BAD_REQUEST);
+      }
+      return { url };
+    } catch (error) {
+      throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
+    }
   }
 
   @Post('metadata')
@@ -114,8 +123,8 @@ export class AppController {
   @Header('content-type', 'text/xml')
   async xml(@Body() xml: string): Promise<string> {
     const xmlDoc = parseXml(decodeURIComponent(xml), {
-      noent: true,
-      dtdvalid: true,
+      noent: false, // Disable external entity expansion
+      dtdvalid: false, // Disable DTD validation
       recover: true
     });
     this.logger.debug(xmlDoc);
@@ -173,6 +182,7 @@ export class AppController {
   }
 
   @Get('/secrets')
+  @UseGuards(AuthGuard)
   @ApiOperation({
     description: SWAGGER_DESC_SECRETS
   })

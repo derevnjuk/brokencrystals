@@ -63,7 +63,24 @@ export class PartnersService {
     xpathExpression: string
   ): SelectReturnType {
     const partnersXMLObj = this.getPartnersXMLObj();
+    // Validate and sanitize the XPath expression
+    if (!this.isValidXPath(xpathExpression)) {
+      throw new Error('Invalid XPath expression');
+    }
     return xpath.select(xpathExpression, partnersXMLObj);
+  }
+
+  private isValidXPath(xpathExpression: string): boolean {
+    // Basic validation to prevent XPath injection
+    // This can be expanded with more complex validation logic
+    const forbiddenPatterns = [
+      /\bor\b/i, // Prevent logical OR
+      /\band\b/i, // Prevent logical AND
+      /\|/g, // Prevent union
+      /\//g, // Prevent direct path
+      /\[.*\]/g // Prevent predicates
+    ];
+    return !forbiddenPatterns.some((pattern) => pattern.test(xpathExpression));
   }
 
   private getFormattedXMLOutput(xmlNodes): string {
