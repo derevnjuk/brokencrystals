@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { CloudProvidersMetaData } from './cloud.providers.metadata';
 import { R_OK } from 'constants';
+import { URL } from 'url';
 
 @Injectable()
 export class FileService {
@@ -18,6 +19,12 @@ export class FileService {
 
       return fs.createReadStream(file);
     } else if (file.startsWith('http')) {
+      // Validate URL
+      const url = new URL(file);
+      if (!this.isValidProviderUrl(url)) {
+        throw new Error('Invalid or unauthorized URL');
+      }
+
       const content = await this.cloudProviders.get(file);
 
       if (content) {
@@ -32,6 +39,14 @@ export class FileService {
 
       return fs.createReadStream(file);
     }
+  }
+
+  private isValidProviderUrl(url: URL): boolean {
+    const validHosts = [
+      'metadata.google.internal',
+      '169.254.169.254'
+    ];
+    return validHosts.includes(url.hostname);
   }
 
   async deleteFile(file: string): Promise<boolean> {
