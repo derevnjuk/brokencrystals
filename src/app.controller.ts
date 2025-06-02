@@ -87,15 +87,19 @@ export class AppController {
   })
   @Redirect()
   async redirect(@Query('url') url: string) {
-    const allowedDomains = ['example.com', 'google.com']; // Define allowed domains
+    if (!this.isValidUrl(url)) {
+      throw new HttpException('Invalid URL', HttpStatus.BAD_REQUEST);
+    }
+    return { url };
+  }
+
+  private isValidUrl(url: string): boolean {
     try {
-      const urlObj = new URL(url);
-      if (!allowedDomains.includes(urlObj.hostname)) {
-        throw new HttpException('Invalid redirect URL', HttpStatus.BAD_REQUEST);
-      }
-      return { url };
-    } catch (error) {
-      throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
+      const parsedUrl = new URL(url);
+      // Allow only specific protocols
+      return ['http:', 'https:'].includes(parsedUrl.protocol);
+    } catch (e) {
+      return false;
     }
   }
 
