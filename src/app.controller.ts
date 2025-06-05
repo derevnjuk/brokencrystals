@@ -93,7 +93,7 @@ export class AppController {
       if (!allowedHosts.includes(parsedUrl.hostname)) {
         throw new HttpException('Forbidden URL', HttpStatus.FORBIDDEN);
       }
-      return { url };
+      return { url: parsedUrl.toString() };
     } catch (error) {
       throw new HttpException('Invalid URL', HttpStatus.BAD_REQUEST);
     }

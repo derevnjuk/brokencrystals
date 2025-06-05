@@ -65,10 +65,7 @@ export class AppService {
       ),
       dbUser = this.configService.get<string>(
         OrmModuleConfigProperties.ENV_DATABASE_USER
-      ),
-      dbPwd = this.configService.get<string>(
-        OrmModuleConfigProperties.ENV_DATABASE_PASSWORD
-      );
+      ); // Removed password retrieval
 
     return {
       awsBucket: this.configService.get<string>(
