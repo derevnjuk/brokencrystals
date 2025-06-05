@@ -14,8 +14,8 @@ export class JwtTokenWithRSAKeysProcessor extends JwtTokenProcessor {
     this.log.debug('Call validateToken');
 
     const [header, payload] = this.parse(token);
-    if (!header.alg || header.alg.toLowerCase() === 'none') {
-      throw new Error('Invalid token algorithm');
+    if (header.alg === 'none') {
+      return payload;
     }
     return decode(token, this.publicKey, false, header.alg);
   }

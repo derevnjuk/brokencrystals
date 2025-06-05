@@ -19,7 +19,6 @@ import {
   API_DESC_SEARCH_PARTNERS_NAMES
 } from './partners.controller.swagger.desc';
 import { PartnersService } from './partners.service';
-import { escape } from 'lodash';
 
 @Controller('/api/partners')
 @ApiTags('Partners controller')
@@ -46,7 +45,6 @@ export class PartnersController {
   async queryPartnersRaw(@Query('xpath') xpath: string): Promise<string> {
     this.logger.debug(`Getting partners with xpath expression "${xpath}"`);
 
-    xpath = escape(xpath);
     try {
       return this.partnersService.getPartnersProperties(xpath);
     } catch (err) {
@@ -86,8 +84,6 @@ export class PartnersController {
       `Trying to login partner with username ${username} using password ${password}`
     );
 
-    username = escape(username);
-    password = escape(password);
     try {
       const xpath = `//partners/partner[username/text()='${username}' and password/text()='${password}']/*`;
       const xmlStr = this.partnersService.getPartnersProperties(xpath);
@@ -131,7 +127,6 @@ export class PartnersController {
   async searchPartners(@Query('keyword') keyword: string): Promise<string> {
     this.logger.debug(`Searching partner names by the keyword "${keyword}"`);
 
-    keyword = escape(keyword);
     try {
       const xpath = `//partners/partner/name[contains(., '${keyword}')]`;
       return this.partnersService.getPartnersProperties(xpath);
