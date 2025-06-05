@@ -121,7 +121,10 @@ export class AuthService {
     );
   }
 
-  validateToken(token: string, processor: JwtProcessorType): Promise<unknown> {
+  async validateToken(token: string, processor: JwtProcessorType): Promise<unknown> {
+    if (!this.processors.has(processor)) {
+      throw new Error('Unsupported JWT processor type');
+    }
     return this.processors.get(processor).validateToken(token);
   }
 

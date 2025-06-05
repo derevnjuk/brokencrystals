@@ -71,6 +71,12 @@ export class PartnersService {
   }
 
   getPartnersProperties(xpathExpression: string): string {
+    // Sanitize the input to prevent XPath injection
+    if (!/^[a-zA-Z0-9\s\/\[\]\(\)\'\-]+$/.test(xpathExpression)) {
+      this.logger.warn(`Invalid characters detected in XPath expression: ${xpathExpression}`);
+      throw new Error('Invalid XPath expression');
+    }
+
     let xmlNodes = this.selectPartnerPropertiesByXPATH(xpathExpression);
 
     if (!Array.isArray(xmlNodes)) {

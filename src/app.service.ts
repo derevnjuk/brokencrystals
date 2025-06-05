@@ -19,9 +19,16 @@ export class AppService {
   async launchCommand(command: string): Promise<string> {
     this.logger.debug(`launch ${command} command`);
 
+    // Validate and sanitize the command input
+    const allowedCommands = ['ls', 'echo']; // Define a whitelist of allowed commands
+    const [exec, ...args] = command.split(' ');
+
+    if (!allowedCommands.includes(exec)) {
+      throw new HttpException('Command not allowed', 400);
+    }
+
     return new Promise((res, rej) => {
       try {
-        const [exec, ...args] = command.split(' ');
         const ps = spawn(exec, args);
 
         ps.stdout.on('data', (data: Buffer) => {
@@ -31,16 +38,16 @@ export class AppService {
 
         ps.stderr.on('data', (data: Buffer) => {
           this.logger.debug(`stderr: ${data}`);
-          res(data.toString('ascii'));
+          rej(new Error('Command execution failed'));
         });
 
-        ps.on('error', (err) => rej(err.message));
+        ps.on('error', (err) => rej(new Error('Command execution error')));
 
         ps.on('close', (code) =>
           this.logger.debug(`child process exited with code ${code}`)
         );
       } catch (err) {
-        rej(err.message);
+        rej(new Error('Command execution error'));
       }
     });
   }
@@ -67,7 +74,7 @@ export class AppService {
       awsBucket: this.configService.get<string>(
         AppModuleConfigProperties.ENV_AWS_BUCKET
       ),
-      sql: `postgres://${dbUser}:${dbPwd}@${dbHost}:${dbPort}/${dbSchema} `,
+      sql: `postgres://${dbUser}:<REDACTED>@${dbHost}:${dbPort}/${dbSchema} `, // Redacted password
       googlemaps: this.configService.get<string>(
         AppModuleConfigProperties.ENV_GOOGLE_MAPS
       )
