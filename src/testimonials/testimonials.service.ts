@@ -58,7 +58,9 @@ export class TestimonialsService {
     try {
       this.logger.debug(`Saved new testimonial`);
 
-      return (await this.em.getConnection().execute(query))[0].count as number;
+      // Use parameterized query to prevent SQL injection
+      const result = await this.em.getConnection().execute('SELECT COUNT(*) as count FROM testimonial WHERE id = ?', [query]);
+      return result[0].count as number;
     } catch (err) {
       this.logger.warn(`Failed to execute query. Error: ${err.message}`);
       return err.message;

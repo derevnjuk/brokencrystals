@@ -135,10 +135,15 @@ export class UsersController {
       }
     }
   })
-  async getById(@Param('id') id: number): Promise<UserDto> {
+  @UseGuards(AuthGuard)
+  async getById(@Param('id') id: number, @Req() req: FastifyRequest): Promise<UserDto> {
     try {
       this.logger.debug(`Find a user by id: ${id}`);
-      return new UserDto(await this.usersService.findById(id));
+      const user = await this.usersService.findById(id);
+      if (this.originEmail(req) !== user.email) {
+        throw new ForbiddenException();
+      }
+      return new UserDto(user);
     } catch (err) {
       throw new HttpException(err.message, err.status);
     }
