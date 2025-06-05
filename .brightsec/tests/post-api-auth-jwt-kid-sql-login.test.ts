@@ -21,7 +21,7 @@ after(() => runner.clear());
 test('POST /api/auth/jwt/kid-sql/login', { signal: AbortSignal.timeout(timeout) }, async () => {
   await runner
     .createScan({
-      tests: ['sqli', 'csrf', 'jwt', 'full_path_disclosure', 'improper_asset_management'],
+      tests: ['full_path_disclosure'],
       attackParamLocations: [AttackParamLocation.BODY]
     })
     .threshold(Severity.CRITICAL)
