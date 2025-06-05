@@ -115,12 +115,13 @@ export class UsersController {
     }
   }
 
-  @Get('/id/:id')
-  @ApiQuery({ name: 'id', example: 1, required: true })
-  @SerializeOptions({ groups: [BASIC_USER_INFO] })
-  @ApiOperation({
-    description: SWAGGER_DESC_FIND_USER
-  })
+ @Get('/id/:id')
+ @ApiQuery({ name: 'id', example: 1, required: true })
+  @UseGuards(AuthGuard)
+ @SerializeOptions({ groups: [BASIC_USER_INFO] })
+ @ApiOperation({
+   description: SWAGGER_DESC_FIND_USER
+ })
   @ApiOkResponse({
     type: UserDto,
     description: 'Returns basic user info if it exists'
@@ -140,6 +141,9 @@ export class UsersController {
       this.logger.debug(`Find a user by id: ${id}`);
       return new UserDto(await this.usersService.findById(id));
     } catch (err) {
+      if (err instanceof NotFoundException) {
+        throw new NotFoundException('User not found');
+      }
       throw new HttpException(err.message, err.status);
     }
   }

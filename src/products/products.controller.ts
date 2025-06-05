@@ -90,27 +90,31 @@ export class ProductsController {
   }
 
   @Get('latest')
-  @ApiQuery({ name: 'limit', example: 3, required: false })
-  @ApiOperation({
-    description: API_DESC_GET_LATEST_PRODUCTS
-  })
-  @ApiOkResponse({
-    type: ProductDto,
-    isArray: true
-  })
-  async getLatestProducts(
-    @Query('limit') limit: number
-  ): Promise<ProductDto[]> {
-    this.logger.debug('Get latest products.');
-    if (limit && isNaN(limit)) {
-      throw new BadRequestException('Limit must be a number');
+    @ApiQuery({ name: 'limit', example: 3, required: false })
+    @ApiOperation({
+      description: API_DESC_GET_LATEST_PRODUCTS
+    })
+    @ApiOkResponse({
+      type: ProductDto,
+      isArray: true
+    })
+    const MAX_LIMIT = 50; // Define a maximum limit for the number of products returned
+    async getLatestProducts(
+      @Query('limit') limit: number
+    ): Promise<ProductDto[]> {
+      this.logger.debug('Get latest products.');
+      if (limit && isNaN(limit)) {
+        throw new BadRequestException('Limit must be a number');
+      }
+      if (limit && limit < 0) {
+        throw new BadRequestException('Limit must be positive');
+      }
+      if (limit > MAX_LIMIT) {
+        throw new BadRequestException(`Limit must not exceed ${MAX_LIMIT}`);
+      }
+      const products = await this.productsService.findLatest(limit || 3);
+      return products.map((p: Product) => new ProductDto(p));
     }
-    if (limit && limit < 0) {
-      throw new BadRequestException('Limit must be positive');
-    }
-    const products = await this.productsService.findLatest(limit || 3);
-    return products.map((p: Product) => new ProductDto(p));
-  }
 
   @Get('views')
   @ApiHeader({ name: 'x-product-name', example: 'Amethyst' })
