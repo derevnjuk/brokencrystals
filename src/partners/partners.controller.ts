@@ -151,12 +151,11 @@ export class PartnersController {
 
   private isValidXpath(xpath: string): boolean {
     // Basic validation logic for XPath
-    // This should be replaced with a more robust validation mechanism
+    // This should be replaced with a more robust validation as needed
     const forbiddenPatterns = [
       /\|/, // disallow union
       /\//, // disallow direct path
       /\[.*\]/, // disallow predicates
-      /\(.*\)/ // disallow functions
     ];
     return !forbiddenPatterns.some((pattern) => pattern.test(xpath));
   }

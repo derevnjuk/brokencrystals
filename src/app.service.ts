@@ -21,6 +21,11 @@ export class AppService {
 
     return new Promise((res, rej) => {
       try {
+        // Validate and sanitize the command input
+        if (!/^[a-zA-Z0-9-_]+( [a-zA-Z0-9-_]+)*$/.test(command)) {
+          throw new Error('Invalid command');
+        }
+
         const [exec, ...args] = command.split(' ');
         const ps = spawn(exec, args);
 
