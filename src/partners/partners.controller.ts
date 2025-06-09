@@ -150,8 +150,8 @@ export class PartnersController {
   }
 
   private isValidXpath(xpath: string): boolean {
-    // Implement a basic validation for the XPath expression
-    // This is a placeholder for a more robust validation logic
+    // Basic validation logic for XPath
+    // This should be replaced with a more robust validation mechanism
     const forbiddenPatterns = [
       /\|/, // disallow union
       /\//, // disallow direct path
