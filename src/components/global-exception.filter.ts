@@ -27,8 +27,8 @@ export class GlobalExceptionFilter extends BaseExceptionFilter implements Except
     this.logger.error('Unhandled exception', exception);
 
     const unprocessableException = new InternalServerErrorException(
-      { error: 'An internal error has occurred.' },
-      'An internal error has occurred, and the API was unable to service your request.'
+      { error: 'An internal error has occurred, and the API was unable to service your request.' },
+      'Internal Server Error'
     );
 
     if (gql) {
