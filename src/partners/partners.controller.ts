@@ -48,7 +48,7 @@ export class PartnersController {
     try {
       // Validate and sanitize the xpath input
       if (!this.isValidXpath(xpath)) {
-        throw new Error('Invalid XPath expression');
+        throw new HttpException('Invalid XPath expression', HttpStatus.BAD_REQUEST);
       }
       return this.partnersService.getPartnersProperties(xpath);
     } catch (err) {
@@ -132,6 +132,10 @@ export class PartnersController {
     this.logger.debug(`Searching partner names by the keyword "${keyword}"`);
 
     try {
+      // Validate and sanitize the keyword input
+      if (!this.isValidKeyword(keyword)) {
+        throw new HttpException('Invalid search keyword', HttpStatus.BAD_REQUEST);
+      }
       const xpath = `//partners/partner/name[contains(., '${keyword}')]`;
       return this.partnersService.getPartnersProperties(xpath);
     } catch (err) {
@@ -150,13 +154,16 @@ export class PartnersController {
   }
 
   private isValidXpath(xpath: string): boolean {
-    // Basic validation logic for XPath
-    // This should be replaced with a more robust validation as needed
-    const forbiddenPatterns = [
-      /\|/, // disallow union
-      /\//, // disallow direct path
-      /\[.*\]/, // disallow predicates
-    ];
-    return !forbiddenPatterns.some((pattern) => pattern.test(xpath));
+    // Implement a basic validation for the xpath expression
+    // This is a placeholder for a more robust validation logic
+    const forbiddenPatterns = ["'", '"', '|', ';', '--'];
+    return !forbiddenPatterns.some(pattern => xpath.includes(pattern));
+  }
+
+  private isValidKeyword(keyword: string): boolean {
+    // Implement a basic validation for the keyword
+    // This is a placeholder for a more robust validation logic
+    const forbiddenPatterns = ["'", '"', '|', ';', '--'];
+    return !forbiddenPatterns.some(pattern => keyword.includes(pattern));
   }
 }
