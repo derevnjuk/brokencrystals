@@ -81,10 +81,11 @@ export class AppController {
       });
       // Use a safe context with predefined values
       const context = { name: 'User', age: 'N/A', location: 'Unknown' };
-      const res = dotT.compile(sanitizedText)(context);
+      const res = dotT.template(sanitizedText)(context);
       this.logger.debug(`Rendered template: ${res}`);
       return res;
     }
+    throw new HttpException('Invalid input type', HttpStatus.BAD_REQUEST);
   }
 
   @Get('goto')
@@ -133,7 +134,7 @@ export class AppController {
   @Header('content-type', 'text/xml')
   async xml(@Body() xml: string): Promise<string> {
     const xmlDoc = parseXml(decodeURIComponent(xml), {
-      noent: true, // Disable external entity expansion
+      noent: false, // Disable external entity expansion
       dtdvalid: false, // Disable DTD validation
       recover: true
     });

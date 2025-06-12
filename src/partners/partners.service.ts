@@ -71,8 +71,8 @@ export class PartnersService {
   }
 
   sanitizeInput(input: string): string {
-    // Basic sanitization to escape single quotes
-    return input.replace(/'/g, "\'");
+    // Use a whitelist approach to allow only alphanumeric characters and spaces
+    return input.replace(/[^a-zA-Z0-9 ]/g, '');
   }
 
   getPartnersProperties(xpathExpression: string): string {
