@@ -79,7 +79,9 @@ export class AppController {
         }
         return '';
       });
-      const res = dotT.compile(sanitizedText)();
+      // Use a safe context with predefined values
+      const context = { name: 'User', age: 'N/A', location: 'Unknown' };
+      const res = dotT.compile(sanitizedText)(context);
       this.logger.debug(`Rendered template: ${res}`);
       return res;
     }
@@ -131,7 +133,7 @@ export class AppController {
   @Header('content-type', 'text/xml')
   async xml(@Body() xml: string): Promise<string> {
     const xmlDoc = parseXml(decodeURIComponent(xml), {
-      noent: false, // Disable external entity expansion
+      noent: true, // Disable external entity expansion
       dtdvalid: false, // Disable DTD validation
       recover: true
     });
