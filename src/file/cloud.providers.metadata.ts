@@ -258,6 +258,26 @@ export class CloudProvidersMetaData {
       throw new Error('Invalid URL protocol');
     }
 
+    // Validate the hostname to prevent SSRF
+    const allowedHostnames = [
+      'metadata.google.internal',
+      '169.254.169.254'
+    ];
+    if (!allowedHostnames.includes(url.hostname)) {
+      throw new Error('Hostname not allowed');
+    }
+
+    // Validate the path to ensure it matches expected patterns
+    const validPaths = [
+      CloudProvidersMetaData.GOOGLE,
+      CloudProvidersMetaData.DIGITAL_OCEAN,
+      CloudProvidersMetaData.AWS,
+      CloudProvidersMetaData.AZURE
+    ];
+    if (!validPaths.some(validPath => providerUrl.startsWith(validPath))) {
+      throw new Error('Invalid provider URL path');
+    }
+
     if (providerUrl.startsWith(CloudProvidersMetaData.GOOGLE)) {
       return this.providers.get(CloudProvidersMetaData.GOOGLE);
     } else if (providerUrl.startsWith(CloudProvidersMetaData.DIGITAL_OCEAN)) {
