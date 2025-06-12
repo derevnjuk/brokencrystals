@@ -52,7 +52,13 @@ export class PartnersService {
   `;
 
   private getPartnersXMLObj(): Node {
-    const partnersXMLObj = new DOMParser().parseFromString(
+    const partnersXMLObj = new DOMParser({
+      errorHandler: {
+        warning: () => {},
+        error: () => {},
+        fatalError: () => {}
+      }
+    }).parseFromString(
       this.XML_AUTHORS_STR,
       'text/xml'
     );

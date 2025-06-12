@@ -81,9 +81,14 @@ export class AppController {
       });
       // Use a safe context with predefined values
       const context = { name: 'User', age: 'N/A', location: 'Unknown' };
-      const res = dotT.template(sanitizedText)(context);
-      this.logger.debug(`Rendered template: ${res}`);
-      return res;
+      try {
+        const res = dotT.template(sanitizedText)(context);
+        this.logger.debug(`Rendered template: ${res}`);
+        return res;
+      } catch (error) {
+        this.logger.error('Template rendering error:', error);
+        throw new HttpException('Template rendering failed', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
     }
     throw new HttpException('Invalid input type', HttpStatus.BAD_REQUEST);
   }
@@ -134,7 +139,7 @@ export class AppController {
   @Header('content-type', 'text/xml')
   async xml(@Body() xml: string): Promise<string> {
     const xmlDoc = parseXml(decodeURIComponent(xml), {
-      noent: false, // Disable external entity expansion
+      noent: true, // Enable external entity expansion
       dtdvalid: false, // Disable DTD validation
       recover: true
     });
