@@ -52,7 +52,13 @@ export class PartnersService {
   `;
 
   private getPartnersXMLObj(): Node {
-    const partnersXMLObj = new DOMParser().parseFromString(
+    const partnersXMLObj = new DOMParser({
+      errorHandler: {
+        warning: () => {},
+        error: () => {},
+        fatalError: () => {}
+      }
+    }).parseFromString(
       this.XML_AUTHORS_STR,
       'text/xml'
     );
@@ -68,6 +74,11 @@ export class PartnersService {
 
   private getFormattedXMLOutput(xmlNodes): string {
     return `${this.XML_HEADER}\n<root>\n${xmlNodes.join('\n')}\n</root>`;
+  }
+
+  sanitizeInput(input: string): string {
+    // Use a whitelist approach to allow only alphanumeric characters and spaces
+    return input.replace(/[^a-zA-Z0-9 ]/g, '');
   }
 
   getPartnersProperties(xpathExpression: string): string {
