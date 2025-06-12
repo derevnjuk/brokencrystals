@@ -18,6 +18,13 @@ export class FileService {
 
       return fs.createReadStream(file);
     } else if (file.startsWith('http')) {
+      // Validate URL to prevent SSRF
+      const url = new URL(file);
+      const allowedHosts = ['trusted-host.com']; // Add trusted hosts here
+      if (!allowedHosts.includes(url.hostname)) {
+        throw new Error(`Access to the host '${url.hostname}' is not allowed`);
+      }
+
       const content = await this.cloudProviders.get(file);
 
       if (content) {
