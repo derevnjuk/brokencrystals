@@ -10,39 +10,40 @@ export class FileService {
   private readonly logger = new Logger(FileService.name);
   private cloudProviders = new CloudProvidersMetaData();
 
+  private isValidPath(filePath: string): boolean {
+    // Define a whitelist of allowed directories
+    const allowedDirectories = [
+      path.resolve(process.cwd(), 'config/products/crystals'),
+      // Add more allowed directories as needed
+    ];
+
+    // Resolve the absolute path
+    const resolvedPath = path.resolve(process.cwd(), filePath);
+
+    // Check if the resolved path starts with any of the allowed directories
+    return allowedDirectories.some(dir => resolvedPath.startsWith(dir));
+  }
+
   async getFile(file: string): Promise<Stream> {
     this.logger.log(`Reading file: ${file}`);
 
-    if (file.startsWith('/')) {
-      await fs.promises.access(file, R_OK);
-
-      return fs.createReadStream(file);
-    } else if (file.startsWith('http')) {
-      const content = await this.cloudProviders.get(file);
-
-      if (content) {
-        return Readable.from(content);
-      } else {
-        throw new Error(`no such file or directory, access '${file}'`);
-      }
-    } else {
-      file = path.resolve(process.cwd(), file);
-
-      await fs.promises.access(file, R_OK);
-
-      return fs.createReadStream(file);
+    if (!this.isValidPath(file)) {
+      throw new Error('Access to this file path is not allowed');
     }
+
+    const resolvedPath = path.resolve(process.cwd(), file);
+    await fs.promises.access(resolvedPath, R_OK);
+
+    return fs.createReadStream(resolvedPath);
   }
 
   async deleteFile(file: string): Promise<boolean> {
-    if (file.startsWith('/')) {
-      throw new Error('cannot delete file from this location');
-    } else if (file.startsWith('http')) {
-      throw new Error('cannot delete file from this location');
-    } else {
-      file = path.resolve(process.cwd(), file);
-      await fs.promises.unlink(file);
-      return true;
+    if (!this.isValidPath(file)) {
+      throw new Error('Access to this file path is not allowed');
     }
+
+    const resolvedPath = path.resolve(process.cwd(), file);
+    await fs.promises.unlink(resolvedPath);
+    return true;
   }
 }
