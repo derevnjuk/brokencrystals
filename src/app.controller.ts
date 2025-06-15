@@ -87,6 +87,10 @@ export class AppController {
   })
   @Redirect()
   async redirect(@Query('url') url: string) {
+    const allowedUrls = ['https://google.com', 'https://example.com']; // Define allowed URLs
+    if (!allowedUrls.includes(url)) {
+      throw new HttpException('Invalid redirect URL', HttpStatus.BAD_REQUEST);
+    }
     return { url };
   }
 
