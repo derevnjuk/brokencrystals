@@ -16,8 +16,7 @@ export class FileService {
     this.logger.log(`Reading file: ${file}`);
 
     // Validate the file path against allowed paths
-    const isValidPath = this.allowedPaths.some(allowedPath => file.startsWith(allowedPath));
-    if (!isValidPath) {
+    if (!this.isValidPath(file)) {
       throw new Error('Access to this file path is not allowed');
     }
 
@@ -27,9 +26,15 @@ export class FileService {
     return fs.createReadStream(resolvedPath);
   }
 
+  isValidPath(file: string): boolean {
+    // Ensure the file path is within the allowed paths
+    const resolvedPath = path.resolve(process.cwd(), file);
+    return this.allowedPaths.some(allowedPath => resolvedPath.startsWith(path.resolve(process.cwd(), allowedPath)));
+  }
+
   async deleteFile(file: string): Promise<boolean> {
     const resolvedPath = path.resolve(process.cwd(), file);
-    if (!this.allowedPaths.some(allowedPath => resolvedPath.startsWith(allowedPath))) {
+    if (!this.isValidPath(file)) {
       throw new Error('cannot delete file from this location');
     }
     await fs.promises.unlink(resolvedPath);
