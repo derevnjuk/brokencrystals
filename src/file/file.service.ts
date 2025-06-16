@@ -10,39 +10,29 @@ export class FileService {
   private readonly logger = new Logger(FileService.name);
   private cloudProviders = new CloudProvidersMetaData();
 
+  private readonly allowedPaths = ['config/products/crystals']; // Define allowed base paths
+
   async getFile(file: string): Promise<Stream> {
     this.logger.log(`Reading file: ${file}`);
 
-    if (file.startsWith('/')) {
-      await fs.promises.access(file, R_OK);
-
-      return fs.createReadStream(file);
-    } else if (file.startsWith('http')) {
-      const content = await this.cloudProviders.get(file);
-
-      if (content) {
-        return Readable.from(content);
-      } else {
-        throw new Error(`no such file or directory, access '${file}'`);
-      }
-    } else {
-      file = path.resolve(process.cwd(), file);
-
-      await fs.promises.access(file, R_OK);
-
-      return fs.createReadStream(file);
+    // Validate the file path against allowed paths
+    const isValidPath = this.allowedPaths.some(allowedPath => file.startsWith(allowedPath));
+    if (!isValidPath) {
+      throw new Error('Access to this file path is not allowed');
     }
+
+    const resolvedPath = path.resolve(process.cwd(), file);
+    await fs.promises.access(resolvedPath, R_OK);
+
+    return fs.createReadStream(resolvedPath);
   }
 
   async deleteFile(file: string): Promise<boolean> {
-    if (file.startsWith('/')) {
+    const resolvedPath = path.resolve(process.cwd(), file);
+    if (!this.allowedPaths.some(allowedPath => resolvedPath.startsWith(allowedPath))) {
       throw new Error('cannot delete file from this location');
-    } else if (file.startsWith('http')) {
-      throw new Error('cannot delete file from this location');
-    } else {
-      file = path.resolve(process.cwd(), file);
-      await fs.promises.unlink(file);
-      return true;
     }
+    await fs.promises.unlink(resolvedPath);
+    return true;
   }
 }
