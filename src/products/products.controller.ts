@@ -108,7 +108,8 @@ export class ProductsController {
     if (limit && limit < 0) {
       throw new BadRequestException('Limit must be positive');
     }
-    const products = await this.productsService.findLatest(limit || 3);
+    const maxLimit = 10; // Set a maximum limit to prevent abuse
+    const products = await this.productsService.findLatest(Math.min(limit || 3, maxLimit));
     return products.map((p: Product) => new ProductDto(p));
   }
 
@@ -131,8 +132,7 @@ export class ProductsController {
     @Headers('x-product-name') productName: string
   ): Promise<void> {
     try {
-      const query = `UPDATE product SET views_count = views_count + 1 WHERE name = '${productName}'`;
-      return await this.productsService.updateProduct(query);
+      await this.productsService.updateProduct(productName);
     } catch (err) {
       throw new InternalServerErrorException({
         error: err.message,
