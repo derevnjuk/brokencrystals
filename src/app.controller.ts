@@ -77,40 +77,6 @@ export class AppController {
     }
   }
 
-  @Post('metadata')
-  @ApiProduces('text/plain')
-  @ApiConsumes('text/plain')
-  @ApiBody({
-    type: String,
-    examples: {
-      xml_doc: {
-        summary: 'XML doc',
-        value: `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 915 585"><g stroke-width="3.45" fill="none"><path stroke="#000" d="M11.8 11.8h411v411l-411 .01v-411z"/><path stroke="#448" d="M489 11.7h415v411H489v-411z"/></g></svg>`
-      }
-    }
-  })
-  @ApiOperation({
-    description: API_DESC_XML_METADATA
-  })
-  @ApiInternalServerErrorResponse({
-    description: 'Invalid data'
-  })
-  @ApiCreatedResponse({
-    description: 'XML passed successfully'
-  })
-  @Header('content-type', 'text/xml')
-  async xml(@Body() xml: string): Promise<string> {
-    const xmlDoc = parseXml(decodeURIComponent(xml), {
-      noent: true,
-      dtdvalid: true,
-      recover: true
-    });
-    this.logger.debug(xmlDoc);
-    this.logger.debug(xmlDoc.getDtd());
-
-    return xmlDoc.toString(true);
-  }
-
   @Options()
   @ApiOperation({
     description: API_DESC_OPTIONS_REQUEST
