@@ -77,19 +77,6 @@ export class AppController {
     }
   }
 
-  @Get('goto')
-  @ApiQuery({ name: 'url', example: 'https://google.com', required: true })
-  @ApiOperation({
-    description: API_DESC_REDIRECT_REQUEST
-  })
-  @ApiOkResponse({
-    description: 'Redirected'
-  })
-  @Redirect()
-  async redirect(@Query('url') url: string) {
-    return { url };
-  }
-
   @Post('metadata')
   @ApiProduces('text/plain')
   @ApiConsumes('text/plain')
