@@ -5,7 +5,6 @@ import { UsersModule } from './users/users.module';
 import { FileModule } from './file/file.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { TestimonialsModule } from './testimonials/testimonials.module';
-import { ProductsModule } from './products/products.module';
 import { OrmModule } from './orm/orm.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HttpClientService } from './httpclient/httpclient.service';
@@ -28,7 +27,6 @@ import { ChatModule } from './chat/chat.module';
     FileModule,
     SubscriptionsModule,
     TestimonialsModule,
-    ProductsModule,
     ConfigModule.forRoot({
       isGlobal: true
     }),
