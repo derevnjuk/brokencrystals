@@ -43,10 +43,12 @@ export class ProductsService {
   }
 
   async findLatest(limit: number): Promise<Product[]> {
-    this.logger.debug(`Find ${limit} latest products`);
+    const MAX_LIMIT = 10; // Define a maximum limit for the number of products
+    const effectiveLimit = Math.min(limit, MAX_LIMIT); // Use the smaller of the requested limit or the maximum limit
+    this.logger.debug(`Find ${effectiveLimit} latest products`);
     return this.productsRepository.find(
       {},
-      { limit, orderBy: { createdAt: 'desc' } }
+      { limit: effectiveLimit, orderBy: { createdAt: 'desc' } }
     );
   }
 
