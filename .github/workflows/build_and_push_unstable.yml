@@ -1,11 +1,13 @@
 name: "Build and Push Docker Image (Manual)"
 on:
   workflow_dispatch:
-    inputs:
-      tag_prefix:
-        description: 'Tag prefix to use (defaults to unstable)'
-        required: false
-        default: 'unstable'
+# on:
+#   workflow_dispatch:
+#     inputs:
+#       tag_prefix:
+#         description: 'Tag prefix to use (defaults to unstable)'
+#         required: false
+#         default: 'unstable'
 
 jobs:
   docker-build-push:
@@ -13,19 +15,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Login to DockerHub
         run: |
           docker login --username=${{ vars.DOCKERHUB_BRIGHT_USER }} --password=${{ secrets.DOCKERHUB_BRIGHT_TOKEN }}
-
       - name: Generate timestamp
         id: timestamp
         run: echo "TIMESTAMP=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
-
       - name: Generate short SHA
         id: sha
         run: echo "SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-6)" >> $GITHUB_ENV
-      
       - name: Set tag prefix
         id: set_tag_prefix
         run: |
@@ -36,13 +34,11 @@ jobs:
             TAG_PREFIX="${{ github.event.inputs.tag_prefix }}"
           fi
           echo "TAG_PREFIX=${TAG_PREFIX}" >> $GITHUB_ENV
-
       - name: Build Docker image
         run: |
           docker build -t brightsec/brokencrystals:${{ env.TAG_PREFIX }} .
           docker tag brightsec/brokencrystals:${{ env.TAG_PREFIX }} brightsec/brokencrystals:${{ env.TAG_PREFIX }}-${{ env.SHORT_SHA }}
           docker tag brightsec/brokencrystals:${{ env.TAG_PREFIX }} brightsec/brokencrystals:${{ env.TAG_PREFIX }}-${{ env.SHORT_SHA }}-${{ env.TIMESTAMP }}
-
       - name: Push Docker images
         run: |
           docker push brightsec/brokencrystals:${{ env.TAG_PREFIX }}
