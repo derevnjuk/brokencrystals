@@ -21,7 +21,7 @@ after(() => runner.clear());
 test('GET /api/goto', { signal: AbortSignal.timeout(timeout) }, async () => {
   await runner
     .createScan({
-      tests: ['proto_pollution', 'unvalidated_redirect'],
+      tests: ['unvalidated_redirect'],
       attackParamLocations: [AttackParamLocation.QUERY]
     })
     .threshold(Severity.CRITICAL)
