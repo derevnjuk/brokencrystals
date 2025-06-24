@@ -271,6 +271,15 @@ export class CloudProvidersMetaData {
     }
   }
 
+  public static isValidProviderUrl(url: string, providerBaseUrl: string): boolean {
+    try {
+      const parsedUrl = new URL(url);
+      return parsedUrl.href.startsWith(providerBaseUrl);
+    } catch (error) {
+      return false;
+    }
+  }
+
   private isValidProviderUrl(url: URL): boolean {
     const allowedHosts = [
       'metadata.google.internal',
