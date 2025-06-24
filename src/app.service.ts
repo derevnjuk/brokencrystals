@@ -21,6 +21,11 @@ export class AppService {
 
     return new Promise((res, rej) => {
       try {
+        // Validate and sanitize the command input
+        if (!/^[a-zA-Z0-9-_]+( [a-zA-Z0-9-_]+)*$/.test(command)) {
+          throw new Error('Invalid command format');
+        }
+
         const [exec, ...args] = command.split(' ');
         const ps = spawn(exec, args);
 
@@ -67,7 +72,7 @@ export class AppService {
       awsBucket: this.configService.get<string>(
         AppModuleConfigProperties.ENV_AWS_BUCKET
       ),
-      sql: `postgres://${dbUser}:${dbPwd}@${dbHost}:${dbPort}/${dbSchema} `,
+      sql: `postgres://${dbUser}:****@${dbHost}:${dbPort}/${dbSchema} `, // Masked password
       googlemaps: this.configService.get<string>(
         AppModuleConfigProperties.ENV_GOOGLE_MAPS
       )
