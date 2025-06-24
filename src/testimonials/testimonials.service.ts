@@ -1,6 +1,6 @@
 import { EntityManager, EntityRepository } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, InternalServerErrorException } from '@nestjs/common';
 import { Testimonial } from '../model/testimonial.entity';
 
 @Injectable()
@@ -56,12 +56,18 @@ export class TestimonialsService {
 
   async count(query: string): Promise<number> {
     try {
-      this.logger.debug(`Saved new testimonial`);
+      this.logger.debug(`Executing count query`);
 
-      return (await this.em.getConnection().execute(query))[0].count as number;
+      // Use parameterized query to prevent SQL injection
+      const result = await this.em.getConnection().execute(
+        'select count(*) as count from testimonial where message like ?',
+        [query]
+      );
+
+      return result[0].count as number;
     } catch (err) {
       this.logger.warn(`Failed to execute query. Error: ${err.message}`);
-      return err.message;
+      throw new InternalServerErrorException('Failed to retrieve count.');
     }
   }
 }
