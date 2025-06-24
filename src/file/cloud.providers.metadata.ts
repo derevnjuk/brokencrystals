@@ -274,7 +274,8 @@ export class CloudProvidersMetaData {
   public static isValidProviderUrl(url: string, providerBaseUrl: string): boolean {
     try {
       const parsedUrl = new URL(url);
-      return parsedUrl.href.startsWith(providerBaseUrl);
+      return parsedUrl.href.startsWith(providerBaseUrl) &&
+             parsedUrl.hostname === new URL(providerBaseUrl).hostname;
     } catch (error) {
       return false;
     }
