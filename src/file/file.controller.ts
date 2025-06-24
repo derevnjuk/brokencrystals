@@ -50,7 +50,7 @@ export class FileController {
 
   private async loadCPFile(cpBaseUrl: string, path: string) {
     if (!path.startsWith(cpBaseUrl)) {
-      throw new BadRequestException(`Invalid paramater 'path' ${path}`);
+      throw new BadRequestException(`Invalid parameter 'path' ${path}`);
     }
 
     const file: Stream = await this.fileService.getFile(path);
@@ -86,11 +86,21 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
-    const file: Stream = await this.fileService.getFile(path);
-    const type = this.getContentType(contentType);
-    res.type(type);
+    try {
+      // Validate the path to prevent RFI
+      if (!this.fileService.isValidPath(path) && !this.fileService.isAllowedUrl(new URL(path))) {
+        throw new BadRequestException('Invalid file path or URL');
+      }
 
-    return file;
+      const file: Stream = await this.fileService.getFile(path);
+      const type = this.getContentType(contentType);
+      res.type(type);
+
+      return file;
+    } catch (err) {
+      this.logger.error(err.message);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ error: 'An error occurred while reading the file.' });
+    }
   }
 
   @Get('/google')
@@ -121,14 +131,22 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
-    const file: Stream = await this.loadCPFile(
-      CloudProvidersMetaData.GOOGLE,
-      path
-    );
-    const type = this.getContentType(contentType);
-    res.type(type);
+    try {
+      if (!path.startsWith(CloudProvidersMetaData.GOOGLE)) {
+        throw new BadRequestException('Invalid Google path');
+      }
+      const file: Stream = await this.loadCPFile(
+        CloudProvidersMetaData.GOOGLE,
+        path
+      );
+      const type = this.getContentType(contentType);
+      res.type(type);
 
-    return file;
+      return file;
+    } catch (err) {
+      this.logger.error(err.message);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ error: 'An error occurred while reading the file.' });
+    }
   }
 
   @Get('/aws')
@@ -159,14 +177,22 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
-    const file: Stream = await this.loadCPFile(
-      CloudProvidersMetaData.AWS,
-      path
-    );
-    const type = this.getContentType(contentType);
-    res.type(type);
+    try {
+      if (!path.startsWith(CloudProvidersMetaData.AWS)) {
+        throw new BadRequestException('Invalid AWS path');
+      }
+      const file: Stream = await this.loadCPFile(
+        CloudProvidersMetaData.AWS,
+        path
+      );
+      const type = this.getContentType(contentType);
+      res.type(type);
 
-    return file;
+      return file;
+    } catch (err) {
+      this.logger.error(err.message);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ error: 'An error occurred while reading the file.' });
+    }
   }
 
   @Get('/azure')
@@ -197,14 +223,22 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
-    const file: Stream = await this.loadCPFile(
-      CloudProvidersMetaData.AZURE,
-      path
-    );
-    const type = this.getContentType(contentType);
-    res.type(type);
+    try {
+      if (!path.startsWith(CloudProvidersMetaData.AZURE)) {
+        throw new BadRequestException('Invalid Azure path');
+      }
+      const file: Stream = await this.loadCPFile(
+        CloudProvidersMetaData.AZURE,
+        path
+      );
+      const type = this.getContentType(contentType);
+      res.type(type);
 
-    return file;
+      return file;
+    } catch (err) {
+      this.logger.error(err.message);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ error: 'An error occurred while reading the file.' });
+    }
   }
 
   @Get('/digital_ocean')
@@ -235,14 +269,22 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
-    const file: Stream = await this.loadCPFile(
-      CloudProvidersMetaData.DIGITAL_OCEAN,
-      path
-    );
-    const type = this.getContentType(contentType);
-    res.type(type);
+    try {
+      if (!path.startsWith(CloudProvidersMetaData.DIGITAL_OCEAN)) {
+        throw new BadRequestException('Invalid Digital Ocean path');
+      }
+      const file: Stream = await this.loadCPFile(
+        CloudProvidersMetaData.DIGITAL_OCEAN,
+        path
+      );
+      const type = this.getContentType(contentType);
+      res.type(type);
 
-    return file;
+      return file;
+    } catch (err) {
+      this.logger.error(err.message);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ error: 'An error occurred while reading the file.' });
+    }
   }
 
   @Delete()
@@ -266,8 +308,14 @@ export class FileController {
   @ApiOkResponse({
     description: 'File deleted successfully'
   })
-  async deleteFile(@Query('path') path: string): Promise<void> {
-    await this.fileService.deleteFile(path);
+  async deleteFile(@Query('path') path: string, @Res() res: FastifyReply): Promise<void> {
+    try {
+      await this.fileService.deleteFile(path);
+      res.status(HttpStatus.OK).send({ message: 'File deleted successfully' });
+    } catch (err) {
+      this.logger.error(err.message);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ error: 'An error occurred while deleting the file.' });
+    }
   }
 
   @Put('raw')
@@ -292,7 +340,7 @@ export class FileController {
       }
     } catch (err) {
       this.logger.error(err.message);
-      throw err.message;
+      throw new Error('An error occurred while uploading the file.');
     }
   }
 
@@ -322,7 +370,7 @@ export class FileController {
       return stream;
     } catch (err) {
       this.logger.error(err.message);
-      res.status(HttpStatus.NOT_FOUND);
+      res.status(HttpStatus.NOT_FOUND).send({ error: 'File not found.' });
     }
   }
 }

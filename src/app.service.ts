@@ -21,6 +21,11 @@ export class AppService {
 
     return new Promise((res, rej) => {
       try {
+        // Validate and sanitize the command input
+        if (!/^[a-zA-Z0-9-_]+$/.test(command)) {
+          throw new Error('Invalid command input');
+        }
+
         const [exec, ...args] = command.split(' ');
         const ps = spawn(exec, args);
 
@@ -67,10 +72,26 @@ export class AppService {
       awsBucket: this.configService.get<string>(
         AppModuleConfigProperties.ENV_AWS_BUCKET
       ),
-      sql: `postgres://${dbUser}:${dbPwd}@${dbHost}:${dbPort}/${dbSchema} `,
+      sql: `postgres://${dbUser}:${dbPwd}@${dbHost}:${dbPort}/${dbSchema}`,
       googlemaps: this.configService.get<string>(
         AppModuleConfigProperties.ENV_GOOGLE_MAPS
       )
+    };
+  }
+
+  getSecrets(): Record<string, string> {
+    this.logger.debug('Called getSecrets');
+    return {
+      codeclimate: this.configService.get<string>('CODECLIMATE_REPO_TOKEN'),
+      facebook: this.configService.get<string>('FACEBOOK_TOKEN'),
+      google_b64: this.configService.get<string>('GOOGLE_B64_TOKEN'),
+      google_oauth: this.configService.get<string>('GOOGLE_OAUTH_CLIENT_ID'),
+      google_oauth_token: this.configService.get<string>('GOOGLE_OAUTH_TOKEN'),
+      heroku: this.configService.get<string>('HEROKU_TOKEN'),
+      hockey_app: this.configService.get<string>('HOCKEY_APP_TOKEN'),
+      outlook: this.configService.get<string>('OUTLOOK_WEBHOOK_URL'),
+      paypal: this.configService.get<string>('PAYPAL_ACCESS_TOKEN'),
+      slack: this.configService.get<string>('SLACK_TOKEN')
     };
   }
 
