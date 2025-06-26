@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
+import { URL } from 'url';
 
 @Injectable()
 export class CloudProvidersMetaData {
@@ -252,6 +253,11 @@ export class CloudProvidersMetaData {
   }
 
   async get(providerUrl: string): Promise<string> {
+    const url = new URL(providerUrl);
+    if (!['http:', 'https:'].includes(url.protocol)) {
+      throw new Error('Invalid URL protocol');
+    }
+
     if (providerUrl.startsWith(CloudProvidersMetaData.GOOGLE)) {
       return this.providers.get(CloudProvidersMetaData.GOOGLE);
     } else if (providerUrl.startsWith(CloudProvidersMetaData.DIGITAL_OCEAN)) {
@@ -261,11 +267,7 @@ export class CloudProvidersMetaData {
     } else if (providerUrl.startsWith(CloudProvidersMetaData.AZURE)) {
       return this.providers.get(CloudProvidersMetaData.AZURE);
     } else {
-      const { data } = await axios(providerUrl, {
-        timeout: 5000,
-        responseType: 'text'
-      });
-      return data;
+      throw new Error('Access to the specified URL is not allowed');
     }
   }
 }
