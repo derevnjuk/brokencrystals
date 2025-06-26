@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import axios from 'axios';
 
 @Injectable()
@@ -252,6 +252,10 @@ export class CloudProvidersMetaData {
   }
 
   async get(providerUrl: string): Promise<string> {
+    if (!this.isValidProviderUrl(providerUrl)) {
+      throw new BadRequestException('Invalid provider URL');
+    }
+
     if (providerUrl.startsWith(CloudProvidersMetaData.GOOGLE)) {
       return this.providers.get(CloudProvidersMetaData.GOOGLE);
     } else if (providerUrl.startsWith(CloudProvidersMetaData.DIGITAL_OCEAN)) {
@@ -261,11 +265,16 @@ export class CloudProvidersMetaData {
     } else if (providerUrl.startsWith(CloudProvidersMetaData.AZURE)) {
       return this.providers.get(CloudProvidersMetaData.AZURE);
     } else {
-      const { data } = await axios(providerUrl, {
-        timeout: 5000,
-        responseType: 'text'
-      });
-      return data;
+      throw new BadRequestException('Access to external URLs is not allowed');
     }
+  }
+
+  public static isValidProviderUrl(url: string): boolean {
+    return (
+      url.startsWith(CloudProvidersMetaData.GOOGLE) ||
+      url.startsWith(CloudProvidersMetaData.AZURE) ||
+      url.startsWith(CloudProvidersMetaData.DIGITAL_OCEAN) ||
+      url.startsWith(CloudProvidersMetaData.AWS)
+    );
   }
 }
