@@ -85,7 +85,9 @@ export class AppController {
         };
         return escapeMap[match];
       });
-      const compiledTemplate = dotT.template(escapedText);
+      // Use a static template instead of user input
+      const templateString = "Hello, {{=it.name}}! You are {{=it.age}} years old.";
+      const compiledTemplate = dotT.template(templateString);
       const res = compiledTemplate(allowedVariables);
       this.logger.debug(`Rendered template: ${res}`);
       return res;
