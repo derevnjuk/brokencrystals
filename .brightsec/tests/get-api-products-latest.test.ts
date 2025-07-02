@@ -1,0 +1,36 @@
+import { test, before, after } from 'node:test';
+import { SecRunner } from '@sectester/runner';
+import { Severity, AttackParamLocation, HttpMethod } from '@sectester/scan';
+
+const timeout = 40 * 60 * 1000;
+const baseUrl = process.env.BRIGHT_TARGET_URL!;
+
+let runner!: SecRunner;
+
+before(async () => {
+  runner = new SecRunner({
+    hostname: process.env.BRIGHT_HOSTNAME!,
+    projectId: process.env.BRIGHT_PROJECT_ID!
+  });
+
+  await runner.init();
+});
+
+after(() => runner.clear());
+
+test('GET /api/products/latest', { signal: AbortSignal.timeout(timeout) }, async () => {
+  await runner
+    .createScan({
+      tests: ['business_constraint_bypass', 'jwt', 'csrf', 'date_manipulation'],
+      attackParamLocations: [AttackParamLocation.QUERY, AttackParamLocation.HEADER]
+    })
+    .threshold(Severity.CRITICAL)
+    .timeout(timeout)
+    .skipStaticParams(false) // Only for date_manipulation
+    .run({
+      method: HttpMethod.GET,
+      url: `${baseUrl}/api/products/latest?limit=3`,
+      headers: { 'Authorization': 'Bearer <your_jwt_token_here>' },
+      auth: process.env.BRIGHT_AUTH_ID
+    });
+});
