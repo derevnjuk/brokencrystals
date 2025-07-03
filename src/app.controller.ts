@@ -71,10 +71,13 @@ export class AppController {
   async renderTemplate(@Body() raw): Promise<string> {
     if (typeof raw === 'string' || Buffer.isBuffer(raw)) {
       const text = raw.toString().trim();
-      const res = dotT.compile(text)();
+      // Use a predefined template instead of compiling user input directly
+      const template = dotT.template('Hello, {{=it.name}}!');
+      const res = template({ name: text });
       this.logger.debug(`Rendered template: ${res}`);
       return res;
     }
+    throw new HttpException('Invalid input', HttpStatus.BAD_REQUEST);
   }
 
   @Get('goto')
@@ -87,7 +90,16 @@ export class AppController {
   })
   @Redirect()
   async redirect(@Query('url') url: string) {
-    return { url };
+    const allowedDomains = ['example.com', 'another-allowed-domain.com'];
+    try {
+      const parsedUrl = new URL(url);
+      if (!allowedDomains.includes(parsedUrl.hostname)) {
+        throw new HttpException('Invalid redirect URL', HttpStatus.BAD_REQUEST);
+      }
+      return { url };
+    } catch (error) {
+      throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
+    }
   }
 
   @Post('metadata')
@@ -114,8 +126,8 @@ export class AppController {
   @Header('content-type', 'text/xml')
   async xml(@Body() xml: string): Promise<string> {
     const xmlDoc = parseXml(decodeURIComponent(xml), {
-      noent: true,
-      dtdvalid: true,
+      noent: false, // Disable external entity expansion
+      dtdvalid: false, // Disable DTD validation
       recover: true
     });
     this.logger.debug(xmlDoc);
@@ -180,26 +192,7 @@ export class AppController {
     type: Object
   })
   getSecrets(): Record<string, string> {
-    const secrets = {
-      codeclimate:
-        'CODECLIMATE_REPO_TOKEN=62864c476ade6ab9d10d0ce0901ae2c211924852a28c5f960ae5165c1fdfec73',
-      facebook:
-        'EAACEdEose0cBAHyDF5HI5o2auPWv3lPP3zNYuWWpjMrSaIhtSvX73lsLOcas5k8GhC5HgOXnbF3rXRTczOpsbNb54CQL8LcQEMhZAWAJzI0AzmL23hZByFAia5avB6Q4Xv4u2QVoAdH0mcJhYTFRpyJKIAyDKUEBzz0GgZDZD',
-      google_b64: 'QUl6YhT6QXlEQnbTr2dSdEI1W7yL2mFCX3c4PPP5NlpkWE65NkZV',
-      google_oauth:
-        '188968487735-c7hh7k87juef6vv84697sinju2bet7gn.apps.googleusercontent.com',
-      google_oauth_token:
-        'ya29.a0TgU6SMDItdQQ9J7j3FVgJuByTTevl0FThTEkBs4pA4-9tFREyf2cfcL-_JU6Trg1O0NWwQKie4uGTrs35kmKlxohWgcAl8cg9DTxRx-UXFS-S1VYPLVtQLGYyNTfGp054Ad3ej73-FIHz3RZY43lcKSorbZEY4BI',
-      heroku:
-        'herokudev.staging.endosome.975138 pid=48751 request_id=0e9a8698-a4d2-4925-a1a5-113234af5f60',
-      hockey_app: 'HockeySDK: 203d3af93f4a218bfb528de08ae5d30ff65e1cf',
-      outlook:
-        'https://outlook.office.com/webhook/7dd49fc6-1975-443d-806c-08ebe8f81146@a532313f-11ec-43a2-9a7a-d2e27f4f3478/IncomingWebhook/8436f62b50ab41b3b93ba1c0a50a0b88/eff4cd58-1bb8-4899-94de-795f656b4a18',
-      paypal:
-        'access_token$production$x0lb4r69dvmmnufd$3ea7cb281754b7da7dac131ef5783321',
-      slack:
-        'xoxo-175588824543-175748345725-176608801663-826315f84e553d482bb7e73e8322sdf3'
-    };
+    const secrets = this.appService.getSecrets();
     return secrets;
   }
 
