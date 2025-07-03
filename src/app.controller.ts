@@ -96,7 +96,7 @@ export class AppController {
       if (!allowedDomains.includes(parsedUrl.hostname)) {
         throw new HttpException('Invalid redirect URL', HttpStatus.BAD_REQUEST);
       }
-      return { url };
+      return { url: parsedUrl.toString() };
     } catch (error) {
       throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
     }
