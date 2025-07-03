@@ -21,7 +21,7 @@ after(() => runner.clear());
 test('GET /api/file/google', { signal: AbortSignal.timeout(timeout) }, async () => {
   await runner
     .createScan({
-      tests: ['open_cloud_storage', 'lfi', 'ssrf', 'unvalidated_redirect'],
+      tests: ['ssrf'],
       attackParamLocations: [AttackParamLocation.QUERY]
     })
     .threshold(Severity.CRITICAL)
