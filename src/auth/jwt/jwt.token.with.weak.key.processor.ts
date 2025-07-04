@@ -9,7 +9,12 @@ export class JwtTokenWithWeakKeyProcessor extends JwtTokenProcessor {
 
   async validateToken(token: string): Promise<unknown> {
     this.log.debug('Call validateToken');
-    return decode(token, this.key, false);
+    // Enforce algorithm check to prevent 'none' algorithm usage
+    const decoded = decode(token, this.key, false);
+    if (!decoded || typeof decoded !== 'object' || decoded.alg === 'none') {
+      throw new Error('Invalid token algorithm');
+    }
+    return decode(token, this.key, true); // Properly decode with verification
   }
 
   async createToken(payload: unknown): Promise<string> {

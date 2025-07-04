@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, InternalServerErrorException, BadRequestException } from '@nestjs/common';
 import { Readable, Stream } from 'stream';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -10,8 +10,26 @@ export class FileService {
   private readonly logger = new Logger(FileService.name);
   private cloudProviders = new CloudProvidersMetaData();
 
+  private isValidPath(filePath: string): boolean {
+    // Define a whitelist of allowed directories
+    const allowedDirectories = [
+      path.resolve(process.cwd(), 'config/products/crystals'),
+      // Add more allowed directories as needed
+    ];
+
+    // Resolve the absolute path
+    const resolvedPath = path.resolve(process.cwd(), filePath);
+
+    // Check if the resolved path starts with any of the allowed directories
+    return allowedDirectories.some(dir => resolvedPath.startsWith(dir));
+  }
+
   async getFile(file: string): Promise<Stream> {
     this.logger.log(`Reading file: ${file}`);
+
+    if (!this.isValidPath(file)) {
+      throw new BadRequestException('Invalid file path');
+    }
 
     if (file.startsWith('/')) {
       await fs.promises.access(file, R_OK);
@@ -35,14 +53,19 @@ export class FileService {
   }
 
   async deleteFile(file: string): Promise<boolean> {
-    if (file.startsWith('/')) {
-      throw new Error('cannot delete file from this location');
-    } else if (file.startsWith('http')) {
-      throw new Error('cannot delete file from this location');
-    } else {
-      file = path.resolve(process.cwd(), file);
-      await fs.promises.unlink(file);
-      return true;
+    try {
+      if (file.startsWith('/')) {
+        throw new Error('cannot delete file from this location');
+      } else if (file.startsWith('http')) {
+        throw new Error('cannot delete file from this location');
+      } else {
+        file = path.resolve(process.cwd(), file);
+        await fs.promises.unlink(file);
+        return true;
+      }
+    } catch (error) {
+      this.logger.error(`Failed to delete file: ${error.message}`);
+      throw new InternalServerErrorException('Failed to delete the file.');
     }
   }
 }
