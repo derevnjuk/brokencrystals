@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { JwtHeader } from './jwt.header';
+import * as jwt from 'jsonwebtoken';
 
 export abstract class JwtTokenProcessor {
   private static readonly END_CERTIFICATE_MARK = '-----END CERTIFICATE-----';
@@ -53,4 +54,29 @@ export abstract class JwtTokenProcessor {
   abstract validateToken(token: string): Promise<unknown>;
 
   abstract createToken(payload: unknown): Promise<string>;
+}
+
+export class JwtTokenProcessorImpl extends JwtTokenProcessor {
+  private readonly publicKey: string;
+
+  constructor(log: Logger, publicKey: string) {
+    super(log);
+    this.publicKey = publicKey;
+  }
+
+  async validateToken(token: string): Promise<unknown> {
+    try {
+      const decoded = jwt.verify(token, this.publicKey, { algorithms: ['RS256'] });
+      this.log.debug('Token is valid');
+      return decoded;
+    } catch (error) {
+      this.log.error('Token validation failed', error);
+      throw new Error('Invalid token');
+    }
+  }
+
+  async createToken(payload: unknown): Promise<string> {
+    // Implementation for creating a token
+    return '';
+  }
 }
