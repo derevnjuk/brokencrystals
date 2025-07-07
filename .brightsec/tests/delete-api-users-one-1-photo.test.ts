@@ -1,3 +1,4 @@
+```
 import { test, before, after } from 'node:test';
 import { SecRunner } from '@sectester/runner';
 import { Severity, AttackParamLocation, HttpMethod } from '@sectester/scan';
@@ -33,3 +34,4 @@ test('DELETE /api/users/one/1/photo', { signal: AbortSignal.timeout(timeout) }, 
       auth: process.env.BRIGHT_AUTH_ID
     });
 });
+```
