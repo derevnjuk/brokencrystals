@@ -50,12 +50,46 @@ export class FileController {
 
   private async loadCPFile(cpBaseUrl: string, path: string) {
     if (!path.startsWith(cpBaseUrl)) {
-      throw new BadRequestException(`Invalid paramater 'path' ${path}`);
+      throw new BadRequestException(`Invalid parameter 'path' ${path}`);
     }
 
     const file: Stream = await this.fileService.getFile(path);
 
     return file;
+  }
+
+  private validatePath(path: string) {
+    const urlPattern = new RegExp('^(https?:\/\/)?'+ // protocol
+      '((([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}|'+ // domain name
+      '((\d{1,3}\.){3}\d{1,3}))'+ // OR ip (v4) address
+      '(\:\d+)?(\/[-a-z\d%_.~+]*)*'+ // port and path
+      '(\?[;&a-z\d%_.~+=-]*)?'+ // query string
+      '(\#[-a-z\d_]*)?$','i'); // fragment locator
+    if (!urlPattern.test(path)) {
+      throw new BadRequestException('Invalid URL format');
+    }
+
+    // Additional validation to prevent SSRF
+    const forbiddenHosts = ['169.254.169.254', 'metadata.google.internal'];
+    const url = new URL(path);
+    if (forbiddenHosts.includes(url.hostname)) {
+      throw new BadRequestException('Access to this host is forbidden');
+    }
+
+    // Ensure the URL is not pointing to a private IP range
+    const privateIpRanges = [
+      /^10\./, // 10.0.0.0 - 10.255.255.255
+      /^172\.(1[6-9]|2[0-9]|3[0-1])\./, // 172.16.0.0 - 172.31.255.255
+      /^192\.168\./, // 192.168.0.0 - 192.168.255.255
+      /^127\./, // 127.0.0.0 - 127.255.255.255 (loopback)
+      /^::1$/, // IPv6 loopback
+      /^fc00:/, // IPv6 private
+      /^fe80:/ // IPv6 link-local
+    ];
+    const isPrivateIp = privateIpRanges.some((range) => range.test(url.hostname));
+    if (isPrivateIp) {
+      throw new BadRequestException('Access to private IP ranges is forbidden');
+    }
   }
 
   @Get()
@@ -86,6 +120,7 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    this.validatePath(path);
     const file: Stream = await this.fileService.getFile(path);
     const type = this.getContentType(contentType);
     res.type(type);
@@ -121,6 +156,7 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    this.validatePath(path);
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.GOOGLE,
       path
@@ -159,6 +195,7 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    this.validatePath(path);
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.AWS,
       path
@@ -197,6 +234,7 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    this.validatePath(path);
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.AZURE,
       path
@@ -235,6 +273,7 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    this.validatePath(path);
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.DIGITAL_OCEAN,
       path
