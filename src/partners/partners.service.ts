@@ -92,11 +92,11 @@ ${xmlNodes.join('\n')}
 
   private sanitizeXpath(xpathExpression: string): string {
     // Basic sanitization logic to escape single quotes
-    return xpathExpression.replace(/'/g, "\'").replace(/"/g, '\"');
+    return xpathExpression.replace(/'/g, "&apos;").replace(/"/g, '&quot;');
   }
 
   escapeForXpath(input: string): string {
     // Escape special characters for XPath
-    return input.replace(/'/g, "\'").replace(/"/g, '\"');
+    return input.replace(/'/g, "&apos;").replace(/"/g, '&quot;');
   }
 }
