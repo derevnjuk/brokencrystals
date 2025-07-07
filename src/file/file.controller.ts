@@ -50,12 +50,43 @@ export class FileController {
 
   private async loadCPFile(cpBaseUrl: string, path: string) {
     if (!path.startsWith(cpBaseUrl)) {
-      throw new BadRequestException(`Invalid paramater 'path' ${path}`);
+      throw new BadRequestException(`Invalid parameter 'path' ${path}`);
     }
 
     const file: Stream = await this.fileService.getFile(path);
 
     return file;
+  }
+
+  private validatePath(path: string) {
+    const urlPattern = new RegExp('^(https?:\/\/)?'+ // protocol
+      '((([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}|'+ // domain name
+      '((\d{1,3}\.){3}\d{1,3}))'+ // OR ip (v4) address
+      '(\:\d+)?(\/[-a-z\d%_.~+]*)*'+ // port and path
+      '(\?[;&a-z\d%_.~+=-]*)?'+ // query string
+      '(\#[-a-z\d_]*)?$','i'); // fragment locator
+    if (!urlPattern.test(path)) {
+      throw new BadRequestException(`Invalid URL format for path: ${path}`);
+    }
+
+    // Additional validation to prevent SSRF
+    const forbiddenHosts = ['169.254.169.254', 'metadata.google.internal'];
+    const url = new URL(path);
+    if (forbiddenHosts.includes(url.hostname)) {
+      throw new BadRequestException(`Access to the host is forbidden: ${url.hostname}`);
+    }
+
+    // Ensure the URL is not a private IP
+    const privateIpPattern = /^(10\.\d{1,3}\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3}|172\.(1[6-9]|2[0-9]|3[0-1])\.\d{1,3}\.\d{1,3})$/;
+    if (privateIpPattern.test(url.hostname)) {
+      throw new BadRequestException(`Access to private IP addresses is forbidden: ${url.hostname}`);
+    }
+
+    // Ensure the URL is not a loopback address
+    const loopbackPattern = /^(127\.\d{1,3}\.\d{1,3}\.\d{1,3}|::1)$/;
+    if (loopbackPattern.test(url.hostname)) {
+      throw new BadRequestException(`Access to loopback addresses is forbidden: ${url.hostname}`);
+    }
   }
 
   @Get()
@@ -86,11 +117,17 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
-    const file: Stream = await this.fileService.getFile(path);
-    const type = this.getContentType(contentType);
-    res.type(type);
+    try {
+      this.validatePath(path);
+      const file: Stream = await this.fileService.getFile(path);
+      const type = this.getContentType(contentType);
+      res.type(type);
 
-    return file;
+      return file;
+    } catch (err) {
+      this.logger.error(err.message);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ error: 'An error occurred while processing your request.' });
+    }
   }
 
   @Get('/google')
@@ -121,6 +158,7 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    this.validatePath(path);
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.GOOGLE,
       path
@@ -159,6 +197,7 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    this.validatePath(path);
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.AWS,
       path
@@ -197,6 +236,7 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    this.validatePath(path);
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.AZURE,
       path
@@ -235,6 +275,7 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    this.validatePath(path);
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.DIGITAL_OCEAN,
       path
