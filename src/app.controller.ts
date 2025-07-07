@@ -73,6 +73,11 @@ export class AppController {
       const text = raw.toString().trim();
       // Implement a whitelist of allowed template variables
       const allowedVariables = { var1: 'value1', var2: 'value2' }; // Example allowed variables
+      // Validate the template content against allowed variables
+      const isValidTemplate = Object.keys(allowedVariables).some(key => text.includes(key));
+      if (!isValidTemplate) {
+        throw new HttpException('Invalid template content', HttpStatus.BAD_REQUEST);
+      }
       const compiledTemplate = dotT.template(text);
       const res = compiledTemplate(allowedVariables);
       this.logger.debug(`Rendered template: ${res}`);
