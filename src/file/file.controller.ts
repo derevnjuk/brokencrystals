@@ -50,7 +50,7 @@ export class FileController {
 
   private async loadCPFile(cpBaseUrl: string, path: string) {
     if (!path.startsWith(cpBaseUrl)) {
-      throw new BadRequestException(`Invalid paramater 'path' ${path}`);
+      throw new BadRequestException(`Invalid parameter 'path' ${path}`);
     }
 
     const file: Stream = await this.fileService.getFile(path);
@@ -121,6 +121,9 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    if (!this.isValidGooglePath(path)) {
+      throw new BadRequestException('Invalid path for Google file');
+    }
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.GOOGLE,
       path
@@ -159,6 +162,9 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    if (!this.isValidAwsPath(path)) {
+      throw new BadRequestException('Invalid path for AWS file');
+    }
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.AWS,
       path
@@ -197,6 +203,9 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    if (!this.isValidAzurePath(path)) {
+      throw new BadRequestException('Invalid path for Azure file');
+    }
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.AZURE,
       path
@@ -205,6 +214,33 @@ export class FileController {
     res.type(type);
 
     return file;
+  }
+
+  private isValidAzurePath(path: string): boolean {
+    // Implement a whitelist or regex check for valid paths
+    const validPaths = [
+      '/metadata/instance/compute',
+      '/metadata/instance/network'
+    ];
+    return validPaths.some(validPath => path.startsWith(validPath));
+  }
+
+  private isValidGooglePath(path: string): boolean {
+    // Implement a whitelist or regex check for valid paths
+    const validPaths = [
+      '/computeMetadata/v1/instance/',
+      '/computeMetadata/v1/project/'
+    ];
+    return validPaths.some(validPath => path.startsWith(validPath));
+  }
+
+  private isValidAwsPath(path: string): boolean {
+    // Implement a whitelist or regex check for valid paths
+    const validPaths = [
+      '/latest/meta-data/ami-id',
+      '/latest/meta-data/instance-id'
+    ];
+    return validPaths.some(validPath => path.startsWith(validPath));
   }
 
   @Get('/digital_ocean')
