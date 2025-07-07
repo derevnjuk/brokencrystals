@@ -67,11 +67,16 @@ export class PartnersService {
   }
 
   private getFormattedXMLOutput(xmlNodes): string {
-    return `${this.XML_HEADER}\n<root>\n${xmlNodes.join('\n')}\n</root>`;
+    return `${this.XML_HEADER}
+<root>
+${xmlNodes.join('\n')}
+</root>`;
   }
 
   getPartnersProperties(xpathExpression: string): string {
-    let xmlNodes = this.selectPartnerPropertiesByXPATH(xpathExpression);
+    // Sanitize the input to prevent XPath Injection
+    const sanitizedXpathExpression = this.sanitizeXpath(xpathExpression);
+    let xmlNodes = this.selectPartnerPropertiesByXPATH(sanitizedXpathExpression);
 
     if (!Array.isArray(xmlNodes)) {
       this.logger.debug(
@@ -83,5 +88,15 @@ export class PartnersService {
     }
 
     return this.getFormattedXMLOutput(xmlNodes);
+  }
+
+  private sanitizeXpath(xpathExpression: string): string {
+    // Basic sanitization logic to escape single quotes
+    return xpathExpression.replace(/'/g, "&apos;").replace(/"/g, '&quot;');
+  }
+
+  escapeForXpath(input: string): string {
+    // Escape special characters for XPath
+    return input.replace(/'/g, "&apos;").replace(/"/g, '&quot;');
   }
 }
