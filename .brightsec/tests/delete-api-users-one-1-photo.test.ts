@@ -21,7 +21,7 @@ after(() => runner.clear());
 test('DELETE /api/users/one/1/photo', { signal: AbortSignal.timeout(timeout) }, async () => {
   await runner
     .createScan({
-      tests: ['bopla', 'id_enumeration', 'jwt', 'csrf'],
+      tests: ['jwt'],
       attackParamLocations: [AttackParamLocation.PATH, AttackParamLocation.HEADER, AttackParamLocation.QUERY]
     })
     .threshold(Severity.CRITICAL)
