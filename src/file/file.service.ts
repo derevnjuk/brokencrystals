@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { Readable, Stream } from 'stream';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -10,27 +10,36 @@ export class FileService {
   private readonly logger = new Logger(FileService.name);
   private cloudProviders = new CloudProvidersMetaData();
 
+  private isValidUrl(url: string): boolean {
+    try {
+      new URL(url);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  private isValidPath(filePath: string): boolean {
+    // Define a base directory for file access
+    const baseDir = path.resolve(process.cwd(), 'allowed_files');
+    const resolvedPath = path.resolve(baseDir, filePath);
+    return resolvedPath.startsWith(baseDir);
+  }
+
   async getFile(file: string): Promise<Stream> {
     this.logger.log(`Reading file: ${file}`);
 
-    if (file.startsWith('/')) {
-      await fs.promises.access(file, R_OK);
+    if (!this.isValidPath(file)) {
+      throw new BadRequestException(`Access to the path is not allowed: ${file}`);
+    }
 
-      return fs.createReadStream(file);
-    } else if (file.startsWith('http')) {
-      const content = await this.cloudProviders.get(file);
-
-      if (content) {
-        return Readable.from(content);
-      } else {
-        throw new Error(`no such file or directory, access '${file}'`);
-      }
-    } else {
-      file = path.resolve(process.cwd(), file);
-
-      await fs.promises.access(file, R_OK);
-
-      return fs.createReadStream(file);
+    try {
+      const resolvedPath = path.resolve(process.cwd(), 'allowed_files', file);
+      await fs.promises.access(resolvedPath, R_OK);
+      return fs.createReadStream(resolvedPath);
+    } catch (err) {
+      this.logger.error(`Error accessing file: ${err.message}`);
+      throw new InternalServerErrorException('An error occurred while accessing the file.');
     }
   }
 
