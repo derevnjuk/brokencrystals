@@ -67,7 +67,10 @@ export class PartnersService {
   }
 
   private getFormattedXMLOutput(xmlNodes): string {
-    return `${this.XML_HEADER}\n<root>\n${xmlNodes.join('\n')}\n</root>`;
+    return `${this.XML_HEADER}
+<root>
+${xmlNodes.join('\n')}
+</root>`;
   }
 
   getPartnersProperties(xpathExpression: string): string {
@@ -90,5 +93,10 @@ export class PartnersService {
   private sanitizeXpath(xpathExpression: string): string {
     // Basic sanitization logic to escape single quotes
     return xpathExpression.replace(/'/g, "\'");
+  }
+
+  sanitizeInput(input: string): string {
+    // Additional sanitization logic for user input
+    return input.replace(/[^a-zA-Z0-9 ]/g, '');
   }
 }
