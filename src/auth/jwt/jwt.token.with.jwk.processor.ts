@@ -22,8 +22,9 @@ export class JwtTokenWithJWKProcessor extends JwtTokenProcessor {
       throw new Error('Invalid token. Key type is not set');
     }
 
-    if (header.alg === 'none') {
-      throw new Error('Invalid token. None algorithm is not allowed');
+    // Remove the check for 'none' algorithm and enforce RS256
+    if (header.alg !== 'RS256') {
+      throw new Error('Invalid token. Only RS256 algorithm is allowed');
     }
 
     const keyLike = await jose.importJWK(header.jwk);
