@@ -64,6 +64,7 @@ import { AdminGuard } from './users.guard';
 import { PermissionDto } from './api/PermissionDto';
 import { BASIC_USER_INFO, FULL_USER_INFO } from './api/UserDto';
 import { parseXml } from 'libxmljs';
+import * as jwt from 'jsonwebtoken';
 
 @Controller('/api/users')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -135,10 +136,15 @@ export class UsersController {
       }
     }
   })
-  async getById(@Param('id') id: number): Promise<UserDto> {
+  @UseGuards(AuthGuard)
+  async getById(@Param('id') id: number, @Req() req: FastifyRequest): Promise<UserDto> {
     try {
       this.logger.debug(`Find a user by id: ${id}`);
-      return new UserDto(await this.usersService.findById(id));
+      const user = await this.usersService.findById(id);
+      if (this.originEmail(req) !== user.email) {
+        throw new ForbiddenException('You are not authorized to access this user information.');
+      }
+      return new UserDto(user);
     } catch (err) {
       throw new HttpException(err.message, err.status);
     }
@@ -459,8 +465,7 @@ export class UsersController {
       type: 'object',
       properties: {
         statusCode: { type: 'number' },
-        message: { type: 'string' },
-        error: { type: 'string' }
+        message: { type: 'string' }
       }
     }
   })
@@ -554,12 +559,13 @@ export class UsersController {
   }
 
   public originEmail(request: FastifyRequest): string {
-    return JSON.parse(
-      Buffer.from(
-        request.headers.authorization.split('.')[1],
-        'base64'
-      ).toString()
-    ).user;
+    const token = request.headers.authorization.split(' ')[1];
+    try {
+      const decoded = jwt.verify(token, 'your-secret-key', { algorithms: ['HS256', 'RS256'] });
+      return decoded.user;
+    } catch (err) {
+      throw new UnauthorizedException('Invalid token');
+    }
   }
 
   private async doesUserExist(user: UserDto): Promise<boolean> {

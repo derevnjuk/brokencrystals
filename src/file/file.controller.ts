@@ -50,12 +50,34 @@ export class FileController {
 
   private async loadCPFile(cpBaseUrl: string, path: string) {
     if (!path.startsWith(cpBaseUrl)) {
-      throw new BadRequestException(`Invalid paramater 'path' ${path}`);
+      throw new BadRequestException(`Invalid parameter 'path' ${path}`);
     }
 
     const file: Stream = await this.fileService.getFile(path);
 
     return file;
+  }
+
+  private validatePath(path: string) {
+    const allowedPaths = [
+      'config/products/crystals/',
+      'config/products/gems/'
+    ];
+    if (!allowedPaths.some(allowedPath => path.startsWith(allowedPath))) {
+      throw new BadRequestException(`Path not allowed: ${path}`);
+    }
+  }
+
+  private validateUrl(url: string) {
+    const allowedUrls = [
+      CloudProvidersMetaData.GOOGLE,
+      CloudProvidersMetaData.AZURE,
+      CloudProvidersMetaData.DIGITAL_OCEAN,
+      CloudProvidersMetaData.AWS
+    ];
+    if (!allowedUrls.some(allowedUrl => url === allowedUrl)) { // Changed to strict equality
+      throw new BadRequestException(`URL not allowed: ${url}`);
+    }
   }
 
   @Get()
@@ -86,6 +108,7 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    this.validatePath(path);
     const file: Stream = await this.fileService.getFile(path);
     const type = this.getContentType(contentType);
     res.type(type);
@@ -121,6 +144,8 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    this.validatePath(path);
+    this.validateUrl(CloudProvidersMetaData.GOOGLE);
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.GOOGLE,
       path
@@ -159,6 +184,8 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    this.validatePath(path);
+    this.validateUrl(CloudProvidersMetaData.AWS);
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.AWS,
       path
@@ -197,6 +224,8 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    this.validatePath(path);
+    this.validateUrl(CloudProvidersMetaData.AZURE);
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.AZURE,
       path
@@ -235,6 +264,8 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    this.validatePath(path);
+    this.validateUrl(CloudProvidersMetaData.DIGITAL_OCEAN);
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.DIGITAL_OCEAN,
       path

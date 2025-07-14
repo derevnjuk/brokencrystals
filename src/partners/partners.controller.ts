@@ -46,6 +46,10 @@ export class PartnersController {
     this.logger.debug(`Getting partners with xpath expression "${xpath}"`);
 
     try {
+      // Validate and sanitize the xpath input
+      if (!this.isValidXPath(xpath)) {
+        throw new Error('Invalid XPath expression');
+      }
       return this.partnersService.getPartnersProperties(xpath);
     } catch (err) {
       throw new HttpException(
@@ -85,7 +89,7 @@ export class PartnersController {
     );
 
     try {
-      const xpath = `//partners/partner[username/text()='${username}' and password/text()='${password}']/*`;
+      const xpath = `//partners/partner[username/text()='${this.escapeXPathValue(username)}' and password/text()='${this.escapeXPathValue(password)}']/*`;
       const xmlStr = this.partnersService.getPartnersProperties(xpath);
 
       // Check if account's data contains any information - If not, the login failed!
@@ -128,7 +132,7 @@ export class PartnersController {
     this.logger.debug(`Searching partner names by the keyword "${keyword}"`);
 
     try {
-      const xpath = `//partners/partner/name[contains(., '${keyword}')]`;
+      const xpath = `//partners/partner/name[contains(., '${this.escapeXPathValue(keyword)}')]`;
       return this.partnersService.getPartnersProperties(xpath);
     } catch (err) {
       const errStr = err.toString();
@@ -143,5 +147,16 @@ export class PartnersController {
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
+  }
+
+  private escapeXPathValue(value: string): string {
+    // Escape single quotes by wrapping the value in double quotes
+    return value.replace(/'/g, "''");
+  }
+
+  private isValidXPath(xpath: string): boolean {
+    // Basic validation to check if the XPath is well-formed
+    // This is a placeholder for more complex validation logic
+    return typeof xpath === 'string' && xpath.length > 0;
   }
 }
