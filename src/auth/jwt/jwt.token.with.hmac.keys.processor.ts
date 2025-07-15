@@ -13,7 +13,8 @@ export class JwtTokenWithHMACKeysProcessor extends JwtTokenProcessor {
   async validateToken(token: string): Promise<unknown> {
     this.log.debug('Call validateToken');
 
-    return decode(token, this.publicKey, false, 'HS256');
+    // Ensure the token is decoded with verification
+    return decode(token, this.privateKey, true, 'HS256');
   }
 
   async createToken(payload: unknown): Promise<string> {

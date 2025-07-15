@@ -63,7 +63,14 @@ export class PartnersService {
     xpathExpression: string
   ): SelectReturnType {
     const partnersXMLObj = this.getPartnersXMLObj();
-    return xpath.select(xpathExpression, partnersXMLObj);
+    // Sanitize the input to prevent XPath Injection
+    const sanitizedXpathExpression = this.sanitizeXpathExpression(xpathExpression);
+    return xpath.select(sanitizedXpathExpression, partnersXMLObj);
+  }
+
+  private sanitizeXpathExpression(expression: string): string {
+    // Basic sanitization: escape single quotes
+    return expression.replace(/'/g, "\'");
   }
 
   private getFormattedXMLOutput(xmlNodes): string {
