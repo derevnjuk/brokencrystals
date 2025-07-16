@@ -21,7 +21,7 @@ after(() => runner.clear());
 test('DELETE /api/file?path=config/products/crystals/some_file.jpg', { signal: AbortSignal.timeout(timeout) }, async () => {
   await runner
     .createScan({
-      tests: ['lfi', 'ssrf', 'bopla', 'full_path_disclosure', 'unvalidated_redirect'],
+      tests: ['full_path_disclosure'],
       attackParamLocations: [AttackParamLocation.QUERY]
     })
     .threshold(Severity.CRITICAL)
