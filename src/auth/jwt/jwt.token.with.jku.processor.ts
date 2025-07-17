@@ -16,6 +16,10 @@ export class JwtTokenWithJKUProcessor extends JwtTokenProcessor {
     this.log.debug('Call validateToken');
     const [header, payload] = this.parse(token);
 
+    if (header.alg === 'none') {
+      throw new Error('None algorithm is not allowed');
+    }
+
     const url = header.jku;
     this.log.debug(`Calling jwk url: ${url}`);
     const jwkRes: jose.JWK = await this.httpClient.loadJSON(url);
