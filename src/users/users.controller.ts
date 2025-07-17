@@ -64,6 +64,7 @@ import { AdminGuard } from './users.guard';
 import { PermissionDto } from './api/PermissionDto';
 import { BASIC_USER_INFO, FULL_USER_INFO } from './api/UserDto';
 import { parseXml } from 'libxmljs';
+import * as jwt from 'jsonwebtoken';
 
 @Controller('/api/users')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -559,12 +560,13 @@ export class UsersController {
   }
 
   public originEmail(request: FastifyRequest): string {
-    return JSON.parse(
-      Buffer.from(
-        request.headers.authorization.split('.')[1],
-        'base64'
-      ).toString()
-    ).user;
+    const token = request.headers.authorization.split(' ')[1];
+    try {
+      const decoded = jwt.verify(token, 'your-secret-key', { algorithms: ['HS256', 'RS256'] });
+      return decoded.user;
+    } catch (err) {
+      throw new UnauthorizedException('Invalid token');
+    }
   }
 
   private async doesUserExist(user: UserDto): Promise<boolean> {
