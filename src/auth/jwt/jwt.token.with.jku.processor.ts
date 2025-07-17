@@ -24,7 +24,9 @@ export class JwtTokenWithJKUProcessor extends JwtTokenProcessor {
     this.log.debug(`Calling jwk url: ${url}`);
     const jwkRes: jose.JWK = await this.httpClient.loadJSON(url);
     const keyLike = await jose.importJWK(jwkRes);
-    const verifyRes = await jose.jwtVerify(token, keyLike);
+    const verifyRes = await jose.jwtVerify(token, keyLike, {
+      algorithms: ['RS256'] // Enforce RS256 algorithm
+    });
     if (verifyRes) {
       return payload;
     }
