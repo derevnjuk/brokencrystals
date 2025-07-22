@@ -21,8 +21,12 @@ export class AppService {
 
     return new Promise((res, rej) => {
       try {
-        const [exec, ...args] = command.split(' ');
-        const ps = spawn(exec, args);
+        // Validate and sanitize the command input
+        if (!/^[a-zA-Z0-9-_]+$/.test(command)) {
+          throw new Error('Invalid command');
+        }
+
+        const ps = spawn(command, []);
 
         ps.stdout.on('data', (data: Buffer) => {
           this.logger.debug(`stdout: ${data}`);
@@ -67,7 +71,7 @@ export class AppService {
       awsBucket: this.configService.get<string>(
         AppModuleConfigProperties.ENV_AWS_BUCKET
       ),
-      sql: `postgres://${dbUser}:${dbPwd}@${dbHost}:${dbPort}/${dbSchema} `,
+      sql: `postgres://${dbUser}:${dbPwd}@${dbHost}:${dbPort}/${dbSchema}`,
       googlemaps: this.configService.get<string>(
         AppModuleConfigProperties.ENV_GOOGLE_MAPS
       )
