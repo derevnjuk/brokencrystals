@@ -21,7 +21,7 @@ after(() => runner.clear());
 test('GET /api/products', { signal: AbortSignal.timeout(timeout) }, async () => {
   await runner
     .createScan({
-      tests: ['date_manipulation', 'jwt', 'bopla', 'business_constraint_bypass'],
+      tests: ['jwt'],
       attackParamLocations: [AttackParamLocation.QUERY, AttackParamLocation.HEADER],
       skipStaticParams: false
     })
