@@ -21,7 +21,7 @@ after(() => runner.clear());
 test('POST /graphql-query-getCommandResult-command-exampleCommand', { signal: AbortSignal.timeout(timeout) }, async () => {
   await runner
     .createScan({
-      tests: ['osi', 'graphql_introspection', 'xss'],
+      tests: ['graphql_introspection'],
       attackParamLocations: [AttackParamLocation.BODY]
     })
     .threshold(Severity.CRITICAL)

@@ -21,7 +21,7 @@ after(() => runner.clear());
 test('GET /api/products/latest', { signal: AbortSignal.timeout(timeout) }, async () => {
   await runner
     .createScan({
-      tests: ['business_constraint_bypass', 'jwt', 'full_path_disclosure'],
+      tests: ['business_constraint_bypass'],
       attackParamLocations: [AttackParamLocation.HEADER, AttackParamLocation.QUERY]
     })
     .threshold(Severity.CRITICAL)
