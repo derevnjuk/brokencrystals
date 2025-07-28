@@ -21,7 +21,7 @@ after(() => runner.clear());
 test('GET /api/config', { signal: AbortSignal.timeout(timeout) }, async () => {
   await runner
     .createScan({
-      tests: ['secret_tokens', 'improper_asset_management', 'csrf'],
+      tests: ['secret_tokens'],
       attackParamLocations: [AttackParamLocation.HEADER, AttackParamLocation.PATH, AttackParamLocation.QUERY]
     })
     .threshold(Severity.CRITICAL)

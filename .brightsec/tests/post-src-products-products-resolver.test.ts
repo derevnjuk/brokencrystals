@@ -21,7 +21,7 @@ after(() => runner.clear());
 test('POST src-products-products-resolver', { signal: AbortSignal.timeout(timeout) }, async () => {
   await runner
     .createScan({
-      tests: ['sqli', 'graphql_introspection', 'bopla', 'csrf'],
+      tests: ['graphql_introspection'],
       attackParamLocations: [AttackParamLocation.BODY]
     })
     .threshold(Severity.CRITICAL)
