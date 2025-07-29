@@ -50,7 +50,7 @@ export class FileController {
 
   private async loadCPFile(cpBaseUrl: string, path: string) {
     if (!path.startsWith(cpBaseUrl)) {
-      throw new BadRequestException(`Invalid paramater 'path' ${path}`);
+      throw new BadRequestException(`Invalid parameter 'path' ${path}`);
     }
 
     const file: Stream = await this.fileService.getFile(path);
@@ -86,11 +86,33 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
-    const file: Stream = await this.fileService.getFile(path);
-    const type = this.getContentType(contentType);
-    res.type(type);
+    // Validate the path to prevent SSRF
+    if (!this.isValidPath(path)) {
+      throw new BadRequestException(`Invalid parameter 'path' ${path}`);
+    }
 
-    return file;
+    try {
+      const file: Stream = await this.fileService.getFile(path);
+      const type = this.getContentType(contentType);
+      res.type(type);
+
+      return file;
+    } catch (err) {
+      this.logger.error(err.message);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ error: 'An error occurred while accessing the file.' });
+    }
+  }
+
+  private isValidPath(path: string): boolean {
+    // Implement a whitelist of allowed domains or paths
+    const allowedDomains = ['example.com', 'another-example.com'];
+    try {
+      const url = new URL(path);
+      return allowedDomains.includes(url.hostname);
+    } catch (e) {
+      // If it's not a valid URL, consider it invalid
+      return false;
+    }
   }
 
   @Get('/google')
@@ -121,6 +143,11 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    // Validate the path to prevent SSRF
+    if (!this.isValidPath(path)) {
+      throw new BadRequestException(`Invalid parameter 'path' ${path}`);
+    }
+
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.GOOGLE,
       path
@@ -159,6 +186,9 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    if (!this.isValidPath(path)) {
+      throw new BadRequestException(`Invalid parameter 'path' ${path}`);
+    }
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.AWS,
       path
@@ -197,6 +227,9 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    if (!this.isValidPath(path)) {
+      throw new BadRequestException(`Invalid parameter 'path' ${path}`);
+    }
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.AZURE,
       path
@@ -235,6 +268,9 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    if (!this.isValidPath(path)) {
+      throw new BadRequestException(`Invalid parameter 'path' ${path}`);
+    }
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.DIGITAL_OCEAN,
       path
@@ -322,7 +358,7 @@ export class FileController {
       return stream;
     } catch (err) {
       this.logger.error(err.message);
-      res.status(HttpStatus.NOT_FOUND);
+      res.status(HttpStatus.NOT_FOUND).send({ error: 'File not found.' });
     }
   }
 }
