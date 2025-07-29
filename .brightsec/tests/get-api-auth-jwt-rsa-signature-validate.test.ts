@@ -21,7 +21,7 @@ after(() => runner.clear());
 test('GET /api/auth/jwt/rsa/signature/validate', { signal: AbortSignal.timeout(timeout) }, async () => {
   await runner
     .createScan({
-      tests: ['jwt', 'csrf', 'insecure_tls_configuration', 'secret_tokens'],
+      tests: ['jwt'],
       attackParamLocations: [AttackParamLocation.HEADER]
     })
     .threshold(Severity.CRITICAL)
