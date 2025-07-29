@@ -50,7 +50,7 @@ export class FileController {
 
   private async loadCPFile(cpBaseUrl: string, path: string) {
     if (!path.startsWith(cpBaseUrl)) {
-      throw new BadRequestException(`Invalid paramater 'path' ${path}`);
+      throw new BadRequestException(`Invalid parameter 'path' ${path}`);
     }
 
     const file: Stream = await this.fileService.getFile(path);
@@ -121,6 +121,9 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    if (!this.isValidGooglePath(path)) {
+      throw new BadRequestException(`Invalid Google path: ${path}`);
+    }
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.GOOGLE,
       path
@@ -159,6 +162,9 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    if (!this.isValidAwsPath(path)) {
+      throw new BadRequestException(`Invalid AWS path: ${path}`);
+    }
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.AWS,
       path
@@ -167,6 +173,26 @@ export class FileController {
     res.type(type);
 
     return file;
+  }
+
+  private isValidAwsPath(path: string): boolean {
+    const allowedPaths = [
+      'ami-id',
+      'instance-id',
+      'instance-type',
+      'public-hostname',
+      'public-ipv4'
+    ];
+    return allowedPaths.some(allowedPath => path.includes(allowedPath));
+  }
+
+  private isValidGooglePath(path: string): boolean {
+    const allowedPaths = [
+      'instance/',
+      'oslogin/',
+      'project/'
+    ];
+    return allowedPaths.some(allowedPath => path.includes(allowedPath));
   }
 
   @Get('/azure')
@@ -197,6 +223,9 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    if (!this.isValidAzurePath(path)) {
+      throw new BadRequestException(`Invalid Azure path: ${path}`);
+    }
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.AZURE,
       path
@@ -205,6 +234,17 @@ export class FileController {
     res.type(type);
 
     return file;
+  }
+
+  private isValidAzurePath(path: string): boolean {
+    const allowedPaths = [
+      'compute/azEnvironment',
+      'compute/location',
+      'compute/name',
+      'compute/osType',
+      'compute/vmId'
+    ];
+    return allowedPaths.some(allowedPath => path.includes(allowedPath));
   }
 
   @Get('/digital_ocean')
@@ -235,6 +275,9 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    if (!this.isValidDigitalOceanPath(path)) {
+      throw new BadRequestException(`Invalid Digital Ocean path: ${path}`);
+    }
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.DIGITAL_OCEAN,
       path
@@ -243,6 +286,18 @@ export class FileController {
     res.type(type);
 
     return file;
+  }
+
+  private isValidDigitalOceanPath(path: string): boolean {
+    const allowedPaths = [
+      'id',
+      'hostname',
+      'user-data',
+      'vendor-data',
+      'public-keys',
+      'region'
+    ];
+    return allowedPaths.some(allowedPath => path.includes(allowedPath));
   }
 
   @Delete()
