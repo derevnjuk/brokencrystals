@@ -21,8 +21,12 @@ export abstract class JwtTokenProcessor {
     this.log.debug(`Jwt token header is ${headerStr}`);
     const header: JwtHeader = JSON.parse(headerStr);
 
+    if (header.alg === 'none') {
+      throw new Error('Tokens with "none" algorithm are not allowed');
+    }
+
     const payloadStr = Buffer.from(parts[1], 'base64').toString('ascii');
-    this.log.debug(`Jwt token (None alg) payload is ${payloadStr}`);
+    this.log.debug(`Jwt token payload is ${payloadStr}`);
     const payload = JSON.parse(payloadStr);
 
     return [header, payload];
