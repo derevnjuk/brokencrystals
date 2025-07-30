@@ -50,12 +50,41 @@ export class FileController {
 
   private async loadCPFile(cpBaseUrl: string, path: string) {
     if (!path.startsWith(cpBaseUrl)) {
-      throw new BadRequestException(`Invalid paramater 'path' ${path}`);
+      throw new BadRequestException(`Invalid parameter 'path' ${path}`);
     }
 
     const file: Stream = await this.fileService.getFile(path);
 
     return file;
+  }
+
+  private validatePath(path: string) {
+    const allowedPaths = [
+      'config/products/crystals/',
+      'config/products/gems/'
+    ];
+    if (!allowedPaths.some(allowedPath => path.startsWith(allowedPath))) {
+      throw new BadRequestException(`Path not allowed: ${path}`);
+    }
+  }
+
+  private validateUrl(url: string) {
+    try {
+      const parsedUrl = new URL(url);
+      if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
+        throw new BadRequestException(`Invalid URL protocol: ${parsedUrl.protocol}`);
+      }
+      if (!/^(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/.test(parsedUrl.hostname)) {
+        throw new BadRequestException(`Invalid URL hostname: ${parsedUrl.hostname}`);
+      }
+      // Ensure the URL is not pointing to internal metadata services
+      const forbiddenHosts = ['metadata.google.internal', '169.254.169.254'];
+      if (forbiddenHosts.includes(parsedUrl.hostname)) {
+        throw new BadRequestException(`Access to internal metadata is forbidden: ${parsedUrl.hostname}`);
+      }
+    } catch (error) {
+      throw new BadRequestException(`Invalid URL: ${url}`);
+    }
   }
 
   @Get()
@@ -86,6 +115,7 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    this.validatePath(path);
     const file: Stream = await this.fileService.getFile(path);
     const type = this.getContentType(contentType);
     res.type(type);
@@ -121,6 +151,8 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    this.validatePath(path);
+    this.validateUrl(path); // Added URL validation
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.GOOGLE,
       path
@@ -159,6 +191,8 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    this.validatePath(path);
+    this.validateUrl(path); // Added URL validation
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.AWS,
       path
@@ -197,6 +231,8 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    this.validatePath(path);
+    this.validateUrl(path);
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.AZURE,
       path
@@ -235,6 +271,8 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    this.validatePath(path);
+    this.validateUrl(path); // Added URL validation
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.DIGITAL_OCEAN,
       path

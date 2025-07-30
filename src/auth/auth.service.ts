@@ -121,8 +121,16 @@ export class AuthService {
     );
   }
 
-  validateToken(token: string, processor: JwtProcessorType): Promise<unknown> {
-    return this.processors.get(processor).validateToken(token);
+  async validateToken(token: string, processor: JwtProcessorType): Promise<unknown> {
+    const jwtProcessor = this.processors.get(processor);
+    if (!jwtProcessor) {
+      throw new Error('Invalid JWT processor type');
+    }
+    const decodedToken = await jwtProcessor.decodeToken(token);
+    if (decodedToken.header.alg === 'none') {
+      throw new Error('Tokens with "none" algorithm are not allowed');
+    }
+    return jwtProcessor.validateToken(token);
   }
 
   createToken(payload: unknown, processor: JwtProcessorType): Promise<string> {

@@ -13,6 +13,11 @@ export class FileService {
   async getFile(file: string): Promise<Stream> {
     this.logger.log(`Reading file: ${file}`);
 
+    // Prevent access to .svn and .hg directories
+    if (file.includes('/.svn/') || file.includes('/.hg/')) {
+      throw new Error('Access to VCS directories is forbidden');
+    }
+
     if (file.startsWith('/')) {
       await fs.promises.access(file, R_OK);
 
