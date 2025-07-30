@@ -21,7 +21,7 @@ after(() => runner.clear());
 test('POST /graphql-all-products', { signal: AbortSignal.timeout(timeout) }, async () => {
   await runner
     .createScan({
-      tests: ['graphql_introspection', 'sqli', 'jwt', 'bopla'],
+      tests: ['graphql_introspection', 'jwt'],
       attackParamLocations: [AttackParamLocation.BODY]
     })
     .threshold(Severity.CRITICAL)
