@@ -121,7 +121,7 @@ export class AuthService {
     );
   }
 
-  validateToken(token: string, processor: JwtProcessorType): Promise<unknown> {
+  async validateToken(token: string, processor: JwtProcessorType): Promise<unknown> {
     if (!token) {
       throw new Error('Token is required');
     }
