@@ -122,6 +122,13 @@ export class AuthService {
   }
 
   validateToken(token: string, processor: JwtProcessorType): Promise<unknown> {
+    if (!token) {
+      throw new Error('Token is required');
+    }
+    const decodedHeader = JSON.parse(Buffer.from(token.split('.')[0], 'base64').toString('utf8'));
+    if (decodedHeader.alg === 'none') {
+      throw new Error('None algorithm is not allowed');
+    }
     return this.processors.get(processor).validateToken(token);
   }
 
