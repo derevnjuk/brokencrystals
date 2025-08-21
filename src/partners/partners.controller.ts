@@ -16,7 +16,8 @@ import {
 import {
   API_DESC_QUERY_PARTNERS_RAW,
   API_DESC_PARTNERS_LOGIN,
-  API_DESC_SEARCH_PARTNERS_NAMES
+  API_DESC_SEARCH_PARTNERS_NAMES,
+  API_DESC_SEARCH_PARTNERS_CITY
 } from './partners.controller.swagger.desc';
 import { PartnersService } from './partners.service';
 
@@ -129,6 +130,43 @@ export class PartnersController {
 
     try {
       const xpath = `//partners/partner/name[contains(., '${keyword}')]`;
+      return this.partnersService.getPartnersProperties(xpath);
+    } catch (err) {
+      const errStr = err.toString();
+      const errorMessage =
+        errStr.includes('XPath parse error') ||
+        errStr.includes('Unterminated string literal')
+          ? 'Error in XPath expression'
+          : errStr;
+
+      throw new HttpException(
+        `Couldn't find partners. ${errorMessage}`,
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  // **** This is an attribute-based XPATH injection EP ****
+  @Get('searchByCity')
+  @ApiQuery({
+    name: 'city',
+    type: 'string',
+    example: 'Albuquerque',
+    required: true
+  })
+  @Header('content-type', 'text/xml')
+  @ApiOperation({
+    description: API_DESC_SEARCH_PARTNERS_CITY
+  })
+  @ApiOkResponse({
+    type: String
+  })
+  async searchByCity(@Query('city') city: string): Promise<string> {
+    this.logger.debug(`Searching partners by residency city "${city}"`);
+
+    try {
+      // Vulnerable: unsanitized interpolation into attribute predicate
+      const xpath = `//partners/partner[residency/@city='${city}']/*`;
       return this.partnersService.getPartnersProperties(xpath);
     } catch (err) {
       const errStr = err.toString();
