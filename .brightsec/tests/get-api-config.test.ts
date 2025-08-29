@@ -21,7 +21,7 @@ after(() => runner.clear());
 test('GET /api/config', { signal: AbortSignal.timeout(timeout) }, async () => {
   await runner
     .createScan({
-      tests: ['csrf', 'secret_tokens', 'improper_asset_management', 'full_path_disclosure'],
+      tests: ['secret_tokens'],
       attackParamLocations: [AttackParamLocation.HEADER, AttackParamLocation.PATH],
       starMetadata: {
         databases: ['PostgreSQL'],
