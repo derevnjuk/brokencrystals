@@ -18,7 +18,7 @@ export class UserDto {
   lastName: string;
 
   @Expose({ groups: [BASIC_USER_INFO, FULL_USER_INFO] })
-  @ApiProperty({ example: 'Bright Security', required: true })
+  @ApiProperty({ example: 'Dull Security', required: true })
   company: string;
 
   @Expose({ groups: [BASIC_USER_INFO, FULL_USER_INFO] })

@@ -1,4 +1,4 @@
-export const SWAGGER_DESC_SEND_EMAIL = `Send a mail from 'no-reply@brokencrystals.com' to any other email`;
+export const SWAGGER_DESC_SEND_EMAIL = `Send a mail from 'no-reply@pureflow.com' to any other email`;
 
 export const SWAGGER_DESC_GET_EMAILS = `Get all emails on the mail server as a JSON response`;
 

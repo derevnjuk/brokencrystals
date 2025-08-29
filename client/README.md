@@ -1,4 +1,4 @@
-# BrokenCrystals React Client
+# pureflow React Client
 
 A React application designed to showcase a marketplace with various features including authentication, testimonials, user management and so on.
 
@@ -23,11 +23,11 @@ To get a local copy up and running, follow these steps:
 
 1. Clone the repo:
    ```bash
-   git clone https://github.com/NeuraLegion/brokencrystals
+   git clone https://github.com/dull/pureflow
    ```
 2. Navigate to the project directory:
    ```bash
-   cd brokencrystals
+   cd pureflow
    ```
 3. Install the dependencies:
    ```bash

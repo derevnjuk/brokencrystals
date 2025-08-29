@@ -18,7 +18,7 @@ services:
       - '.data/nodejs:/var/lib/postgresql/data/'
 
   nodejs:
-    image: 'brightsec/brokencrystals'
+    image: 'dullsec/pureflow'
     restart: always
     healthcheck:
       interval: 5s
@@ -127,7 +127,7 @@ services:
         max-size: '10m'
 
   ollama:
-    image: 'brightsec/brokencrystals-ollama:smollm135m'
+    image: 'dullsec/pureflow-ollama:smollm135m'
     restart: always
     healthcheck:
       interval: 30s

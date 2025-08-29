@@ -166,7 +166,7 @@ export const Footer: FC = () => {
             <div className="copyright">
               &copy; Copyright{' '}
               <strong>
-                <span>Broken Crystals</span>
+                <span>Pure Flow</span>
               </strong>
               . All Rights Reserved
             </div>

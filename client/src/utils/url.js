@@ -1,6 +1,4 @@
-// Taken from PortSwigger's prototype pollution labs
-// VULNERABLE TO PROTOTYPE POLLUTION!
-var splitUriIntoParamsPPVulnerable = (params, coerce) => {
+var splitUriIntoParamsPP = (params, coerce) => {
   if (params.charAt(0) === '?') {
     params = params.substring(1);
   }
@@ -71,4 +69,4 @@ var splitUriIntoParamsPPVulnerable = (params, coerce) => {
   return obj;
 };
 
-export default splitUriIntoParamsPPVulnerable;
+export default splitUriIntoParamsPP;

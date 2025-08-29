@@ -1,6 +1,4 @@
-// Taken from PortSwigger's prototype pollution labs
-// VULNERABLE TO PROTOTYPE POLLUTION!
-const splitUriIntoParamsPPVulnerable = (
+const splitUriIntoParamsPP = (
   params,
   coerce = undefined
 ): Record<string, unknown> => {
@@ -77,4 +75,4 @@ const splitUriIntoParamsPPVulnerable = (
   return obj;
 };
 
-export default splitUriIntoParamsPPVulnerable;
+export default splitUriIntoParamsPP;

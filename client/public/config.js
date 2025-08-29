@@ -45,7 +45,7 @@ module.exports = {
 
   email : new Email({
     message: {
-      from: 'something@brokencrystals.com'
+      from: 'something@pureflow.com'
     },
     views: { root: __dirname },
     // uncomment below to send emails in development/test env:

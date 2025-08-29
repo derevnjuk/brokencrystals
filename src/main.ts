@@ -86,11 +86,9 @@ async function bootstrap() {
       process.env.NODE_ENV === 'production'
         ? {
             cert: readFileSync(
-              '/etc/letsencrypt/live/brokencrystals.com/fullchain.pem'
+              '/etc/letsencrypt/live/pureflow.com/fullchain.pem'
             ),
-            key: readFileSync(
-              '/etc/letsencrypt/live/brokencrystals.com/privkey.pem'
-            )
+            key: readFileSync('/etc/letsencrypt/live/pureflow.com/privkey.pem')
           }
         : null
   });
@@ -192,14 +190,14 @@ async function bootstrap() {
     .useGlobalFilters(new GlobalExceptionFilter(httpAdapter));
 
   const options = new DocumentBuilder()
-    .setTitle('Broken Crystals')
+    .setTitle('Pure Flow')
     .setDescription(
       `
   ![BC logo](/assets/img/logo_blue_small.png)
 
-  This is the _Broken Crystals_ REST API.
+  This is the _Pure Flow_ REST API.
 
-  _Broken Crystals_ is a benchmark application that uses modern technologies and implements a set of common security vulnerabilities.
+  _Pure Flow_ is a benchmark application that uses modern technologies and implements a set of common security vulnerabilities.
 
   ## Available endpoints
 

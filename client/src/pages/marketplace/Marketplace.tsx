@@ -13,7 +13,7 @@ import Testimonials from './Testimonials/Testimonials';
 import ProductView from './ProductView';
 import DateRangePicker from './DatePicker';
 import Partners from './Partners/Partners';
-import splitUriIntoParamsPPVulnerable from '../../utils/url';
+import splitUriIntoParamsPP from '../../utils/url';
 
 interface Props {
   preview: boolean;
@@ -42,9 +42,8 @@ export const Marketplace: FC<Props> = (props: Props) => {
   const isoRef = useRef<HTMLDivElement | null>(null);
   const [isotope, setIsotope] = useState<Isotope | null>(null);
 
-  // Note: This function is vulnerable to Prototype Pollution
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const currentUriParams: Record<string, any> = splitUriIntoParamsPPVulnerable(
+  const currentUriParams: Record<string, any> = splitUriIntoParamsPP(
     document.location.search
   );
 

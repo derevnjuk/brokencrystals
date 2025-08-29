@@ -1,7 +1,7 @@
 {
-  "id": "brokencrystals",
-  "realm": "brokencrystals",
-  "displayName": "brokencrystals",
+  "id": "pureflow",
+  "realm": "pureflow",
+  "displayName": "pureflow",
   "notBefore": 0,
   "defaultSignatureAlgorithm": "RS256",
   "revokeRefreshToken": false,
@@ -48,7 +48,7 @@
     "realm": [
       {
         "id": "76df3b1f-025c-4d97-a11a-ca4316fc38ba",
-        "name": "default-roles-brokencrystals",
+        "name": "default-roles-pureflow",
         "description": "${role_default-roles}",
         "composite": true,
         "composites": {
@@ -58,7 +58,7 @@
           }
         },
         "clientRole": false,
-        "containerId": "brokencrystals",
+        "containerId": "pureflow",
         "attributes": {}
       },
       {
@@ -67,7 +67,7 @@
         "description": "${role_offline-access}",
         "composite": false,
         "clientRole": false,
-        "containerId": "brokencrystals",
+        "containerId": "pureflow",
         "attributes": {}
       },
       {
@@ -76,7 +76,7 @@
         "description": "${role_uma_authorization}",
         "composite": false,
         "clientRole": false,
-        "containerId": "brokencrystals",
+        "containerId": "pureflow",
         "attributes": {}
       }
     ],
@@ -291,7 +291,7 @@
       "security-admin-console": [],
       "admin-cli": [],
       "account-console": [],
-      "brokencrystals-client": [],
+      "pureflow-client": [],
       "broker": [
         {
           "id": "68e437d4-907a-4827-b82c-e4b7d2b38af9",
@@ -383,11 +383,11 @@
   "groups": [],
   "defaultRole": {
     "id": "76df3b1f-025c-4d97-a11a-ca4316fc38ba",
-    "name": "default-roles-brokencrystals",
+    "name": "default-roles-pureflow",
     "description": "${role_default-roles}",
     "composite": true,
     "clientRole": false,
-    "containerId": "brokencrystals"
+    "containerId": "pureflow"
   },
   "requiredCredentials": ["password"],
   "otpPolicyType": "totp",
@@ -440,7 +440,7 @@
       "serviceAccountClientId": "admin-cli",
       "disableableCredentialTypes": [],
       "requiredActions": [],
-      "realmRoles": ["default-roles-brokencrystals"],
+      "realmRoles": ["default-roles-pureflow"],
       "clientRoles": {
         "realm-management": ["manage-users"]
       },
@@ -450,14 +450,14 @@
     {
       "id": "8bb69acc-3ba2-4232-a79b-062d3d655540",
       "createdTimestamp": 1622129809364,
-      "username": "service-account-brokencrystals-client",
+      "username": "service-account-pureflow-client",
       "enabled": true,
       "totp": false,
       "emailVerified": false,
-      "serviceAccountClientId": "brokencrystals-client",
+      "serviceAccountClientId": "pureflow-client",
       "disableableCredentialTypes": [],
       "requiredActions": [],
-      "realmRoles": ["default-roles-brokencrystals"],
+      "realmRoles": ["default-roles-pureflow"],
       "notBefore": 0,
       "groups": []
     }
@@ -488,12 +488,12 @@
       "clientId": "account",
       "name": "${client_account}",
       "rootUrl": "${authBaseUrl}",
-      "baseUrl": "/realms/brokencrystals/account/",
+      "baseUrl": "/realms/pureflow/account/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "redirectUris": ["/realms/brokencrystals/account/*"],
+      "redirectUris": ["/realms/pureflow/account/*"],
       "webOrigins": [],
       "notBefore": 0,
       "bearerOnly": false,
@@ -522,12 +522,12 @@
       "clientId": "account-console",
       "name": "${client_account-console}",
       "rootUrl": "${authBaseUrl}",
-      "baseUrl": "/realms/brokencrystals/account/",
+      "baseUrl": "/realms/pureflow/account/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "redirectUris": ["/realms/brokencrystals/account/*"],
+      "redirectUris": ["/realms/pureflow/account/*"],
       "webOrigins": [],
       "notBefore": 0,
       "bearerOnly": false,
@@ -666,7 +666,7 @@
     },
     {
       "id": "c5877e1b-8460-480c-840b-52341e1c0f82",
-      "clientId": "brokencrystals-client",
+      "clientId": "pureflow-client",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
@@ -830,12 +830,12 @@
       "clientId": "security-admin-console",
       "name": "${client_security-admin-console}",
       "rootUrl": "${authAdminUrl}",
-      "baseUrl": "/admin/brokencrystals/console/",
+      "baseUrl": "/admin/pureflow/console/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "redirectUris": ["/admin/brokencrystals/console/*"],
+      "redirectUris": ["/admin/pureflow/console/*"],
       "webOrigins": ["+"],
       "notBefore": 0,
       "bearerOnly": false,

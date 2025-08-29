@@ -14,7 +14,7 @@ jobs:
 
       - name: Login to DockerHub
         run: |
-          docker login --username=${{ vars.DOCKERHUB_BRIGHT_USER }} --password=${{ secrets.DOCKERHUB_BRIGHT_TOKEN }}
+          docker login --username=${{ vars.DOCKERHUB_DULL_USER }} --password=${{ secrets.DOCKERHUB_DULL_TOKEN }}
 
       - name: Generate timestamp
         id: timestamp
@@ -27,15 +27,15 @@ jobs:
       - name: Build and tag Docker images
         run: |
           for TAG_PREFIX in stable unstable; do
-            docker build -t brightsec/brokencrystals:${TAG_PREFIX} .
-            docker tag brightsec/brokencrystals:${TAG_PREFIX} brightsec/brokencrystals:${TAG_PREFIX}-${{ env.SHORT_SHA }}
-            docker tag brightsec/brokencrystals:${TAG_PREFIX} brightsec/brokencrystals:${TAG_PREFIX}-${{ env.SHORT_SHA }}-${{ env.TIMESTAMP }}
+            docker build -t dullsec/pureflow:${TAG_PREFIX} .
+            docker tag dullsec/pureflow:${TAG_PREFIX} brdullc/pureflow:${TAG_PREFIX}-${{ env.SHORT_SHA }}
+            docker tag dullsec/pureflow:${TAG_PREFIX} brdullc/pureflow:${TAG_PREFIX}-${{ env.SHORT_SHA }}-${{ env.TIMESTAMP }}
           done
 
       - name: Push Docker images
         run: |
           for TAG_PREFIX in stable unstable; do
-            docker push brightsec/brokencrystals:${TAG_PREFIX}
-            docker push brightsec/brokencrystals:${TAG_PREFIX}-${{ env.SHORT_SHA }}
-            docker push brightsec/brokencrystals:${TAG_PREFIX}-${{ env.SHORT_SHA }}-${{ env.TIMESTAMP }}
+            docker push dullsec/pureflow:${TAG_PREFIX}
+            docker push dullsec/pureflow:${TAG_PREFIX}-${{ env.SHORT_SHA }}
+            docker push dullsec/pureflow:${TAG_PREFIX}-${{ env.SHORT_SHA }}-${{ env.TIMESTAMP }}
           done

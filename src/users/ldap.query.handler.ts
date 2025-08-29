@@ -6,7 +6,7 @@ export class LdapQueryHandler {
   private static readonly LDAP_ERROR_RESPONSE = `
       Lookup failed: javax.naming.NamingException: 
       [LDAP: error code 1 - 000004DC: Lda pErr: DSID-0C0906DC, comment: context not found., data 0, v1db1 ]; 
-      remaining name: 'OU=Users,O=BrokenCrystals'
+      remaining name: 'OU=Users,O=pureflow'
     `;
   private static readonly PARSER: RegExp =
     /\(&\(objectClass=person\)\(objectClass=user\)\(email=(.*)\)\)/;

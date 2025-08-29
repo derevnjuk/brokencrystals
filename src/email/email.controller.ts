@@ -16,7 +16,7 @@ import {
   SWAGGER_DESC_GET_EMAILS,
   SWAGGER_DESC_SEND_EMAIL
 } from './email.controller.swagger.desc';
-import splitUriIntoParamsPPVulnerable from '../utils/url';
+import splitUriIntoParamsPP from '../utils/url';
 
 @Controller('/api/email')
 @ApiTags('Emails controller')
@@ -25,7 +25,7 @@ export class EmailController {
 
   constructor(private emailService: EmailService) {}
 
-  readonly BC_EMAIL_ADDRESS = 'no-reply@brokencrystals.com';
+  readonly BC_EMAIL_ADDRESS = 'no-reply@pureflow.com';
 
   @Get('/sendSupportEmail')
   @ApiQuery({
@@ -84,7 +84,7 @@ export class EmailController {
     this.logger.debug(`Raw query ${rawQuery}`);
 
     // "Use" the status code
-    const uriParams = splitUriIntoParamsPPVulnerable(rawQuery);
+    const uriParams = splitUriIntoParamsPP(rawQuery);
     if (uriParams?.status) {
       responseJson.status = uriParams.status as HttpStatus;
     }

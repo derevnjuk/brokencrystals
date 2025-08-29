@@ -9,8 +9,8 @@ create table "product" ("id" serial primary key, "created_at" timestamptz(0) not
 
 set session_replication_role = 'origin';
 --password is admin
-INSERT INTO "user" (created_at, updated_at, email, password, first_name, last_name, is_admin, photo, company, card_number, phone_number, is_basic) VALUES (now(), now(), 'admin', '$argon2id$v=19$m=65536,t=3,p=4$jmtTCTEcjngErif00RfYAg$biS59Ixnrz+dHeJrJ91ybmHt+4wrVgcH3RXvfaqZtNI', 'admin', 'admin', true, null, 'Brightsec', '1234 5678 9012 3456', '+1 234 567 890', true);
-INSERT INTO "user" (created_at, updated_at, email, password, first_name, last_name, is_admin, photo, company, card_number, phone_number, is_basic) VALUES (now(), now(), 'user', '$argon2id$v=19$m=65536,t=3,p=4$hJX1v2kH3UFlEOhZFZn3RQ$oXDFhwgoxosiunmy720fBEBGiin0XNeTvDlDk3dUAT4', 'user', 'user', false, null, 'Brightsec', '1234 5678 9012 3456', '+1 234 567 890', true);
+INSERT INTO "user" (created_at, updated_at, email, password, first_name, last_name, is_admin, photo, company, card_number, phone_number, is_basic) VALUES (now(), now(), 'admin', '$argon2id$v=19$m=65536,t=3,p=4$jmtTCTEcjngErif00RfYAg$biS59Ixnrz+dHeJrJ91ybmHt+4wrVgcH3RXvfaqZtNI', 'admin', 'admin', true, null, 'Dull', '1234 5678 9012 3456', '+1 234 567 890', true);
+INSERT INTO "user" (created_at, updated_at, email, password, first_name, last_name, is_admin, photo, company, card_number, phone_number, is_basic) VALUES (now(), now(), 'user', '$argon2id$v=19$m=65536,t=3,p=4$hJX1v2kH3UFlEOhZFZn3RQ$oXDFhwgoxosiunmy720fBEBGiin0XNeTvDlDk3dUAT4', 'user', 'user', false, null, 'Dull', '1234 5678 9012 3456', '+1 234 567 890', true);
 
 --insert default products into the table
 INSERT INTO "product" ("created_at", "category", "photo_url", "name", "description") VALUES (now(), 'Healing', '/api/file?path=config/products/crystals/amethyst.jpg&type=image/jpg', 'Amethyst', 'a violet variety of quartz');

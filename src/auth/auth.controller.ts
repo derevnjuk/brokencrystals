@@ -38,18 +38,13 @@ import {
   SWAGGER_DESC_LOGIN_WITH_WEAK_KEY_JWT,
   SWAGGER_DESC_LOGIN_WITH_X5C_JWT,
   SWAGGER_DESC_LOGIN_WITH_X5U_JWT,
-  SWAGGER_DESC_VALIDATE_WITH_JKU_JWT,
   SWAGGER_DESC_VALIDATE_WITH_JWK_JWT,
   SWAGGER_DESC_VALIDATE_WITH_KID_SQL_JWT,
   SWAGGER_DESC_VALIDATE_WITH_WEAK_KEY_JWT,
-  SWAGGER_DESC_VALIDATE_WITH_X5C_JWT,
-  SWAGGER_DESC_VALIDATE_WITH_X5U_JWT,
   SWAGGER_DESC_CALL_OIDC_CLIENT,
   SWAGGER_DESC_REQUEST_WITH_DOM_CSRF_TOKEN,
   SWAGGER_DESC_REQUEST_WITH_SIMPLE_CSRF_TOKEN,
-  SWAGGER_DESC_LOGIN_WITH_HMAC_JWT,
-  SWAGGER_DESC_VALIDATE_WITH_HMAC_JWT,
-  SWAGGER_DESC_VALIDATE_WITH_RSA_SIGNATURE_JWT
+  SWAGGER_DESC_LOGIN_WITH_HMAC_JWT
 } from './auth.controller.swagger.desc';
 import { AuthGuard } from './auth.guard';
 import { AuthService, JwtProcessorType } from './auth.service';
@@ -157,9 +152,6 @@ export class AuthController {
         location: { type: 'string' }
       }
     }
-  })
-  @ApiOperation({
-    description: SWAGGER_DESC_VALIDATE_WITH_RSA_SIGNATURE_JWT
   })
   async validateWithRSASignatureJwt(): Promise<JwtValidationResponse> {
     return {
@@ -401,9 +393,6 @@ export class AuthController {
   @Get('jwt/jku/validate')
   @UseGuards(AuthGuard)
   @JwtType(JwtProcessorType.JKU)
-  @ApiOperation({
-    description: SWAGGER_DESC_VALIDATE_WITH_JKU_JWT
-  })
   @ApiOkResponse({
     type: JwtValidationResponse
   })
@@ -521,9 +510,6 @@ export class AuthController {
   @Get('jwt/x5c/validate')
   @UseGuards(AuthGuard)
   @JwtType(JwtProcessorType.X5C)
-  @ApiOperation({
-    description: SWAGGER_DESC_VALIDATE_WITH_X5C_JWT
-  })
   @ApiOkResponse({
     type: JwtValidationResponse
   })
@@ -581,9 +567,6 @@ export class AuthController {
   @Get('jwt/x5u/validate')
   @UseGuards(AuthGuard)
   @JwtType(JwtProcessorType.X5U)
-  @ApiOperation({
-    description: SWAGGER_DESC_VALIDATE_WITH_X5U_JWT
-  })
   @ApiOkResponse({
     type: JwtValidationResponse
   })
@@ -641,9 +624,6 @@ export class AuthController {
   @Get('jwt/hmac/validate')
   @UseGuards(AuthGuard)
   @JwtType(JwtProcessorType.HMAC)
-  @ApiOperation({
-    description: SWAGGER_DESC_VALIDATE_WITH_HMAC_JWT
-  })
   @ApiOkResponse({
     type: JwtValidationResponse
   })
