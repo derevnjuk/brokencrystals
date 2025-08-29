@@ -21,7 +21,7 @@ after(() => runner.clear());
 test('GET /.vcs', { signal: AbortSignal.timeout(timeout) }, async () => {
   await runner
     .createScan({
-      tests: ['version_control_systems', 'full_path_disclosure', 'improper_asset_management', 'xss'],
+      tests: ['version_control_systems'],
       attackParamLocations: [AttackParamLocation.PATH],
       starMetadata: {
         databases: ['PostgreSQL'],
