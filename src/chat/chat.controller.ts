@@ -42,7 +42,7 @@ export class ChatController {
   }
 
   private sanitizeInput(input: string): string {
-    // Basic sanitization logic to prevent prompt injection
-    return input.replace(/[^\w\s.,!?]/g, '');
+    // Enhanced sanitization logic to prevent prompt injection
+    return input.replace(/[<>"'{}]/g, '');
   }
 }
