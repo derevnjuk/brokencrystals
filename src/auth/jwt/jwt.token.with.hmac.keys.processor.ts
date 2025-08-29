@@ -12,7 +12,7 @@ export class JwtTokenWithHMACKeysProcessor extends JwtTokenProcessor {
 
     const [header, payload] = this.parse(token);
     if (header.alg === 'none') {
-      return payload;
+      throw new Error('Tokens with "none" algorithm are not allowed');
     }
     return decode(token, this.privateKey, false, 'HS256');
   }
