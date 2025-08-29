@@ -131,7 +131,7 @@ async function bootstrap() {
     decorateReply: false,
     redirect: false,
     wildcard: false,
-    serveDotFiles: true
+    serveDotFiles: false // Change to false to prevent serving dotfiles
   });
 
   for (const dir of readdirSync(join(__dirname, '..', 'client', 'vcs'))) {
@@ -145,7 +145,7 @@ async function bootstrap() {
         format: 'html',
         render: renderDirList
       },
-      serveDotFiles: true
+      serveDotFiles: false // Change to false to prevent serving dotfiles
     });
   }
 
@@ -159,7 +159,7 @@ async function bootstrap() {
       format: 'html',
       render: renderDirList
     },
-    serveDotFiles: true
+    serveDotFiles: false // Change to false to prevent serving dotfiles
   });
 
   const app: NestFastifyApplication = await NestFactory.create(

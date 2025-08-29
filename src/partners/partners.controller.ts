@@ -46,6 +46,10 @@ export class PartnersController {
     this.logger.debug(`Getting partners with xpath expression "${xpath}"`);
 
     try {
+      // Validate the xpath input to prevent injection
+      if (!this.isValidXPath(xpath)) {
+        throw new HttpException('Invalid XPath expression', HttpStatus.BAD_REQUEST);
+      }
       return this.partnersService.getPartnersProperties(xpath);
     } catch (err) {
       throw new HttpException(
@@ -86,6 +90,10 @@ export class PartnersController {
 
     try {
       const xpath = `//partners/partner[username/text()='${username}' and password/text()='${password}']/*`;
+      // Validate the xpath input to prevent injection
+      if (!this.isValidXPath(xpath)) {
+        throw new HttpException('Invalid XPath expression', HttpStatus.BAD_REQUEST);
+      }
       const xmlStr = this.partnersService.getPartnersProperties(xpath);
 
       // Check if account's data contains any information - If not, the login failed!
@@ -129,6 +137,10 @@ export class PartnersController {
 
     try {
       const xpath = `//partners/partner/name[contains(., '${keyword}')]`;
+      // Validate the xpath input to prevent injection
+      if (!this.isValidXPath(xpath)) {
+        throw new HttpException('Invalid XPath expression', HttpStatus.BAD_REQUEST);
+      }
       return this.partnersService.getPartnersProperties(xpath);
     } catch (err) {
       const errStr = err.toString();
@@ -143,5 +155,19 @@ export class PartnersController {
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
+  }
+
+  private isValidXPath(xpath: string): boolean {
+    // Basic validation logic for XPath
+    // This should be replaced with a more robust validation mechanism
+    const forbiddenPatterns = [
+      /\|/, // Disallow union
+      /\[\s*\d+\s*\]/, // Disallow positional predicates
+      /\btext\(\)\b/, // Disallow text() function
+      /\bcomment\(\)\b/, // Disallow comment() function
+      /\bprocessing-instruction\(\)\b/, // Disallow processing-instruction() function
+      /\bnode\(\)\b/ // Disallow node() function
+    ];
+    return !forbiddenPatterns.some(pattern => pattern.test(xpath));
   }
 }
