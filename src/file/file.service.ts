@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { CloudProvidersMetaData } from './cloud.providers.metadata';
 import { R_OK } from 'constants';
+import { URL } from 'url';
 
 @Injectable()
 export class FileService {
@@ -14,10 +15,21 @@ export class FileService {
     this.logger.log(`Reading file: ${file}`);
 
     if (file.startsWith('/')) {
+      // Prevent access to hidden directories like .hg
+      if (file.includes('/.hg/')) {
+        throw new Error('Access to this directory is forbidden');
+      }
+
       await fs.promises.access(file, R_OK);
 
       return fs.createReadStream(file);
     } else if (file.startsWith('http')) {
+      // Validate URL
+      const url = new URL(file);
+      if (!this.isValidUrl(url)) {
+        throw new Error('Invalid URL or not allowed');
+      }
+
       const content = await this.cloudProviders.get(file);
 
       if (content) {
@@ -28,10 +40,24 @@ export class FileService {
     } else {
       file = path.resolve(process.cwd(), file);
 
+      // Prevent access to hidden directories like .hg
+      if (file.includes('/.hg/')) {
+        throw new Error('Access to this directory is forbidden');
+      }
+
       await fs.promises.access(file, R_OK);
 
       return fs.createReadStream(file);
     }
+  }
+
+  private isValidUrl(url: URL): boolean {
+    // Only allow URLs from known cloud provider metadata services
+    const allowedHosts = [
+      'metadata.google.internal',
+      '169.254.169.254'
+    ];
+    return allowedHosts.includes(url.hostname);
   }
 
   async deleteFile(file: string): Promise<boolean> {

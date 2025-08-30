@@ -71,13 +71,15 @@ export class AuthGuard implements CanActivate {
       context.getHandler()
     );
 
+    if (processorType === undefined || processorType === null) {
+      throw new UnauthorizedException('Processor type not found');
+    }
+
     try {
       return !!(await this.authService.validateToken(token, processorType));
-    } catch {
-      return !!(await this.authService.validateToken(
-        token,
-        JwtProcessorType.BEARER
-      ));
+    } catch (error) {
+      this.logger.error(`Token validation failed: ${error.message}`);
+      throw new UnauthorizedException('Invalid token');
     }
   }
 
