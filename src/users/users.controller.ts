@@ -135,10 +135,15 @@ export class UsersController {
       }
     }
   })
-  async getById(@Param('id') id: number): Promise<UserDto> {
+  @UseGuards(AuthGuard)
+  async getById(@Param('id') id: number, @Req() req: FastifyRequest): Promise<UserDto> {
     try {
       this.logger.debug(`Find a user by id: ${id}`);
-      return new UserDto(await this.usersService.findById(id));
+      const user = await this.usersService.findById(id);
+      if (this.originEmail(req) !== user.email) {
+        throw new ForbiddenException('You are not authorized to access this user information.');
+      }
+      return new UserDto(user);
     } catch (err) {
       throw new HttpException(err.message, err.status);
     }
@@ -459,8 +464,7 @@ export class UsersController {
       type: 'object',
       properties: {
         statusCode: { type: 'number' },
-        message: { type: 'string' },
-        error: { type: 'string' }
+        message: { type: 'string' }
       }
     }
   })
@@ -554,12 +558,19 @@ export class UsersController {
   }
 
   public originEmail(request: FastifyRequest): string {
-    return JSON.parse(
-      Buffer.from(
-        request.headers.authorization.split('.')[1],
-        'base64'
-      ).toString()
-    ).user;
+    const token = request.headers.authorization;
+    if (!token) {
+      throw new UnauthorizedException('No token provided');
+    }
+    const tokenParts = token.split('.');
+    if (tokenParts.length !== 3) {
+      throw new UnauthorizedException('Invalid token format');
+    }
+    const payload = JSON.parse(Buffer.from(tokenParts[1], 'base64').toString());
+    if (!payload.user) {
+      throw new UnauthorizedException('Invalid token payload');
+    }
+    return payload.user;
   }
 
   private async doesUserExist(user: UserDto): Promise<boolean> {
