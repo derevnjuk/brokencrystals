@@ -14,7 +14,7 @@ export class JwtTokenWithWeakKeyProcessor extends JwtTokenProcessor {
     if (decoded && decoded.header && decoded.header.alg === 'none') {
       throw new Error('Invalid token algorithm');
     }
-    return decoded;
+    return decode(token, this.key, true, 'HS256'); // Enforce HS256 algorithm
   }
 
   async createToken(payload: unknown): Promise<string> {

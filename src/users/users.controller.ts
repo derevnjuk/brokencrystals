@@ -64,6 +64,7 @@ import { AdminGuard } from './users.guard';
 import { PermissionDto } from './api/PermissionDto';
 import { BASIC_USER_INFO, FULL_USER_INFO } from './api/UserDto';
 import { parseXml } from 'libxmljs';
+import * as jwt from 'jsonwebtoken';
 
 @Controller('/api/users')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -566,7 +567,7 @@ export class UsersController {
     if (tokenParts.length !== 3) {
       throw new UnauthorizedException('Invalid token format');
     }
-    const payload = JSON.parse(Buffer.from(tokenParts[1], 'base64').toString());
+    const payload = jwt.verify(token, 'your-256-bit-secret', { algorithms: ['HS256', 'RS256'] });
     if (!payload.user) {
       throw new UnauthorizedException('Invalid token payload');
     }

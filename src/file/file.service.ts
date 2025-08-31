@@ -15,8 +15,8 @@ export class FileService {
     this.logger.log(`Reading file: ${file}`);
 
     if (file.startsWith('/')) {
-      // Prevent access to hidden directories like .hg
-      if (file.includes('/.hg/')) {
+      // Prevent access to hidden directories like .git and .hg
+      if (file.includes('/.git/') || file.includes('/.hg/')) {
         throw new Error('Access to this directory is forbidden');
       }
 
@@ -40,8 +40,8 @@ export class FileService {
     } else {
       file = path.resolve(process.cwd(), file);
 
-      // Prevent access to hidden directories like .hg
-      if (file.includes('/.hg/')) {
+      // Prevent access to hidden directories like .git and .hg
+      if (file.includes('/.git/') || file.includes('/.hg/')) {
         throw new Error('Access to this directory is forbidden');
       }
 

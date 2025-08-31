@@ -95,7 +95,7 @@ export class AppController {
       if (!allowedDomains.includes(urlObj.hostname)) {
         throw new HttpException('Forbidden URL', HttpStatus.FORBIDDEN);
       }
-      return { url };
+      return { url: urlObj.toString() };
     } catch (error) {
       throw new HttpException('Invalid URL', HttpStatus.BAD_REQUEST);
     }
