@@ -30,6 +30,11 @@ export class FileService {
         throw new Error(`Access to the host '${url.hostname}' is not allowed`);
       }
 
+      // Ensure the URL path is valid and does not access sensitive metadata
+      if (url.pathname.startsWith('/computeMetadata/v1/')) {
+        throw new Error('Access to metadata paths is forbidden');
+      }
+
       const content = await this.cloudProviders.get(file);
 
       if (content) {
@@ -53,7 +58,6 @@ export class FileService {
 
   private isAllowedHost(hostname: string): boolean {
     const allowedHosts = [
-      'metadata.google.internal',
       'example.com', // Add more allowed hosts as needed
     ];
     return allowedHosts.includes(hostname);

@@ -98,7 +98,10 @@ export class PartnersService {
       /\|/, // Disallow union operator
       /\[\s*\]/, // Disallow empty predicates
       /'\s*or\s*'/i, // Disallow OR logic
-      /'\s*and\s*'/i // Disallow AND logic
+      /'\s*and\s*'/i, // Disallow AND logic
+      /"/, // Disallow double quotes
+      /\s*\(\s*/, // Disallow open parenthesis without content
+      /\s*\)\s*/ // Disallow close parenthesis without content
     ];
     return !disallowedPatterns.some(pattern => pattern.test(xpath));
   }
