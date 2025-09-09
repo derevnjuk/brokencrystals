@@ -19,6 +19,7 @@ export class JwtTokenWithRSASignatureKeysProcessor extends JwtTokenProcessor {
       throw new Error('Tokens with "none" algorithm are not allowed');
     }
 
+    // Validate the token using RS256 algorithm
     return decode(token, this.publicKey, true, 'RS256');
   }
 

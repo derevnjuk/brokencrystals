@@ -14,6 +14,9 @@ export class JwtTokenWithHMACKeysProcessor extends JwtTokenProcessor {
     if (header.alg === 'none') {
       throw new Error('Tokens with "none" algorithm are not allowed');
     }
+    if (header.alg !== 'HS256') {
+      throw new Error(`Unsupported algorithm: ${header.alg}`);
+    }
     return decode(token, this.privateKey, false, 'HS256');
   }
 
