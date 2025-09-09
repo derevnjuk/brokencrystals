@@ -121,9 +121,13 @@ export class AuthService {
     );
   }
 
-  validateToken(token: string, processor: JwtProcessorType): Promise<unknown> {
+  async validateToken(token: string, processor: JwtProcessorType): Promise<unknown> {
     if (!token || token.split('.').length !== 3) {
       throw new Error('Invalid token format');
+    }
+    const decodedHeader = JSON.parse(Buffer.from(token.split('.')[0], 'base64').toString('utf8'));
+    if (decodedHeader.alg === 'None') {
+      throw new Error('Tokens with "None" algorithm are not allowed');
     }
     return this.processors.get(processor).validateToken(token);
   }
