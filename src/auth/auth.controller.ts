@@ -153,7 +153,18 @@ export class AuthController {
       }
     }
   })
-  async validateWithRSASignatureJwt(): Promise<JwtValidationResponse> {
+  async validateWithRSASignatureJwt(@Req() req: FastifyRequest): Promise<JwtValidationResponse> {
+    const token = req.headers['authorization'];
+    if (!token) {
+      throw new UnauthorizedException('Token is missing');
+    }
+
+    try {
+      await this.authService.validateToken(token, JwtProcessorType.RSA_SIGNATURE);
+    } catch (error) {
+      throw new UnauthorizedException('Invalid token');
+    }
+
     return {
       secret: 'this is our secret'
     };
