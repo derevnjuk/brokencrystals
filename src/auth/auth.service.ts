@@ -122,6 +122,9 @@ export class AuthService {
   }
 
   validateToken(token: string, processor: JwtProcessorType): Promise<unknown> {
+    if (!token || token.split('.').length !== 3) {
+      throw new Error('Invalid token format');
+    }
     return this.processors.get(processor).validateToken(token);
   }
 
