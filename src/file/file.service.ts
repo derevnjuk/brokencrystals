@@ -49,10 +49,9 @@ export class FileService {
   }
 
   private isAllowedUrl(url: URL): boolean {
-    // Updated allowed hosts to prevent SSRF
     const allowedHosts = [
-      'example.com', // Add legitimate hosts here
-      'another-example.com'
+      'metadata.google.internal',
+      '169.254.169.254'
     ];
     return allowedHosts.includes(url.hostname);
   }

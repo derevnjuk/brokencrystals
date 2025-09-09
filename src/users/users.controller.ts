@@ -262,7 +262,8 @@ export class UsersController {
   })
   async deleteUserPhotoById(
     @Param('id') id: number,
-    @Query('isAdmin') isAdminParam: string
+    @Query('isAdmin') isAdminParam: string,
+    @Req() req: FastifyRequest
   ) {
     isAdminParam = isAdminParam.toLowerCase();
     const isAdmin =
@@ -276,6 +277,12 @@ export class UsersController {
       throw new NotFoundException({
         error: 'Could not file user'
       });
+    }
+
+    // Ensure the request is authenticated and authorized
+    const requestUserEmail = this.originEmail(req);
+    if (requestUserEmail !== user.email) {
+      throw new ForbiddenException('You are not authorized to delete this photo.');
     }
 
     await this.usersService.deletePhoto(id);
