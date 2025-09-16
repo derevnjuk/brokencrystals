@@ -44,19 +44,23 @@ export class ProductsService {
 
   async findLatest(limit: number): Promise<Product[]> {
     this.logger.debug(`Find ${limit} latest products`);
+    const maxLimit = 10; // Set a maximum limit to prevent abuse
     return this.productsRepository.find(
       {},
-      { limit, orderBy: { createdAt: 'desc' } }
+      { limit: Math.min(limit, maxLimit), orderBy: { createdAt: 'desc' } }
     );
   }
 
-  async updateProduct(query: string): Promise<void> {
+  async updateProduct(productName: string): Promise<void> {
     try {
-      this.logger.debug(`Updating products table with query "${query}"`);
-      await this.em.getConnection().execute(query);
+      this.logger.debug(`Updating product with name "${productName}"`);
+      await this.em.createQueryBuilder(Product)
+        .update({ viewsCount: () => 'views_count + 1' })
+        .where({ name: productName })
+        .execute();
       return;
     } catch (err) {
-      this.logger.warn(`Failed to execute query. Error: ${err.message}`);
+      this.logger.warn(`Failed to execute update. Error: ${err.message}`);
       throw new InternalServerErrorException(err.message);
     }
   }
