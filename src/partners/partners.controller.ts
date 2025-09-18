@@ -128,7 +128,9 @@ export class PartnersController {
     this.logger.debug(`Searching partner names by the keyword "${keyword}"`);
 
     try {
-      const xpath = `//partners/partner/name[contains(., '${keyword}')]`;
+      // Sanitize the keyword to prevent XPath Injection
+      const sanitizedKeyword = keyword.replace(/'/g, "\'");
+      const xpath = `//partners/partner/name[contains(., '${sanitizedKeyword}')]`;
       return this.partnersService.getPartnersProperties(xpath);
     } catch (err) {
       const errStr = err.toString();
