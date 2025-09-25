@@ -144,6 +144,10 @@ export class PartnersController {
     this.logger.debug(`Searching partner names by the keyword "${keyword}"`);
 
     try {
+      // Sanitize the keyword input to prevent injection
+      if (!this.isValidKeyword(keyword)) {
+        throw new Error('Invalid search keyword');
+      }
       const xpath = `//partners/partner/name[contains(., '${keyword}')]`;
       return this.partnersService.getPartnersProperties(xpath);
     } catch (err) {
@@ -159,5 +163,14 @@ export class PartnersController {
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
+  }
+
+  // Method to validate the search keyword
+  private isValidKeyword(keyword: string): boolean {
+    // Basic validation logic, can be extended
+    const forbiddenPatterns = [
+      /['"\[\]\|\(\)\@]/, // disallow special characters
+    ];
+    return !forbiddenPatterns.some((pattern) => pattern.test(keyword));
   }
 }
