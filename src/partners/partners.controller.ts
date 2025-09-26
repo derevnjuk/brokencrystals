@@ -46,7 +46,9 @@ export class PartnersController {
     this.logger.debug(`Getting partners with xpath expression "${xpath}"`);
 
     try {
-      return this.partnersService.getPartnersProperties(xpath);
+      // Sanitize the input before passing it to the service
+      const sanitizedXpath = this.sanitizeXpath(xpath);
+      return this.partnersService.getPartnersProperties(sanitizedXpath);
     } catch (err) {
       throw new HttpException(
         `Failed to load XML using XPATH. Details: ${err}`,
@@ -143,5 +145,10 @@ export class PartnersController {
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
+  }
+
+  private sanitizeXpath(xpathExpression: string): string {
+    // Basic sanitization logic to escape single quotes
+    return xpathExpression.replace(/'/g, "\'");
   }
 }
