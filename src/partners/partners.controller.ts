@@ -97,6 +97,10 @@ export class PartnersController {
     );
 
     try {
+      // Sanitize inputs to prevent XPath Injection
+      if (!this.isValidXPath(username) || !this.isValidXPath(password)) {
+        throw new Error('Invalid input');
+      }
       const xpath = `//partners/partner[username/text()='${username}' and password/text()='${password}']/*`;
       const xmlStr = this.partnersService.getPartnersProperties(xpath);
 
@@ -140,6 +144,10 @@ export class PartnersController {
     this.logger.debug(`Searching partner names by the keyword "${keyword}"`);
 
     try {
+      // Sanitize input to prevent XPath Injection
+      if (!this.isValidXPath(keyword)) {
+        throw new Error('Invalid input');
+      }
       const xpath = `//partners/partner/name[contains(., '${keyword}')]`;
       return this.partnersService.getPartnersProperties(xpath);
     } catch (err) {
