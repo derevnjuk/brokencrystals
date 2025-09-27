@@ -46,7 +46,9 @@ export class PartnersController {
     this.logger.debug(`Getting partners with xpath expression "${xpath}"`);
 
     try {
-      return this.partnersService.getPartnersProperties(xpath);
+      // Sanitize the input before passing it to the service
+      const sanitizedXpath = this.partnersService.sanitizeXpath(xpath);
+      return this.partnersService.getPartnersProperties(sanitizedXpath);
     } catch (err) {
       throw new HttpException(
         `Failed to load XML using XPATH. Details: ${err}`,
@@ -86,7 +88,9 @@ export class PartnersController {
 
     try {
       const xpath = `//partners/partner[username/text()='${username}' and password/text()='${password}']/*`;
-      const xmlStr = this.partnersService.getPartnersProperties(xpath);
+      // Sanitize the input before passing it to the service
+      const sanitizedXpath = this.partnersService.sanitizeXpath(xpath);
+      const xmlStr = this.partnersService.getPartnersProperties(sanitizedXpath);
 
       // Check if account's data contains any information - If not, the login failed!
       if (
@@ -129,7 +133,9 @@ export class PartnersController {
 
     try {
       const xpath = `//partners/partner/name[contains(., '${keyword}')]`;
-      return this.partnersService.getPartnersProperties(xpath);
+      // Sanitize the input before passing it to the service
+      const sanitizedXpath = this.partnersService.sanitizeXpath(xpath);
+      return this.partnersService.getPartnersProperties(sanitizedXpath);
     } catch (err) {
       const errStr = err.toString();
       const errorMessage =

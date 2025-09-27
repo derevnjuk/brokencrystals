@@ -87,7 +87,7 @@ export class PartnersService {
     return this.getFormattedXMLOutput(xmlNodes);
   }
 
-  private sanitizeXpath(xpathExpression: string): string {
+  sanitizeXpath(xpathExpression: string): string {
     // Basic sanitization logic to escape single quotes
     return xpathExpression.replace(/'/g, "\'");
   }
