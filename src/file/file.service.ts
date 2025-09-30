@@ -48,9 +48,8 @@ export class FileService {
         CloudProvidersMetaData.AWS,
         CloudProvidersMetaData.AZURE,
         CloudProvidersMetaData.DIGITAL_OCEAN
-      ].some(baseUrl => parsedUrl.href.startsWith(baseUrl));
+      ].some(baseUrl => parsedUrl.origin === baseUrl);
     } catch (error) {
-      this.logger.error(`Invalid URL format: ${url}`);
       return false;
     }
   }

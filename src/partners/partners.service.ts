@@ -89,6 +89,7 @@ export class PartnersService {
 
   private sanitizeXpath(xpathExpression: string): string {
     // Basic sanitization to escape single quotes
-    return xpathExpression.replace(/'/g, "\'");
+    // Improved sanitization to allow only safe characters
+    return xpathExpression.replace(/[^a-zA-Z0-9_\-\/\[\]\(\)\*\@\.\:\=\s]/g, '');
   }
 }
