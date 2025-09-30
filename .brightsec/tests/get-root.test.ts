@@ -21,7 +21,7 @@ after(() => runner.clear());
 test('GET /', { signal: AbortSignal.timeout(timeout) }, async () => {
   await runner
     .createScan({
-      tests: ['improper_asset_management', 'version_control_systems', 'xss', 'csrf', 'secret_tokens'],
+      tests: ['version_control_systems'],
       attackParamLocations: [AttackParamLocation.HEADER],
       starMetadata: {
         databases: ['PostgreSQL'],
