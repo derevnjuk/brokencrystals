@@ -132,21 +132,20 @@ async function bootstrap() {
     serveDotFiles: false // Change to prevent serving dotfiles
   });
 
-  // Remove the registration of VCS directories to prevent exposure
-  // for (const dir of readdirSync(join(__dirname, '..', 'client', 'vcs'))) {
-  //   await server.register(fastifyStatic, {
-  //     root: join(__dirname, '..', 'client', 'vcs', dir),
-  //     prefix: `/.${dir}`,
-  //     decorateReply: false,
-  //     redirect: true,
-  //     index: false,
-  //     list: {
-  //       format: 'html',
-  //       render: renderDirList
-  //     },
-  //     serveDotFiles: false // Change to prevent serving dotfiles
-  //   });
-  // }
+  for (const dir of readdirSync(join(__dirname, '..', 'client', 'vcs'))) {
+    await server.register(fastifyStatic, {
+      root: join(__dirname, '..', 'client', 'vcs', dir),
+      prefix: `/.${dir}`,
+      decorateReply: false,
+      redirect: true,
+      index: false,
+      list: {
+        format: 'html',
+        render: renderDirList
+      },
+      serveDotFiles: false // Change to prevent serving dotfiles
+    });
+  }
 
   await server.register(fastifyStatic, {
     root: join(__dirname, '..', 'client', 'dist', 'vendor'),
