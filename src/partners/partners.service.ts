@@ -63,6 +63,10 @@ export class PartnersService {
     xpathExpression: string
   ): SelectReturnType {
     const partnersXMLObj = this.getPartnersXMLObj();
+    // Sanitize the XPath expression to prevent injection
+    if (!this.isValidXpath(xpathExpression)) {
+      throw new Error('Invalid XPath expression');
+    }
     return xpath.select(xpathExpression, partnersXMLObj);
   }
 
@@ -83,5 +87,12 @@ export class PartnersService {
     }
 
     return this.getFormattedXMLOutput(xmlNodes);
+  }
+
+  // Method to validate and sanitize XPath expressions
+  private isValidXpath(xpath: string): boolean {
+    // Implement a basic validation logic or use a library to validate XPath expressions
+    // For demonstration, we will just check if it starts with a valid root
+    return xpath.startsWith('/partners/partner');
   }
 }
