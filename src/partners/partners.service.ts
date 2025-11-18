@@ -63,6 +63,11 @@ export class PartnersService {
     xpathExpression: string
   ): SelectReturnType {
     const partnersXMLObj = this.getPartnersXMLObj();
+    // Sanitize the XPath expression to prevent injection
+    if (!this.isValidXpath(xpathExpression)) {
+      this.logger.error(`Invalid XPath expression: ${xpathExpression}`);
+      return [];
+    }
     return xpath.select(xpathExpression, partnersXMLObj);
   }
 
@@ -83,5 +88,12 @@ export class PartnersService {
     }
 
     return this.getFormattedXMLOutput(xmlNodes);
+  }
+
+  // Method to validate and sanitize XPath expressions
+  private isValidXpath(xpath: string): boolean {
+    // Implement a basic allow-list or pattern check for valid XPath expressions
+    const xpathPattern = /^\/partners\/partner(\/\w+)*$/;
+    return xpathPattern.test(xpath);
   }
 }
