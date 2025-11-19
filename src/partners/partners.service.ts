@@ -60,18 +60,27 @@ export class PartnersService {
   }
 
   private selectPartnerPropertiesByXPATH(
-    xpathExpression: string
+    username: string,
+    password: string
   ): SelectReturnType {
     const partnersXMLObj = this.getPartnersXMLObj();
+    const sanitizedUsername = this.sanitizeInput(username);
+    const sanitizedPassword = this.sanitizeInput(password);
+    const xpathExpression = `//partners/partner[username/text()='${sanitizedUsername}' and password/text()='${sanitizedPassword}']/*`;
     return xpath.select(xpathExpression, partnersXMLObj);
+  }
+
+  private sanitizeInput(input: string): string {
+    // Basic sanitization to escape single quotes
+    return input.replace(/'/g, "\'");
   }
 
   private getFormattedXMLOutput(xmlNodes): string {
     return `${this.XML_HEADER}\n<root>\n${xmlNodes.join('\n')}\n</root>`;
   }
 
-  getPartnersProperties(xpathExpression: string): string {
-    let xmlNodes = this.selectPartnerPropertiesByXPATH(xpathExpression);
+  getPartnersProperties(username: string, password: string): string {
+    let xmlNodes = this.selectPartnerPropertiesByXPATH(username, password);
 
     if (!Array.isArray(xmlNodes)) {
       this.logger.debug(
