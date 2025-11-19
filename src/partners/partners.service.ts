@@ -64,15 +64,12 @@ export class PartnersService {
     password: string
   ): SelectReturnType {
     const partnersXMLObj = this.getPartnersXMLObj();
-    const sanitizedUsername = this.sanitizeInput(username);
-    const sanitizedPassword = this.sanitizeInput(password);
-    const xpathExpression = `//partners/partner[username/text()='${sanitizedUsername}' and password/text()='${sanitizedPassword}']/*`;
-    return xpath.select(xpathExpression, partnersXMLObj);
-  }
-
-  private sanitizeInput(input: string): string {
-    // Basic sanitization to escape single quotes
-    return input.replace(/'/g, "\'");
+    const xpathExpression = `//partners/partner[username/text()=$username and password/text()=$password]/*`;
+    const variables = {
+      username: username,
+      password: password
+    };
+    return xpath.selectWithVariables(xpathExpression, partnersXMLObj, variables);
   }
 
   private getFormattedXMLOutput(xmlNodes): string {
