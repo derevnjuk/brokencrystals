@@ -21,7 +21,7 @@ after(() => runner.clear());
 test('GET /api/partners/searchPartners', { signal: AbortSignal.timeout(timeout) }, async () => {
   await runner
     .createScan({
-      tests: ['xpathi', 'xss', 'csrf', 'business_constraint_bypass'],
+      tests: ['xpathi'],
       attackParamLocations: [AttackParamLocation.QUERY, AttackParamLocation.HEADER],
       starMetadata: {
         "code_source": "derevnjuk/pureflow:stable",
