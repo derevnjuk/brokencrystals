@@ -110,7 +110,7 @@ export class ProductsController {
     }
     const maxLimit = 10; // Set a maximum limit to prevent excessive data retrieval
     const effectiveLimit = Math.min(limit || 3, maxLimit);
-    if (effectiveLimit > maxLimit) {
+    if (limit > maxLimit) {
       throw new BadRequestException(`Limit cannot exceed ${maxLimit}`);
     }
     const products = await this.productsService.findLatest(effectiveLimit);
