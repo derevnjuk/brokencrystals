@@ -1,4 +1,4 @@
-import { InternalServerErrorException, UseGuards, BadRequestException } from '@nestjs/common';
+import { InternalServerErrorException, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import { JwtProcessorType } from '../auth/auth.service';
 import { JwtType } from '../auth/jwt/jwt.type.decorator';
@@ -27,24 +27,8 @@ export class ProductsResolver {
   @Query(() => [Product], {
     description: API_DESC_GET_LATEST_PRODUCTS
   })
-  async latestProducts(
-    @Args('limit', { type: () => Number, nullable: true }) limit?: number
-  ): Promise<Product[]> {
-    const MAX_LIMIT = 10;
-    let parsedLimit = 3;
-    if (limit !== undefined && limit !== null) {
-      parsedLimit = parseInt(limit as any, 10);
-      if (isNaN(parsedLimit)) {
-        throw new BadRequestException('Limit must be a number');
-      }
-      if (parsedLimit < 1) {
-        throw new BadRequestException('Limit must be at least 1');
-      }
-      if (parsedLimit > MAX_LIMIT) {
-        throw new BadRequestException(`Limit must not exceed ${MAX_LIMIT}`);
-      }
-    }
-    const products = await this.productsService.findLatest(parsedLimit);
+  async latestProducts(): Promise<Product[]> {
+    const products = await this.productsService.findLatest(3);
     return products.map((p: Product) => new ProductDto(p));
   }
 

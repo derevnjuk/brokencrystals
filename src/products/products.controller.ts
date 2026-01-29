@@ -102,21 +102,13 @@ export class ProductsController {
     @Query('limit') limit: number
   ): Promise<ProductDto[]> {
     this.logger.debug('Get latest products.');
-    const MAX_LIMIT = 10;
-    let parsedLimit = 3;
-    if (limit !== undefined && limit !== null) {
-      parsedLimit = parseInt(limit as any, 10);
-      if (isNaN(parsedLimit)) {
-        throw new BadRequestException('Limit must be a number');
-      }
-      if (parsedLimit < 1) {
-        throw new BadRequestException('Limit must be at least 1');
-      }
-      if (parsedLimit > MAX_LIMIT) {
-        throw new BadRequestException(`Limit must not exceed ${MAX_LIMIT}`);
-      }
+    if (limit && isNaN(limit)) {
+      throw new BadRequestException('Limit must be a number');
     }
-    const products = await this.productsService.findLatest(parsedLimit);
+    if (limit && limit < 0) {
+      throw new BadRequestException('Limit must be positive');
+    }
+    const products = await this.productsService.findLatest(limit || 3);
     return products.map((p: Product) => new ProductDto(p));
   }
 
