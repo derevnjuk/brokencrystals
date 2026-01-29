@@ -104,8 +104,8 @@ export class ProductsController {
     this.logger.debug('Get latest products.');
     const maxLimit = 10; // Set a maximum limit to prevent excessive data retrieval
     let parsedLimit = parseInt(limit, 10);
-    if (isNaN(parsedLimit) || parsedLimit < 0) {
-      throw new BadRequestException('Limit must be a positive number');
+    if (isNaN(parsedLimit) || parsedLimit <= 0) {
+      parsedLimit = 3; // Default limit if invalid
     }
     parsedLimit = Math.min(parsedLimit, maxLimit);
     const products = await this.productsService.findLatest(parsedLimit);
