@@ -110,6 +110,9 @@ export class ProductsController {
     }
     const maxLimit = 10; // Set a maximum limit to prevent abuse
     const effectiveLimit = Math.min(limit || 3, maxLimit);
+    if (limit > maxLimit) {
+      this.logger.warn(`Requested limit ${limit} exceeds maximum allowed limit of ${maxLimit}. Using ${maxLimit} instead.`);
+    }
     const products = await this.productsService.findLatest(effectiveLimit);
     return products.map((p: Product) => new ProductDto(p));
   }
