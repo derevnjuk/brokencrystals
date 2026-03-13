@@ -22,6 +22,13 @@ jobs:
         with:
           node-version: 22.x
 
+      - name: Check DockerHub Secrets
+        run: |
+          if [ -z "${{ secrets.DOCKERHUB_USERNAME }}" ] || [ -z "${{ secrets.DOCKERHUB_TOKEN }}" ]; then
+            echo "ERROR: DockerHub credentials are not set in repository secrets." >&2
+            exit 1
+          fi
+
       - name: Docker Login
         run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
 
