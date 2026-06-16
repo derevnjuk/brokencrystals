@@ -1,0 +1,35 @@
+name: star-mcp-workspace
+
+on:
+  workflow_dispatch:
+    inputs:
+      star_ws_url:
+        description: "Star WebSocket hub URL (wss://...)"
+        required: true
+      run_id:
+        description: "Workflow run ID used to pair the connection"
+        required: true
+
+jobs:
+  workspace:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install MCP server deps
+        run: npm ci
+        working-directory: .bright/mcp-workspace-server
+
+      - name: Run MCP workspace server
+        env:
+          STAR_WS_URL: ${{ inputs.star_ws_url }}
+          RUN_ID: ${{ inputs.run_id }}
+          STAR_WS_TOKEN: ${{ secrets.BRIGHT_TOKEN }}
+          WORKDIR: ${{ github.workspace }}
+        run: npx tsx src/index.ts
+        working-directory: .bright/mcp-workspace-server
