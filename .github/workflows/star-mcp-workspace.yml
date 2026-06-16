@@ -80,7 +80,7 @@ jobs:
       - name: Run MCP workspace server
         env:
           STAR_WS_URL: "wss://nicely-picked-quail.ngrok-free.app/star/mcp-workspace"
-          RUN_ID: "357dae41-e02a-506f-a47f-baf9e4dfd9d1"
+          RUN_ID: "019ed0fb-cfcc-7dc2-b78b-683ae25ba31e_70"
           STAR_WS_TOKEN: ${{ env.BRIGHT_TOKEN }}
           WORKDIR: ${{ github.workspace }}
         run: npx tsx src/index.ts
