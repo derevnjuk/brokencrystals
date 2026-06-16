@@ -1,0 +1,36 @@
+name: star-mcp-workspace
+
+# Triggered by the push that adds the workspace files (done by Star's StartWorkspace
+# activity). Scoped with a paths filter so later commits on this branch (security fixes,
+# test changes, etc.) do not re-trigger and spawn duplicate MCP server connections.
+on:
+  push:
+    branches:
+      - "bright/357dae41-e02a-506f-a47f-baf9e4dfd9d1"
+    paths:
+      - ".bright/mcp-workspace-server/**"
+      - ".github/workflows/star-mcp-workspace.yml"
+
+jobs:
+  workspace:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install MCP server deps
+        run: npm install
+        working-directory: .bright/mcp-workspace-server
+
+      - name: Run MCP workspace server
+        env:
+          STAR_WS_URL: "development.playground.brightsec.com"
+          RUN_ID: "357dae41-e02a-506f-a47f-baf9e4dfd9d1"
+          STAR_WS_TOKEN: ${{ secrets.BRIGHT_TOKEN }}
+          WORKDIR: ${{ github.workspace }}
+        run: npx tsx src/index.ts
+        working-directory: .bright/mcp-workspace-server
