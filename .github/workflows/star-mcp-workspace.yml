@@ -1,0 +1,107 @@
+name: star-mcp-workspace
+
+# Triggered by the push that adds the workspace files (done by Star's StartWorkspace
+# activity). Scoped with a paths filter so later commits on this branch (security fixes,
+# test changes, etc.) do not re-trigger and spawn duplicate MCP server connections.
+on:
+  push:
+    branches:
+      - "bright/357dae41-e02a-506f-a47f-baf9e4dfd9d1"
+    paths:
+      - ".bright/mcp-workspace-server/**"
+      - ".github/workflows/star-mcp-workspace.yml"
+
+# id-token: write is required to mint the GitHub OIDC JWT that is exchanged for a
+# short-lived Bright token via Workload Identity Federation (no long-lived secret).
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  workspace:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      BRIGHT_HOSTNAME: "development.playground.brightsec.com"
+      BRIGHT_PROJECT_ID: "2tiBS9X13Ps5BkKzBdbWgj"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # Workload Identity Federation: RFC 8693 token exchange.
+      # https://docs.brightsec.com/docs/workload-identity-federation
+      - name: Exchange OIDC token for Bright token
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          OIDC_TOKEN=$(curl -sS -H "Authorization: Bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
+            "${ACTIONS_ID_TOKEN_REQUEST_URL}" | jq -r '.value // empty')
+          if [ -z "${OIDC_TOKEN}" ]; then
+            echo "Error: could not obtain GitHub OIDC token." >&2
+            exit 1
+          fi
+
+          BRIGHT_BASE_URL="https://${BRIGHT_HOSTNAME}"
+
+          # resource pins the exchange to this exact project so the token cannot match a
+          # WIF configuration in another Bright project.
+          exchange_payload=$(jq -n \
+            --arg token "${OIDC_TOKEN}" \
+            --arg resource "${BRIGHT_BASE_URL}/api/v1/projects/${BRIGHT_PROJECT_ID}" \
+            '{
+              grant_type: "urn:ietf:params:oauth:grant-type:token-exchange",
+              subject_token: $token,
+              subject_token_type: "urn:ietf:params:oauth:token-type:id_token",
+              resource: $resource
+            }')
+
+          exchange_response=$(curl -sS --fail-with-body \
+            -X POST "${BRIGHT_BASE_URL}/api/v1/token" \
+            -H 'Content-Type: application/json' \
+            --data "${exchange_payload}")
+
+          BRIGHT_TOKEN=$(jq -r '.access_token // empty' <<< "${exchange_response}")
+          if [ -z "${BRIGHT_TOKEN}" ]; then
+            echo "Error: OIDC exchange response did not include access_token." >&2
+            exit 1
+          fi
+
+          echo "::add-mask::${BRIGHT_TOKEN}"
+          echo "BRIGHT_TOKEN=${BRIGHT_TOKEN}" >> "$GITHUB_ENV"
+
+      - name: Install MCP server deps
+        run: npm install
+        working-directory: .bright/mcp-workspace-server
+
+      - name: Run MCP workspace server
+        env:
+          STAR_WS_URL: "wss://nicely-picked-quail.ngrok-free.app/star/mcp-workspace"
+          RUN_ID: "357dae41-e02a-506f-a47f-baf9e4dfd9d1"
+          STAR_WS_TOKEN: ${{ env.BRIGHT_TOKEN }}
+          WORKDIR: ${{ github.workspace }}
+        run: npx tsx src/index.ts
+        working-directory: .bright/mcp-workspace-server
+
+      # Posthook: revoke the temporary Bright access token once the job is done, per
+      # RFC 7009. Runs even if earlier steps failed. Non-fatal on its own failure.
+      - name: Revoke Bright token
+        if: always()
+        shell: bash
+        run: |
+          set -uo pipefail
+          if [ -z "${BRIGHT_TOKEN:-}" ]; then
+            echo "No Bright token to revoke."
+            exit 0
+          fi
+
+          revoke_payload=$(jq -n --arg token "${BRIGHT_TOKEN}" \
+            '{ token: $token, token_type_hint: "access_token" }')
+
+          curl -sS --fail-with-body \
+            -X POST "https://${BRIGHT_HOSTNAME}/api/v1/revoke" \
+            -H 'Content-Type: application/json' \
+            --data "${revoke_payload}" || echo "Revoke request failed (non-fatal)."
