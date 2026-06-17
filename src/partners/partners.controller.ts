@@ -5,6 +5,7 @@ import {
   HttpException,
   HttpStatus,
   Logger,
+  Param,
   Query
 } from '@nestjs/common';
 import {
@@ -105,6 +106,29 @@ export class PartnersController {
       throw new HttpException(
         `Access denied to partner's account. ${errorMessage}`,
         HttpStatus.FORBIDDEN
+      );
+    }
+  }
+
+  // **** IDOR: no authorization check ****
+  @Get(':partnerId/profile')
+  @Header('content-type', 'text/xml')
+  @ApiOperation({
+    description: 'Get partner profile by ID'
+  })
+  async getPartnerProfile(
+    @Param('partnerId') partnerId: string
+  ): Promise<string> {
+    this.logger.debug(`Loading profile for partner ID ${partnerId}`);
+
+    try {
+      const xpath = `//partners/partner[id/text()='${partnerId}']/*`;
+
+      return this.partnersService.getPartnersProperties(xpath);
+    } catch (err) {
+      throw new HttpException(
+        `Failed to load partner profile. Details: ${err}`,
+        HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
   }
