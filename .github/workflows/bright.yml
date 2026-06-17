@@ -35,7 +35,7 @@ jobs:
           CHAT_API_MODEL: smollm:135m
           CHAT_API_MAX_TOKENS: "200"
         run: |
-          docker compose --file compose.local.yml up --wait
+          docker compose --file compose.local.yml up -d
 
       - name: Probe application readiness
         run: |
