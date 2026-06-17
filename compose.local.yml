@@ -68,8 +68,9 @@ services:
     healthcheck:
       interval: 5s
       retries: 10
-      test: ['CMD', 'wget', '-q', '-O', '/dev/null', 'http://127.0.0.1:3000/']
+      test: ["CMD", "node", "-e", "require('http').get('http://127.0.0.1:3000/api/config',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"]
       timeout: 30s
+      start_period: 30s
     environment:
       URL: http://localhost:3000
       CHAT_API_URL: http://ollama:11434/v1/chat/completions
