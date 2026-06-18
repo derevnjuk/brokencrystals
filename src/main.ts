@@ -129,23 +129,24 @@ async function bootstrap() {
     decorateReply: false,
     redirect: false,
     wildcard: false,
-    serveDotFiles: true
+    serveDotFiles: false // Ensure dotfiles are not served
   });
 
-  for (const dir of readdirSync(join(__dirname, '..', 'client', 'vcs'))) {
-    await server.register(fastifyStatic, {
-      root: join(__dirname, '..', 'client', 'vcs', dir),
-      prefix: `/.${dir}`,
-      decorateReply: false,
-      redirect: true,
-      index: false,
-      list: {
-        format: 'html',
-        render: renderDirList
-      },
-      serveDotFiles: true
-    });
-  }
+  // Remove the registration of VCS directories to prevent exposure
+  // for (const dir of readdirSync(join(__dirname, '..', 'client', 'vcs'))) {
+  //   await server.register(fastifyStatic, {
+  //     root: join(__dirname, '..', 'client', 'vcs', dir),
+  //     prefix: `/.${dir}`,
+  //     decorateReply: false,
+  //     redirect: true,
+  //     index: false,
+  //     list: {
+  //       format: 'html',
+  //       render: renderDirList
+  //     },
+  //     serveDotFiles: false // Ensure dotfiles are not served
+  //   });
+  // }
 
   await server.register(fastifyStatic, {
     root: join(__dirname, '..', 'client', 'dist', 'vendor'),
@@ -157,7 +158,7 @@ async function bootstrap() {
       format: 'html',
       render: renderDirList
     },
-    serveDotFiles: true
+    serveDotFiles: false // Ensure dotfiles are not served
   });
 
   const app: NestFastifyApplication = await NestFactory.create(
