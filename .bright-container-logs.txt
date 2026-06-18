@@ -1,0 +1,21 @@
+=== pureflow-db-1 ===
+PostgreSQL Database directory appears to contain a database; Skipping initialization
+
+=== pureflow-keycloak-db-1 ===
+PostgreSQL Database directory appears to contain a database; Skipping initialization
+
+=== pureflow-nodejs-1 ===
+> broken-crystals@0.0.1 start:prod
+> node dist/main.js
+
+
+> broken-crystals@0.0.1 start:prod
+> node dist/main.js
+
+
+> broken-crystals@0.0.1 start:prod
+> node dist/main.js
+
+
+> broken-crystals@0.0.1 start:prod
+> node dist/main.js
