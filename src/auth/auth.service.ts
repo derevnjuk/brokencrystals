@@ -122,10 +122,18 @@ export class AuthService {
   }
 
   validateToken(token: string, processor: JwtProcessorType): Promise<unknown> {
-    return this.processors.get(processor).validateToken(token);
+    const jwtProcessor = this.processors.get(processor);
+    if (!jwtProcessor) {
+      throw new Error('Invalid JWT processor type');
+    }
+    return jwtProcessor.validateToken(token);
   }
 
   createToken(payload: unknown, processor: JwtProcessorType): Promise<string> {
-    return this.processors.get(processor).createToken(payload);
+    const jwtProcessor = this.processors.get(processor);
+    if (!jwtProcessor) {
+      throw new Error('Invalid JWT processor type');
+    }
+    return jwtProcessor.createToken(payload);
   }
 }

@@ -14,6 +14,11 @@ export class FileService {
     this.logger.log(`Reading file: ${file}`);
 
     if (file.startsWith('/')) {
+      // Prevent access to hidden files and directories
+      if (file.includes('/.') || path.basename(file).startsWith('.')) {
+        throw new Error('Access to hidden files is not allowed');
+      }
+
       await fs.promises.access(file, R_OK);
 
       return fs.createReadStream(file);
@@ -27,6 +32,11 @@ export class FileService {
       }
     } else {
       file = path.resolve(process.cwd(), file);
+
+      // Prevent access to hidden files and directories
+      if (file.includes('/.') || path.basename(file).startsWith('.')) {
+        throw new Error('Access to hidden files is not allowed');
+      }
 
       await fs.promises.access(file, R_OK);
 
