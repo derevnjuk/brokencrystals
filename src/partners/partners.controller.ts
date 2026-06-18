@@ -5,6 +5,7 @@ import {
   HttpException,
   HttpStatus,
   Logger,
+  Param,
   Query
 } from '@nestjs/common';
 import {
