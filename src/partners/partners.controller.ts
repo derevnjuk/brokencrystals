@@ -28,6 +28,29 @@ export class PartnersController {
 
   constructor(private readonly partnersService: PartnersService) {}
 
+  private toXPathLiteral(value: string): string {
+    if (!value.includes("'")) {
+      return `'${value}'`;
+    }
+
+    if (!value.includes('"')) {
+      return `"${value}";
+    }
+
+    const valueParts = value.split("'");
+    const concatParts: string[] = [];
+
+    valueParts.forEach((part, index) => {
+      concatParts.push(`'${part}'`);
+
+      if (index < valueParts.length - 1) {
+        concatParts.push(`"'"`);
+      }
+    });
+
+    return `concat(${concatParts.join(', ')})`;
+  }
+
   // **** This is a general XPATH injection EP - Will accept anything ****
   @Get('query')
   @ApiQuery({
@@ -86,7 +109,9 @@ export class PartnersController {
     );
 
     try {
-      const xpath = `//partners/partner[username/text()='${username}' and password/text()='${password}']/*`;
+      const escapedUsername = this.toXPathLiteral(username);
+      const escapedPassword = this.toXPathLiteral(password);
+      const xpath = `//partners/partner[username/text()=${escapedUsername} and password/text()=${escapedPassword}]/*`;
       const xmlStr = this.partnersService.getPartnersProperties(xpath);
 
       // Check if account's data contains any information - If not, the login failed!
@@ -152,7 +177,8 @@ export class PartnersController {
     this.logger.debug(`Searching partner names by the keyword "${keyword}"`);
 
     try {
-      const xpath = `//partners/partner/name[contains(., '${keyword}')]`;
+      const escapedKeyword = this.toXPathLiteral(keyword);
+      const xpath = `//partners/partner/name[contains(., ${escapedKeyword})]`;
       return this.partnersService.getPartnersProperties(xpath);
     } catch (err) {
       const errStr = err.toString();
