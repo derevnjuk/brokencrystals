@@ -38,23 +38,36 @@ export abstract class JwtTokenProcessor {
   protected parseCRTChain(chainText: string): string {
     this.log.debug('Call parseCRTChain');
 
-    let idx = -1;
-    if (
-      !chainText ||
-      (idx = Math.max(
-        chainText.indexOf(JwtTokenProcessor.END_CERTIFICATE_MARK),
-        chainText.indexOf(JwtTokenProcessor.END_PUBLIC_KEY_MARK)
-      )) === -1
-    ) {
-      throw new Error('Invalid certificate');
-    }
+    try {
+      let idx = -1;
+      if (
+        !chainText ||
+        (idx = Math.max(
+          chainText.indexOf(JwtTokenProcessor.END_CERTIFICATE_MARK),
+          chainText.indexOf(JwtTokenProcessor.END_PUBLIC_KEY_MARK)
+        )) === -1
+      ) {
+        throw new UnauthorizedException({ error: 'Unauthorized' });
+      }
 
-    const key = chainText.slice(
-      0,
-      idx + JwtTokenProcessor.END_CERTIFICATE_MARK.length
-    );
-    this.log.debug(`Extracted key\n${key}`);
-    return key;
+      const key = chainText.slice(
+        0,
+        idx + JwtTokenProcessor.END_CERTIFICATE_MARK.length
+      );
+
+      if (!key.trim().length) {
+        throw new UnauthorizedException({ error: 'Unauthorized' });
+      }
+
+      return key;
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      }
+
+      this.log.warn('Failed to parse certificate chain');
+      throw new UnauthorizedException({ error: 'Unauthorized' });
+    }
   }
 
   abstract validateToken(token: string): Promise<unknown>;
