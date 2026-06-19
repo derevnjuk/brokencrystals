@@ -1,6 +1,6 @@
 services:
   db:
-    image: 'postgres:17-alpine'
+    image: 'postgres:16-alpine'
     restart: always
     healthcheck:
       interval: 10s
@@ -15,10 +15,12 @@ services:
       - '5432:5432'
     volumes:
       - './pg.sql:/docker-entrypoint-initdb.d/pg.sql'
-      - '.data/nodejs:/var/lib/postgresql/data/'
+      - 'db_data:/var/lib/postgresql/data/'
 
   nodejs:
-    image: 'dull/pureflow'
+    # image: dull/pureflow  # replaced — must build from source
+    build:
+      context: .
     restart: always
     healthcheck:
       interval: 5s
@@ -26,8 +28,10 @@ services:
       test:
         ['CMD', 'wget', '--spider', '-q', 'http://127.0.0.1:3000/api/config']
       timeout: 30s
+    env_file:
+      - .env
     environment:
-      NODE_ENV: production
+      NODE_ENV: development
       CHAT_API_URL: http://ollama:11434/v1/chat/completions
       CHAT_API_MODEL: smollm:135m
       CHAT_API_TOKEN: ''
@@ -37,7 +41,7 @@ services:
         condition: on-failure
       resources:
         limits:
-          cpus: 3.5
+          cpus: 2.0
     logging:
       options:
         max-file: '5'
@@ -47,26 +51,11 @@ services:
       - mailcatcher
       - keycloak
       - ollama
-
-  watchtower:
-    image: 'containrrr/watchtower'
-    healthcheck:
-      test: ['CMD', '/watchtower', '--health-check']
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 5s
-    restart: always
-    logging:
-      options:
-        max-file: '5'
-        max-size: '10m'
-    volumes:
-      - '/var/run/docker.sock:/var/run/docker.sock'
-    command: --interval 300 --debug
+    ports:
+      - '3000:3000'
 
   keycloak-db:
-    image: 'postgres:17-alpine'
+    image: 'postgres:16-alpine'
     environment:
       POSTGRES_DB: keycloak
       POSTGRES_USER: keycloak
@@ -78,10 +67,10 @@ services:
       timeout: 45s
     restart: on-failure
     volumes:
-      - '.data/keycloak:/var/lib/postgresql/data/'
+      - 'keycloak_db_data:/var/lib/postgresql/data/'
 
   keycloak:
-    image: 'quay.io/keycloak/keycloak:26.1.2'
+    image: 'quay.io/keycloak/keycloak:25.0'
     volumes:
       - './keycloak/imports/realm-export.json:/opt/keycloak/data/import/realm-export.json'
     command: start-dev --import-realm
@@ -111,15 +100,15 @@ services:
       - keycloak-db
 
   mailcatcher:
-    image: 'sj26/mailcatcher'
+    image: 'axllent/mailpit:v1.20'
     healthcheck:
       interval: 10s
       retries: 10
-      test: ['CMD', 'wget', '--spider', '-q', 'http://127.0.0.1:1080']
+      test: ['CMD', 'wget', '--spider', '-q', 'http://127.0.0.1:8025']
       timeout: 45s
     restart: always
     ports:
-      - '1080:1080'
+      - '1080:8025'
       - '1025:1025'
     logging:
       options:
@@ -127,7 +116,7 @@ services:
         max-size: '10m'
 
   ollama:
-    image: 'brightsec/brokencrystals-ollama:smollm135m'
+    image: 'ollama/ollama:0.3.14'
     restart: always
     healthcheck:
       interval: 30s
@@ -149,4 +138,6 @@ services:
         max-size: '10m'
 
 volumes:
+  db_data:
+  keycloak_db_data:
   letsencrypt:

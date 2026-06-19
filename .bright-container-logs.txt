@@ -1,0 +1,518 @@
+=== pureflow-db-1 ===
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "en_US.utf8".
+The default database encoding has accordingly been set to "UTF8".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /var/lib/postgresql/data ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... posix
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting default time zone ... UTC
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+
+Success. You can now start the database server using:
+
+    pg_ctl -D /var/lib/postgresql/data -l logfile start
+
+waiting for server to start....2026-06-18 13:45:56.950 UTC [40] LOG:  starting PostgreSQL 16.14 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-06-18 13:45:56.954 UTC [40] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-06-18 13:45:56.961 UTC [43] LOG:  database system was shut down at 2026-06-18 13:45:56 UTC
+2026-06-18 13:45:56.965 UTC [40] LOG:  database system is ready to accept connections
+ done
+server started
+CREATE DATABASE
+
+
+/usr/local/bin/docker-entrypoint.sh: running /docker-entrypoint-initdb.d/pg.sql
+SET
+SET
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+SET
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+CREATE INDEX
+
+
+2026-06-18 13:45:57.157 UTC [40] LOG:  received fast shutdown request
+waiting for server to shut down....2026-06-18 13:45:57.158 UTC [40] LOG:  aborting any active transactions
+2026-06-18 13:45:57.161 UTC [40] LOG:  background worker "logical replication launcher" (PID 46) exited with exit code 1
+2026-06-18 13:45:57.162 UTC [41] LOG:  shutting down
+2026-06-18 13:45:57.162 UTC [41] LOG:  checkpoint starting: shutdown immediate
+2026-06-18 13:45:57.201 UTC [41] LOG:  checkpoint complete: wrote 944 buffers (5.8%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.014 s, sync=0.023 s, total=0.040 s; sync files=317, longest=0.005 s, average=0.001 s; distance=4358 kB, estimate=4358 kB; lsn=0/1938B50, redo lsn=0/1938B50
+2026-06-18 13:45:57.206 UTC [40] LOG:  database system is shut down
+ done
+server stopped
+
+PostgreSQL init process complete; ready for start up.
+
+=== pureflow-keycloak-1 ===
+Updating the configuration and installing your custom providers, if any. Please wait.
+2026-06-18 13:46:05,748 INFO  [io.qua.dep.QuarkusAugmentor] (main) Quarkus augmentation completed in 7696ms
+2026-06-18 13:46:06,737 WARN  [org.keycloak.quarkus.runtime.cli.Picocli] (main) The following used run time options are UNAVAILABLE and will be ignored during build time:
+ 	- hostname-strict-https: Available only when hostname:v1 feature is enabled.
+2026-06-18 13:46:10,061 INFO  [org.infinispan.CONTAINER] (Thread-5) ISPN000556: Starting user marshaller 'org.infinispan.jboss.marshalling.core.JBossUserMarshaller'
+2026-06-18 13:46:10,872 INFO  [org.keycloak.broker.provider.AbstractIdentityProviderMapper] (main) Registering class org.keycloak.broker.provider.mappersync.ConfigSyncEventListener
+2026-06-18 13:46:10,890 INFO  [org.keycloak.connections.infinispan.DefaultInfinispanConnectionProviderFactory] (main) Node name: node_49833, Site name: null
+2026-06-18 13:46:11,755 INFO  [org.keycloak.quarkus.runtime.storage.legacy.liquibase.QuarkusJpaUpdaterProvider] (main) Initializing database schema. Using changelog META-INF/jpa-changelog-master.xml
+
+UPDATE SUMMARY
+Run:                        134
+Previously run:               0
+Filtered out:                 0
+-------------------------------
+Total change sets:          134
+
+2026-06-18 13:46:14,440 INFO  [org.keycloak.services] (main) KC-SERVICES0050: Initializing master realm
+2026-06-18 13:46:16,319 INFO  [org.keycloak.exportimport.singlefile.SingleFileImportProvider] (main) Full importing from file /opt/keycloak/bin/../data/import/realm-export.json
+2026-06-18 13:46:18,669 WARN  [org.keycloak.representations.idm.RealmRepresentation] (main) Failed to deserialize client policies in the realm pureflow. Fallback to return empty profiles. Details: Unrecognized field "builtin" (class org.keycloak.representations.idm.ClientPolicyRepresentation), not marked as ignorable (5 known properties: "conditions", "enabled", "profiles", "name", "description"])
+ at [Source: UNKNOWN; byte offset: #UNKNOWN] (through reference chain: org.keycloak.representations.idm.ClientPoliciesRepresentation["policies"]->java.util.ArrayList[0]->org.keycloak.representations.idm.ClientPolicyRepresentation["builtin"])
+2026-06-18 13:46:18,671 INFO  [org.keycloak.exportimport.util.ImportUtils] (main) Realm 'pureflow' imported
+2026-06-18 13:46:18,707 INFO  [org.keycloak.exportimport.dir.DirImportProvider] (main) Importing from directory /opt/keycloak/bin/../data/import
+2026-06-18 13:46:18,707 INFO  [org.keycloak.services] (main) KC-SERVICES0030: Full model import requested. Strategy: IGNORE_EXISTING
+2026-06-18 13:46:18,708 INFO  [org.keycloak.services] (main) KC-SERVICES0032: Import finished successfully
+2026-06-18 13:46:18,834 INFO  [io.quarkus] (main) Keycloak 25.0.6 on JVM (powered by Quarkus 3.8.5) started in 12.947s. Listening on: http://0.0.0.0:8080. Management interface listening on http://0.0.0.0:9000.
+2026-06-18 13:46:18,836 INFO  [io.quarkus] (main) Profile dev activated. 
+2026-06-18 13:46:18,836 INFO  [io.quarkus] (main) Installed features: [agroal, cdi, hibernate-orm, jdbc-postgresql, keycloak, logging-gelf, narayana-jta, reactive-routes, resteasy-reactive, resteasy-reactive-jackson, smallrye-context-propagation, smallrye-health, vertx]
+2026-06-18 13:46:18,843 WARN  [org.keycloak.quarkus.runtime.KeycloakMain] (main) Running the server in development mode. DO NOT use this configuration in production.
+
+=== pureflow-keycloak-db-1 ===
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "en_US.utf8".
+The default database encoding has accordingly been set to "UTF8".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /var/lib/postgresql/data ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... posix
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting default time zone ... UTC
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+
+Success. You can now start the database server using:
+
+    pg_ctl -D /var/lib/postgresql/data -l logfile start
+
+waiting for server to start....2026-06-18 13:45:56.935 UTC [40] LOG:  starting PostgreSQL 16.14 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-06-18 13:45:56.938 UTC [40] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-06-18 13:45:56.945 UTC [43] LOG:  database system was shut down at 2026-06-18 13:45:56 UTC
+2026-06-18 13:45:56.951 UTC [40] LOG:  database system is ready to accept connections
+ done
+server started
+CREATE DATABASE
+
+
+/usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+
+2026-06-18 13:45:57.085 UTC [40] LOG:  received fast shutdown request
+waiting for server to shut down....2026-06-18 13:45:57.086 UTC [40] LOG:  aborting any active transactions
+2026-06-18 13:45:57.099 UTC [40] LOG:  background worker "logical replication launcher" (PID 46) exited with exit code 1
+2026-06-18 13:45:57.102 UTC [41] LOG:  shutting down
+2026-06-18 13:45:57.104 UTC [41] LOG:  checkpoint starting: shutdown immediate
+2026-06-18 13:45:57.138 UTC [41] LOG:  checkpoint complete: wrote 926 buffers (5.7%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.021 s, sync=0.009 s, total=0.035 s; sync files=301, longest=0.004 s, average=0.001 s; distance=4283 kB, estimate=4283 kB; lsn=0/1925D20, redo lsn=0/1925D20
+2026-06-18 13:45:57.142 UTC [40] LOG:  database system is shut down
+ done
+server stopped
+
+PostgreSQL init process complete; ready for start up.
+
+=== pureflow-mailcatcher-1 ===
+time="2026/06/18 13:45:56" level=info msg="[smtpd] starting on [::]:1025 (no encryption)"
+time="2026/06/18 13:45:56" level=info msg="[http] starting on [::]:8025"
+time="2026/06/18 13:45:56" level=info msg="[http] accessible via http://localhost:8025/"
+
+=== pureflow-nodejs-1 ===
+> broken-crystals@0.0.1 start:prod
+> node dist/main.js
+
+Primary 18 is running
+Worker 26 started
+Worker 26 died with code 1 and signal null
+Starting a new worker
+Worker 25 started
+Worker 25 died with code 1 and signal null
+Starting a new worker
+Worker 39 started
+Worker 39 died with code 1 and signal null
+Starting a new worker
+Worker 46 started
+Worker 46 died with code 1 and signal null
+Starting a new worker
+Worker 53 started
+Worker 53 died with code 1 and signal null
+Starting a new worker
+Worker 60 started
+Worker 60 died with code 1 and signal null
+Starting a new worker
+Worker 73 started
+Worker 73 died with code 1 and signal null
+Starting a new worker
+Worker 80 started
+Worker 80 died with code 1 and signal null
+Starting a new worker
+Worker 87 started
+Worker 87 died with code 1 and signal null
+Starting a new worker
+Worker 94 started
+Worker 94 died with code 1 and signal null
+Starting a new worker
+Worker 101 started
+Worker 101 died with code 1 and signal null
+Starting a new worker
+Worker 108 started
+Worker 108 died with code 1 and signal null
+Starting a new worker
+Worker 115 started
+Worker 115 died with code 1 and signal null
+Starting a new worker
+Worker 122 started
+Worker 122 died with code 1 and signal null
+Starting a new worker
+Worker 135 started
+Worker 135 died with code 1 and signal null
+Starting a new worker
+Worker 142 started
+Worker 142 died with code 1 and signal null
+Starting a new worker
+Worker 149 started
+Worker 149 died with code 1 and signal null
+Starting a new worker
+Worker 156 started
+Worker 156 died with code 1 and signal null
+Starting a new worker
+Worker 163 started
+Worker 163 died with code 1 and signal null
+Starting a new worker
+Worker 170 started
+Worker 170 died with code 1 and signal null
+Starting a new worker
+Worker 177 started
+Worker 184 started
+Worker 177 died with code 1 and signal null
+Starting a new worker
+Worker 184 died with code 1 and signal null
+Starting a new worker
+Worker 198 started
+Worker 198 died with code 1 and signal null
+Starting a new worker
+Worker 197 started
+Worker 197 died with code 1 and signal null
+Starting a new worker
+Worker 211 started
+Worker 211 died with code 1 and signal null
+Starting a new worker
+Worker 218 started
+Worker 218 died with code 1 and signal null
+Starting a new worker
+Worker 225 started
+Worker 225 died with code 1 and signal null
+Starting a new worker
+Worker 232 started
+Worker 232 died with code 1 and signal null
+Starting a new worker
+Worker 245 started
+Worker 245 died with code 1 and signal null
+Starting a new worker
+Worker 252 started
+Worker 252 died with code 1 and signal null
+Starting a new worker
+Worker 259 started
+Worker 259 died with code 1 and signal null
+Starting a new worker
+Worker 266 started
+Worker 266 died with code 1 and signal null
+Starting a new worker
+Worker 273 started
+Worker 273 died with code 1 and signal null
+Starting a new worker
+Worker 280 started
+Worker 280 died with code 1 and signal null
+Starting a new worker
+Worker 287 started
+Worker 287 died with code 1 and signal null
+Starting a new worker
+Worker 294 started
+Worker 294 died with code 1 and signal null
+Starting a new worker
+Worker 301 started
+Worker 301 died with code 1 and signal null
+Starting a new worker
+Worker 308 started
+Worker 308 died with code 1 and signal null
+Starting a new worker
+Worker 315 started
+Worker 315 died with code 1 and signal null
+Starting a new worker
+Worker 322 started
+Worker 322 died with code 1 and signal null
+Starting a new worker
+Worker 329 started
+Worker 329 died with code 1 and signal null
+Starting a new worker
+Worker 342 started
+Worker 342 died with code 1 and signal null
+Starting a new worker
+Worker 349 started
+Worker 349 died with code 1 and signal null
+Starting a new worker
+Worker 356 started
+Worker 356 died with code 1 and signal null
+Starting a new worker
+Worker 363 started
+Worker 363 died with code 1 and signal null
+Starting a new worker
+Worker 370 started
+Worker 370 died with code 1 and signal null
+Starting a new worker
+Worker 377 started
+Worker 377 died with code 1 and signal null
+Starting a new worker
+Worker 384 started
+Worker 384 died with code 1 and signal null
+Starting a new worker
+Worker 391 started
+Worker 391 died with code 1 and signal null
+Starting a new worker
+Worker 398 started
+Worker 398 died with code 1 and signal null
+Starting a new worker
+Worker 405 started
+Worker 405 died with code 1 and signal null
+Starting a new worker
+Worker 412 started
+Worker 412 died with code 1 and signal null
+Starting a new worker
+Worker 419 started
+Worker 419 died with code 1 and signal null
+Starting a new worker
+Worker 426 started
+Worker 426 died with code 1 and signal null
+Starting a new worker
+Worker 433 started
+Worker 433 died with code 1 and signal null
+Starting a new worker
+Worker 440 started
+Worker 440 died with code 1 and signal null
+Starting a new worker
+Worker 453 started
+Worker 453 died with code 1 and signal null
+Starting a new worker
+Worker 460 started
+Worker 460 died with code 1 and signal null
+Starting a new worker
+Worker 467 started
+Worker 467 died with code 1 and signal null
+Starting a new worker
+Worker 474 started
+Worker 474 died with code 1 and signal null
+Starting a new worker
+Worker 481 started
+Worker 481 died with code 1 and signal null
+Starting a new worker
+Worker 488 started
+Worker 488 died with code 1 and signal null
+Starting a new worker
+Worker 495 started
+Worker 495 died with code 1 and signal null
+Starting a new worker
+Worker 502 started
+Worker 502 died with code 1 and signal null
+Starting a new worker
+Worker 509 started
+Worker 509 died with code 1 and signal null
+Starting a new worker
+Worker 516 started
+Worker 516 died with code 1 and signal null
+Starting a new worker
+Worker 523 started
+Worker 523 died with code 1 and signal null
+Starting a new worker
+Worker 530 started
+Worker 530 died with code 1 and signal null
+Starting a new worker
+Worker 537 started
+Worker 537 died with code 1 and signal null
+Starting a new worker
+Worker 544 started
+Worker 544 died with code 1 and signal null
+Starting a new worker
+Worker 551 started
+Worker 551 died with code 1 and signal null
+Starting a new worker
+Worker 564 started
+Worker 564 died with code 1 and signal null
+Starting a new worker
+Worker 571 started
+Worker 571 died with code 1 and signal null
+Starting a new worker
+Worker 578 started
+Worker 578 died with code 1 and signal null
+Starting a new worker
+Worker 585 started
+Worker 585 died with code 1 and signal null
+Starting a new worker
+Worker 592 started
+Worker 592 died with code 1 and signal null
+Starting a new worker
+Worker 599 started
+Worker 599 died with code 1 and signal null
+Starting a new worker
+Worker 606 started
+Worker 606 died with code 1 and signal null
+Starting a new worker
+Worker 613 started
+Worker 613 died with code 1 and signal null
+Starting a new worker
+Worker 620 started
+Worker 620 died with code 1 and signal null
+Starting a new worker
+Worker 627 started
+Worker 627 died with code 1 and signal null
+Starting a new worker
+Worker 634 started
+Worker 634 died with code 1 and signal null
+Starting a new worker
+Worker 641 started
+Worker 641 died with code 1 and signal null
+Starting a new worker
+Worker 648 started
+Worker 648 died with code 1 and signal null
+Starting a new worker
+Worker 655 started
+Worker 655 died with code 1 and signal null
+Starting a new worker
+Worker 662 started
+Worker 662 died with code 1 and signal null
+Starting a new worker
+Worker 669 started
+Worker 669 died with code 1 and signal null
+Starting a new worker
+Worker 682 started
+Worker 682 died with code 1 and signal null
+Starting a new worker
+Worker 689 started
+Worker 689 died with code 1 and signal null
+Starting a new worker
+Worker 696 started
+Worker 696 died with code 1 and signal null
+Starting a new worker
+Worker 703 started
+Worker 703 died with code 1 and signal null
+Starting a new worker
+Worker 710 started
+Worker 710 died with code 1 and signal null
+Starting a new worker
+Worker 717 started
+Worker 717 died with code 1 and signal null
+Starting a new worker
+Worker 724 started
+Worker 724 died with code 1 and signal null
+Starting a new worker
+Worker 731 started
+Worker 731 died with code 1 and signal null
+Starting a new worker
+Worker 738 started
+Worker 738 died with code 1 and signal null
+Starting a new worker
+Worker 745 started
+Worker 745 died with code 1 and signal null
+Starting a new worker
+Worker 752 started
+Worker 752 died with code 1 and signal null
+Starting a new worker
+Worker 759 started
+Worker 759 died with code 1 and signal null
+Starting a new worker
+Worker 766 started
+Worker 766 died with code 1 and signal null
+Starting a new worker
+Worker 773 started
+Worker 773 died with code 1 and signal null
+Starting a new worker
+Worker 786 started
+Worker 786 died with code 1 and signal null
+Starting a new worker
+Worker 793 started
+Worker 793 died with code 1 and signal null
+Starting a new worker
+Worker 800 started
+Worker 800 died with code 1 and signal null
+Starting a new worker
+Worker 807 started
+Worker 807 died with code 1 and signal null
+Starting a new worker
+Worker 814 started
+Worker 814 died with code 1 and signal null
+Starting a new worker
+Worker 821 started
+Worker 821 died with code 1 and signal null
+Starting a new worker
+Worker 828 started
+Worker 828 died with code 1 and signal null
+Starting a new worker
+Worker 835 started
+Worker 835 died with code 1 and signal null
+Starting a new worker
+Worker 842 started
+Worker 842 died with code 1 and signal null
+Starting a new worker
+Worker 849 started
+Worker 849 died with code 1 and signal null
+Starting a new worker
+Worker 856 started
+Worker 856 died with code 1 and signal null
+Starting a new worker
+Worker 863 started
+Worker 863 died with code 1 and signal null
+Starting a new worker
+Worker 870 started
+Worker 870 died with code 1 and signal null
+Starting a new worker
+Worker 877 started
+Worker 877 died with code 1 and signal null
+Starting a new worker
+Worker 890 started
+Worker 890 died with code 1 and signal null
+Starting a new worker
+
+=== pureflow-ollama-1 ===
+Couldn't find '/root/.ollama/id_ed25519'. Generating new private key.
+Your new public key is: 
+
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJfzs01AVAeRpZPnxVJmfU3mGxArf620apc1ZryW2TIp
+
+[GIN] 2026/06/18 - 13:46:01 | 200 |      26.625µs |       127.0.0.1 | HEAD     "/"
+[GIN] 2026/06/18 - 13:46:01 | 200 |     147.375µs |       127.0.0.1 | GET      "/api/tags"
+[GIN] 2026/06/18 - 13:46:31 | 200 |      14.958µs |       127.0.0.1 | HEAD     "/"
+[GIN] 2026/06/18 - 13:46:31 | 200 |      37.459µs |       127.0.0.1 | GET      "/api/tags"

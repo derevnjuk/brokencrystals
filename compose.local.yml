@@ -1,6 +1,6 @@
 services:
   db:
-    image: 'postgres:17-alpine'
+    image: 'postgres:16-alpine'
     restart: always
     healthcheck:
       interval: 10s
@@ -17,7 +17,7 @@ services:
       - './pg.sql:/docker-entrypoint-initdb.d/pg.sql'
 
   keycloak-db:
-    image: 'postgres:17-alpine'
+    image: 'postgres:16-alpine'
     environment:
       POSTGRES_DB: keycloak
       POSTGRES_USER: keycloak
@@ -30,7 +30,7 @@ services:
     restart: on-failure
 
   keycloak:
-    image: 'quay.io/keycloak/keycloak:26.1.2'
+    image: 'quay.io/keycloak/keycloak:25.0'
     volumes:
       - './keycloak/imports/realm-export.json:/opt/keycloak/data/import/realm-export.json'
     command: start-dev --import-realm
@@ -93,7 +93,7 @@ services:
         condition: service_healthy
 
   mailcatcher:
-    image: 'sj26/mailcatcher'
+    image: 'axllent/mailpit:v1.20'
     healthcheck:
       interval: 10s
       retries: 10
@@ -109,7 +109,7 @@ services:
         max-size: '10m'
 
   ollama:
-    image: 'brightsec/brokencrystals-ollama:smollm135m'
+    image: 'ollama/ollama:0.3.14'
     restart: always
     healthcheck:
       interval: 30s

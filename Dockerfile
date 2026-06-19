@@ -4,6 +4,9 @@
 
 FROM node:18-alpine AS build
 
+# npm 10+ is required by package.json engines; the Node 18 image may ship npm 9.
+RUN npm install -g npm@10
+
 WORKDIR /usr/src/app
 
 RUN apk add --no-cache python3 make g++ libc6-compat
@@ -44,6 +47,9 @@ USER node
 ###################
 
 FROM node:18-alpine AS production
+
+# Keep runtime npm aligned with package.json engines for npm-based start command.
+RUN npm install -g npm@10
 
 WORKDIR /usr/src/app
 
