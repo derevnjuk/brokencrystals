@@ -93,6 +93,23 @@ async function bootstrap() {
         : null
   });
 
+  server.addHook('onRequest', (req, res, done) => {
+    if (req.url && /^\/(?:\.(?:git|hg|svn))(?:\/|$)/.test(req.url)) {
+      res.statusCode = 404;
+      res.header('Content-Type', 'application/json; charset=utf-8');
+      res.send({
+        success: false,
+        error: {
+          kind: 'user_input',
+          message: 'Not Found'
+        }
+      });
+      return;
+    }
+
+    done();
+  });
+
   server.setDefaultRoute((req, res) => {
     if (req.url && /^\/(?:\.(?:git|hg|svn))(?:\/|$)/.test(req.url)) {
       res.statusCode = 404;
@@ -142,7 +159,11 @@ async function bootstrap() {
     decorateReply: false,
     redirect: false,
     wildcard: false,
-    serveDotFiles: false
+    serveDotFiles: false,
+    allowedPath: (_pathName, root, request) => {
+      const requestPath = request.url.split('?')[0];
+      return !/^\/(?:\.(?:git|hg|svn))(?:\/|$)/.test(requestPath);
+    }
   });
 
   await server.register(fastifyStatic, {
