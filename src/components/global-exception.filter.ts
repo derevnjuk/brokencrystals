@@ -49,9 +49,14 @@ export class GlobalExceptionFilter extends BaseExceptionFilter {
         return;
       }
 
+      if (response?.raw) {
+        response.raw.statusMessage = responseBody.error;
+      }
+
       if (response?.header) {
         response.header('Cache-Control', 'no-store');
         response.header('X-Content-Type-Options', 'nosniff');
+        response.header('Content-Security-Policy', "default-src 'none'");
       }
 
       return applicationRef.reply(response, responseBody, status);
@@ -76,9 +81,14 @@ export class GlobalExceptionFilter extends BaseExceptionFilter {
       return;
     }
 
+    if (response?.raw) {
+      response.raw.statusMessage = 'Internal server error';
+    }
+
     if (response?.header) {
       response.header('Cache-Control', 'no-store');
       response.header('X-Content-Type-Options', 'nosniff');
+      response.header('Content-Security-Policy', "default-src 'none'");
     }
 
     return applicationRef.reply(

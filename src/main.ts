@@ -60,34 +60,36 @@ async function bootstrap() {
 
   server.setErrorHandler((error, request, reply) => {
     const requestPath = request.url ? request.url.split('?')[0] : '';
-    const isApiRequest = requestPath === '/api' || requestPath.startsWith('/api/');
     const rawStatusCode = Number(error?.statusCode);
     const statusCode =
       Number.isInteger(rawStatusCode) && rawStatusCode >= 400 && rawStatusCode < 500
         ? rawStatusCode
         : 500;
 
+    const sanitizedErrorMessage =
+      statusCode === 401
+        ? 'Unauthorized'
+        : statusCode < 500
+          ? 'Request failed'
+          : 'Internal server error';
+
     server.log.error({
       name: error?.name,
-      stack: error?.stack,
       statusCode,
-      path: requestPath
+      path: requestPath,
+      message: error instanceof Error ? error.message : undefined,
+      stack: error instanceof Error ? error.stack : undefined
     });
 
     if (!reply.sent) {
-      const responseBody =
-        statusCode === 401
-          ? { error: 'Unauthorized' }
-          : statusCode < 500
-            ? { error: 'Request failed' }
-            : { error: 'Internal server error' };
-
+      reply.raw.statusMessage = sanitizedErrorMessage;
       reply
         .code(statusCode)
         .type('application/json; charset=utf-8')
         .header('Cache-Control', 'no-store')
         .header('X-Content-Type-Options', 'nosniff')
-        .send(responseBody);
+        .header('Content-Security-Policy', "default-src 'none'")
+        .send({ error: sanitizedErrorMessage });
     }
   });
 
