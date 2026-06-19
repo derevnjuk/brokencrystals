@@ -25,6 +25,29 @@ async function bootstrap() {
   http.globalAgent.maxSockets = Infinity;
   https.globalAgent.maxSockets = Infinity;
 
+  const letsEncryptCertPath =
+    process.env.TLS_CERT_PATH || '/etc/letsencrypt/live/pureflow.com/fullchain.pem';
+  const letsEncryptKeyPath =
+    process.env.TLS_KEY_PATH || '/etc/letsencrypt/live/pureflow.com/privkey.pem';
+  const useHttps =
+    process.env.NODE_ENV === 'production' &&
+    process.env.DISABLE_HTTPS !== 'true' &&
+    process.env.URL?.startsWith('https://');
+
+  let httpsOptions;
+
+  if (useHttps) {
+    try {
+      httpsOptions = {
+        cert: readFileSync(letsEncryptCertPath),
+        key: readFileSync(letsEncryptKeyPath)
+      };
+    } catch (error) {
+      console.error('Failed to initialize HTTPS certificates');
+      process.exit(1);
+    }
+  }
+
   const server = fastify({
     logger:
       process.env.FASTIFY_LOGGER === 'true'
@@ -32,15 +55,7 @@ async function bootstrap() {
         : false,
     trustProxy: true,
     onProtoPoisoning: 'ignore',
-    https:
-      process.env.NODE_ENV === 'production'
-        ? {
-            cert: readFileSync(
-              '/etc/letsencrypt/live/pureflow.com/fullchain.pem'
-            ),
-            key: readFileSync('/etc/letsencrypt/live/pureflow.com/privkey.pem')
-          }
-        : null
+    https: httpsOptions
   });
 
   server.setErrorHandler((error, request, reply) => {
@@ -74,18 +89,6 @@ async function bootstrap() {
         .header('X-Content-Type-Options', 'nosniff')
         .send(responseBody);
     }
-  });
-
-  server.setNotFoundHandler((request, reply) => {
-    const requestPath = request.url ? request.url.split('?')[0] : '';
-    const isApiRequest = requestPath === '/api' || requestPath.startsWith('/api/');
-
-    reply
-      .code(404)
-      .type('application/json; charset=utf-8')
-      .header('Cache-Control', 'no-store')
-      .header('X-Content-Type-Options', 'nosniff')
-      .send(isApiRequest ? { error: 'Request failed' } : { error: 'Internal server error' });
   });
 
   server.addHook('onRequest', (req, res, done) => {
@@ -197,6 +200,7 @@ async function bootstrap() {
     redirect: false,
     wildcard: false,
     serveDotFiles: false,
+    ignoreTrailingSlash: true,
     allowedPath: (_pathName, root, request) => {
       const requestPath = request.url.split('?')[0];
       let normalizedPath = requestPath;
@@ -223,15 +227,6 @@ async function bootstrap() {
     }
   });
 
-  await server.register(fastifyStatic, {
-    root: join(__dirname, '..', 'client', 'dist', 'vendor'),
-    prefix: `/vendor`,
-    decorateReply: false,
-    redirect: false,
-    index: false,
-    serveDotFiles: false,
-    wildcard: false
-  });
 
   const app: NestFastifyApplication = await NestFactory.create(
     AppModule,

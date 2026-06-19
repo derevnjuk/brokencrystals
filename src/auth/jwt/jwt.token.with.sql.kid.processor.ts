@@ -17,14 +17,19 @@ export class JwtTokenWithSqlKIDProcessor extends JwtTokenProcessor {
   async validateToken(token: string): Promise<unknown> {
     this.log.debug('Call validateToken');
 
-    const [header] = this.parse(token);
+    try {
+      const [header] = this.parse(token);
 
-    if (`${header.kid}` !== `${JwtTokenWithSqlKIDProcessor.KID}`) {
-      this.log.warn('JWT token contains unsupported kid value');
+      if (`${header.kid}` !== `${JwtTokenWithSqlKIDProcessor.KID}`) {
+        this.log.warn('JWT token contains unsupported kid value');
+        return undefined;
+      }
+
+      return decode(token, this.key, false, 'HS256');
+    } catch (error) {
+      this.log.warn('Failed to validate SQL KID JWT token');
       return undefined;
     }
-
-    return decode(token, this.key, false, 'HS256');
   }
 
   async createToken(payload: unknown): Promise<string> {

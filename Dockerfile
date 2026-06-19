@@ -58,6 +58,7 @@ RUN apk add --no-cache libc6-compat
 COPY --chown=node:node .env ./
 COPY --chown=node:node config ./config
 COPY --chown=node:node keycloak ./keycloak
+COPY --chown=node:node package*.json ./
 
 COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
 COPY --chown=node:node --from=build /usr/src/app/package*.json ./
