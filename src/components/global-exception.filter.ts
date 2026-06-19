@@ -15,6 +15,16 @@ export class GlobalExceptionFilter extends BaseExceptionFilter {
 
   public catch(exception: unknown, host: ArgumentsHost) {
     const gql = host.getType<GqlContextType>() === 'graphql';
+    const request = !gql ? host.switchToHttp().getRequest() : undefined;
+    const sanitizedHeaders: Record<string, string | string[] | undefined> = {};
+    const rawHeaders = request?.headers || {};
+
+    for (const [key, value] of Object.entries(rawHeaders)) {
+      sanitizedHeaders[key] =
+        key.toLowerCase() === 'authorization' || key.toLowerCase() === 'cookie'
+          ? '[REDACTED]'
+          : value;
+    }
 
     this.logger.error(
       exception instanceof HttpException
@@ -22,7 +32,12 @@ export class GlobalExceptionFilter extends BaseExceptionFilter {
         : exception instanceof Error
           ? exception.name
           : 'Unhandled exception',
-      exception instanceof Error ? exception.stack : undefined
+      JSON.stringify({
+        path: request?.url ? request.url.split('?')[0] : undefined,
+        method: request?.method,
+        headers: sanitizedHeaders,
+        stack: exception instanceof Error ? exception.stack : undefined
+      })
     );
 
     if (exception instanceof HttpException) {
@@ -52,10 +67,6 @@ export class GlobalExceptionFilter extends BaseExceptionFilter {
         return;
       }
 
-      if (response?.raw) {
-        response.raw.statusMessage = responseBody.error;
-      }
-
       if (response?.header) {
         response.header('Cache-Control', 'no-store');
         response.header('X-Content-Type-Options', 'nosniff');
@@ -82,10 +93,6 @@ export class GlobalExceptionFilter extends BaseExceptionFilter {
 
     if (response?.raw?.headersSent || response?.sent) {
       return;
-    }
-
-    if (response?.raw) {
-      response.raw.statusMessage = 'Internal server error';
     }
 
     if (response?.header) {

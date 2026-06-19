@@ -42,7 +42,7 @@ async function bootstrap() {
         cert: readFileSync(letsEncryptCertPath),
         key: readFileSync(letsEncryptKeyPath)
       };
-    } catch (error) {
+    } catch {
       console.error('Failed to initialize HTTPS certificates');
       process.exit(1);
     }
@@ -73,21 +73,34 @@ async function bootstrap() {
           ? 'Request failed'
           : 'Internal server error';
 
+    const sanitizedHeaders: Record<string, string | string[] | undefined> = {};
+    const rawHeaders = request.headers || {};
+
+    for (const [key, value] of Object.entries(rawHeaders)) {
+      sanitizedHeaders[key] =
+        key.toLowerCase() === 'authorization' || key.toLowerCase() === 'cookie'
+          ? '[REDACTED]'
+          : value;
+    }
+
     server.log.error({
       name: error?.name,
       statusCode,
       path: requestPath,
+      method: request.method,
+      headers: sanitizedHeaders,
       details: error instanceof Error ? error.stack : String(error)
     });
 
     if (!reply.sent) {
-      reply.raw.statusMessage = sanitizedErrorMessage;
       reply
         .code(statusCode)
         .type('application/json; charset=utf-8')
         .header('Cache-Control', 'no-store')
         .header('X-Content-Type-Options', 'nosniff')
         .header('Content-Security-Policy', "default-src 'none'")
+        .header('X-Frame-Options', 'DENY')
+        .header('Referrer-Policy', 'no-referrer')
         .send({
           statusCode,
           error: sanitizedErrorMessage,
