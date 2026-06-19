@@ -26,37 +26,30 @@ export class GlobalExceptionFilter extends BaseExceptionFilter {
     );
 
     if (exception instanceof HttpException) {
+      const status = exception.getStatus();
+      const responseBody = {
+        error:
+          status === HttpStatus.UNAUTHORIZED
+            ? 'Unauthorized'
+            : status >= HttpStatus.INTERNAL_SERVER_ERROR
+              ? 'Internal server error'
+              : 'Request failed'
+      };
+
       if (gql) {
-        throw new HttpException(
-          {
-            error:
-              exception.getStatus() === HttpStatus.UNAUTHORIZED
-                ? 'Unauthorized'
-                : exception.getStatus() >= HttpStatus.INTERNAL_SERVER_ERROR
-                  ? 'Internal server error'
-                  : 'Request failed'
-          },
-          exception.getStatus()
-        );
+        throw new HttpException(responseBody, status);
       }
 
       const applicationRef =
         this.applicationRef ||
         (this.httpAdapterHost && this.httpAdapterHost.httpAdapter);
-      const status = exception.getStatus();
+      const response = host.getArgByIndex(1);
 
-      return applicationRef.reply(
-        host.getArgByIndex(1),
-        {
-          error:
-            status === HttpStatus.UNAUTHORIZED
-              ? 'Unauthorized'
-              : status >= HttpStatus.INTERNAL_SERVER_ERROR
-                ? 'Internal server error'
-                : 'Request failed'
-        },
-        status
-      );
+      if (response?.raw?.headersSent || response?.sent) {
+        return;
+      }
+
+      return applicationRef.reply(response, responseBody, status);
     }
 
     const unprocessableException = new InternalServerErrorException(

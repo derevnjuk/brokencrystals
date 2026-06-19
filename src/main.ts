@@ -43,7 +43,9 @@ async function bootstrap() {
         : null
   });
 
-  server.setErrorHandler((error, _request, reply) => {
+  server.setErrorHandler((error, request, reply) => {
+    const requestPath = request.url ? request.url.split('?')[0] : '';
+    const isApiRequest = requestPath === '/api' || requestPath.startsWith('/api/');
     const rawStatusCode = Number(error?.statusCode);
     const statusCode =
       Number.isInteger(rawStatusCode) && rawStatusCode >= 400 && rawStatusCode < 500
@@ -53,7 +55,8 @@ async function bootstrap() {
     server.log.error({
       name: error?.name,
       stack: error?.stack,
-      statusCode
+      statusCode,
+      path: requestPath
     });
 
     if (!reply.sent) {
@@ -62,11 +65,13 @@ async function bootstrap() {
         .type('application/json; charset=utf-8')
         .header('Cache-Control', 'no-store')
         .send(
-          statusCode === 401
-            ? { error: 'Unauthorized' }
-            : statusCode < 500
-              ? { error: 'Request failed' }
-              : { error: 'Internal server error' }
+          isApiRequest
+            ? statusCode === 401
+              ? { error: 'Unauthorized' }
+              : statusCode < 500
+                ? { error: 'Request failed' }
+                : { error: 'Internal server error' }
+            : { error: 'Internal server error' }
         );
     }
   });
