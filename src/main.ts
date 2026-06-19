@@ -20,6 +20,7 @@ import fastify from 'fastify';
 import { fastifyStatic } from '@fastify/static';
 import { join } from 'path';
 import rawbody from 'raw-body';
+import { ValidationPipe, BadRequestException } from '@nestjs/common';
 
 async function bootstrap() {
   http.globalAgent.maxSockets = Infinity;
@@ -336,7 +337,17 @@ async function bootstrap() {
     abortOnError: false,
     bufferLogs: false,
     bodyParser: false,
-    rawBody: true
+    rawBody: true,
+    cors: false
+  });
+  app.useBodyParser('json', {
+    bodyLimit: 1048576,
+    onProtoPoisoning: 'error'
+  });
+  app.useBodyParser('urlencoded', {
+    bodyLimit: 1048576,
+    extended: false,
+    onProtoPoisoning: 'error'
   });
 
   await server.register(fastifyCookie);
@@ -361,7 +372,20 @@ async function bootstrap() {
 
   app
     .useGlobalInterceptors(new HeadersConfiguratorInterceptor())
-    .useGlobalFilters(new GlobalExceptionFilter(httpAdapter));
+    .useGlobalFilters(new GlobalExceptionFilter(httpAdapter))
+    .useGlobalPipes(
+      new ValidationPipe({
+        transform: true,
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        exceptionFactory: () =>
+          new BadRequestException({
+            statusCode: 400,
+            error: 'Request failed',
+            message: 'Request failed'
+          })
+      })
+    );
 
   app.getHttpAdapter().getInstance().addHook('onError', (request, reply, error, done) => {
     if (!reply.sent) {
