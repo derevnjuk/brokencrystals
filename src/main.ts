@@ -332,7 +332,9 @@ async function bootstrap() {
     logger:
       process.env.NODE_ENV === 'production'
         ? ['error']
-        : ['debug', 'log', 'warn', 'error']
+        : ['debug', 'log', 'warn', 'error'],
+    abortOnError: false,
+    bufferLogs: false
   });
 
   await server.register(fastifyCookie);
@@ -394,6 +396,22 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, options);
 
   SwaggerModule.setup('swagger', app, document);
+
+  const httpServer = app.getHttpAdapter().getInstance();
+  httpServer.setNotFoundHandler((request, reply) => {
+    const requestPath = request.url ? request.url.split('?')[0] : '';
+    reply
+      .code(404)
+      .type('application/json; charset=utf-8')
+      .header('Cache-Control', 'no-store')
+      .header('X-Content-Type-Options', 'nosniff')
+      .header('Content-Security-Policy', "default-src 'none'")
+      .send({
+        statusCode: 404,
+        error: 'Not Found',
+        message: requestPath.startsWith('/api') ? 'Not Found' : 'Request failed'
+      });
+  });
 
   await app.listen(3000, '0.0.0.0');
 }

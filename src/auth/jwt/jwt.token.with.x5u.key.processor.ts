@@ -1,4 +1,4 @@
-import { Logger, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Logger, UnauthorizedException } from '@nestjs/common';
 import * as jose from 'jose';
 import { HttpClientService } from '../../httpclient/httpclient.service';
 import { JwtTokenProcessor as JwtTokenProcessor } from './jwt.token.processor';
@@ -14,6 +14,15 @@ export class JwtTokenWithX5UKeyProcessor extends JwtTokenProcessor {
   async validateToken(token: string): Promise<unknown> {
     this.log.debug('Call validateToken');
 
+    if (typeof token !== 'string' || !token.trim()) {
+      throw new UnauthorizedException('Unauthorized');
+    }
+
+    const jwtParts = token.split('.');
+    if (jwtParts.length !== 3 || jwtParts.some((part) => !part.length || part.length > 4096)) {
+      throw new UnauthorizedException('Unauthorized');
+    }
+
     try {
       const [header] = this.parse(token);
       const url = header?.x5u;
@@ -28,8 +37,11 @@ export class JwtTokenWithX5UKeyProcessor extends JwtTokenProcessor {
 
       return await jose.jwtVerify(token, x509);
     } catch (error) {
+      if (error instanceof BadRequestException || error instanceof UnauthorizedException) {
+        throw new UnauthorizedException('Unauthorized');
+      }
+
       this.log.warn('JWT x5u validation failed');
-      this.log.debug(error instanceof Error ? error.stack : String(error));
       throw new UnauthorizedException('Unauthorized');
     }
   }
