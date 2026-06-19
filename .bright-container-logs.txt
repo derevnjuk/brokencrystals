@@ -1,1126 +1,408 @@
 === pureflow-db-1 ===
-PostgreSQL Database directory appears to contain a database; Skipping initialization
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "en_US.utf8".
+The default database encoding has accordingly been set to "UTF8".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /var/lib/postgresql/data ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... posix
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting default time zone ... UTC
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+
+Success. You can now start the database server using:
+
+    pg_ctl -D /var/lib/postgresql/data -l logfile start
+
+waiting for server to start....2026-06-19 09:55:27.768 UTC [40] LOG:  starting PostgreSQL 16.14 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-06-19 09:55:27.771 UTC [40] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-06-19 09:55:27.776 UTC [43] LOG:  database system was shut down at 2026-06-19 09:55:27 UTC
+2026-06-19 09:55:27.785 UTC [40] LOG:  database system is ready to accept connections
+ done
+server started
+CREATE DATABASE
+
+
+/usr/local/bin/docker-entrypoint.sh: running /docker-entrypoint-initdb.d/pg.sql
+SET
+SET
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+SET
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+CREATE INDEX
+
+
+waiting for server to shut down....2026-06-19 09:55:28.090 UTC [40] LOG:  received fast shutdown request
+2026-06-19 09:55:28.091 UTC [40] LOG:  aborting any active transactions
+2026-06-19 09:55:28.102 UTC [40] LOG:  background worker "logical replication launcher" (PID 46) exited with exit code 1
+2026-06-19 09:55:28.102 UTC [41] LOG:  shutting down
+2026-06-19 09:55:28.104 UTC [41] LOG:  checkpoint starting: shutdown immediate
+2026-06-19 09:55:28.152 UTC [41] LOG:  checkpoint complete: wrote 944 buffers (5.8%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.017 s, sync=0.028 s, total=0.050 s; sync files=317, longest=0.009 s, average=0.001 s; distance=4358 kB, estimate=4358 kB; lsn=0/1938B50, redo lsn=0/1938B50
+2026-06-19 09:55:28.154 UTC [40] LOG:  database system is shut down
+ done
+server stopped
+
+PostgreSQL init process complete; ready for start up.
 
 === pureflow-keycloak-1 ===
 Updating the configuration and installing your custom providers, if any. Please wait.
-2026-06-19 08:54:39,083 INFO  [io.qua.dep.QuarkusAugmentor] (main) Quarkus augmentation completed in 9211ms
-2026-06-19 08:54:39,993 WARN  [org.keycloak.quarkus.runtime.cli.Picocli] (main) The following used run time options are UNAVAILABLE and will be ignored during build time:
+2026-06-19 09:55:43,372 INFO  [io.qua.dep.QuarkusAugmentor] (main) Quarkus augmentation completed in 4594ms
+2026-06-19 09:55:43,862 WARN  [org.keycloak.quarkus.runtime.cli.Picocli] (main) The following used run time options are UNAVAILABLE and will be ignored during build time:
  	- hostname-strict-https: Available only when hostname:v1 feature is enabled.
-2026-06-19 08:54:43,661 INFO  [org.infinispan.CONTAINER] (Thread-5) ISPN000556: Starting user marshaller 'org.infinispan.jboss.marshalling.core.JBossUserMarshaller'
-2026-06-19 08:54:44,484 INFO  [org.keycloak.broker.provider.AbstractIdentityProviderMapper] (main) Registering class org.keycloak.broker.provider.mappersync.ConfigSyncEventListener
-2026-06-19 08:54:44,578 INFO  [org.keycloak.connections.infinispan.DefaultInfinispanConnectionProviderFactory] (main) Node name: node_582298, Site name: null
-2026-06-19 08:54:45,453 INFO  [org.keycloak.exportimport.singlefile.SingleFileImportProvider] (main) Full importing from file /opt/keycloak/bin/../data/import/realm-export.json
-2026-06-19 08:54:45,762 INFO  [org.keycloak.exportimport.util.ImportUtils] (main) Realm 'pureflow' already exists. Import skipped
-2026-06-19 08:54:45,770 INFO  [org.keycloak.exportimport.dir.DirImportProvider] (main) Importing from directory /opt/keycloak/bin/../data/import
-2026-06-19 08:54:45,771 INFO  [org.keycloak.services] (main) KC-SERVICES0030: Full model import requested. Strategy: IGNORE_EXISTING
-2026-06-19 08:54:45,772 INFO  [org.keycloak.services] (main) KC-SERVICES0032: Import finished successfully
-2026-06-19 08:54:45,930 INFO  [io.quarkus] (main) Keycloak 25.0.6 on JVM (powered by Quarkus 3.8.5) started in 6.732s. Listening on: http://0.0.0.0:8080. Management interface listening on http://0.0.0.0:9000.
-2026-06-19 08:54:45,932 INFO  [io.quarkus] (main) Profile dev activated. 
-2026-06-19 08:54:45,932 INFO  [io.quarkus] (main) Installed features: [agroal, cdi, hibernate-orm, jdbc-postgresql, keycloak, logging-gelf, narayana-jta, reactive-routes, resteasy-reactive, resteasy-reactive-jackson, smallrye-context-propagation, smallrye-health, vertx]
-2026-06-19 08:54:45,937 WARN  [org.keycloak.quarkus.runtime.KeycloakMain] (main) Running the server in development mode. DO NOT use this configuration in production.
+2026-06-19 09:55:46,870 INFO  [org.infinispan.CONTAINER] (Thread-5) ISPN000556: Starting user marshaller 'org.infinispan.jboss.marshalling.core.JBossUserMarshaller'
+2026-06-19 09:55:47,992 INFO  [org.keycloak.quarkus.runtime.storage.legacy.liquibase.QuarkusJpaUpdaterProvider] (main) Initializing database schema. Using changelog META-INF/jpa-changelog-master.xml
+
+UPDATE SUMMARY
+Run:                        134
+Previously run:               0
+Filtered out:                 0
+-------------------------------
+Total change sets:          134
+
+2026-06-19 09:55:49,742 INFO  [org.keycloak.connections.infinispan.DefaultInfinispanConnectionProviderFactory] (main) Node name: node_387526, Site name: null
+2026-06-19 09:55:49,844 INFO  [org.keycloak.broker.provider.AbstractIdentityProviderMapper] (main) Registering class org.keycloak.broker.provider.mappersync.ConfigSyncEventListener
+2026-06-19 09:55:49,858 INFO  [org.keycloak.services] (main) KC-SERVICES0050: Initializing master realm
+2026-06-19 09:55:51,298 INFO  [org.keycloak.exportimport.singlefile.SingleFileImportProvider] (main) Full importing from file /opt/keycloak/bin/../data/import/realm-export.json
+2026-06-19 09:55:52,876 WARN  [org.keycloak.representations.idm.RealmRepresentation] (main) Failed to deserialize client policies in the realm pureflow. Fallback to return empty profiles. Details: Unrecognized field "builtin" (class org.keycloak.representations.idm.ClientPolicyRepresentation), not marked as ignorable (5 known properties: "conditions", "enabled", "profiles", "name", "description"])
+ at [Source: UNKNOWN; byte offset: #UNKNOWN] (through reference chain: org.keycloak.representations.idm.ClientPoliciesRepresentation["policies"]->java.util.ArrayList[0]->org.keycloak.representations.idm.ClientPolicyRepresentation["builtin"])
+2026-06-19 09:55:52,876 INFO  [org.keycloak.exportimport.util.ImportUtils] (main) Realm 'pureflow' imported
+2026-06-19 09:55:52,911 INFO  [org.keycloak.exportimport.dir.DirImportProvider] (main) Importing from directory /opt/keycloak/bin/../data/import
+2026-06-19 09:55:52,912 INFO  [org.keycloak.services] (main) KC-SERVICES0030: Full model import requested. Strategy: IGNORE_EXISTING
+2026-06-19 09:55:52,912 INFO  [org.keycloak.services] (main) KC-SERVICES0032: Import finished successfully
+2026-06-19 09:55:52,995 INFO  [io.quarkus] (main) Keycloak 25.0.6 on JVM (powered by Quarkus 3.8.5) started in 9.535s. Listening on: http://0.0.0.0:8080. Management interface listening on http://0.0.0.0:9000.
+2026-06-19 09:55:52,995 INFO  [io.quarkus] (main) Profile dev activated. 
+2026-06-19 09:55:52,995 INFO  [io.quarkus] (main) Installed features: [agroal, cdi, hibernate-orm, jdbc-postgresql, keycloak, logging-gelf, narayana-jta, reactive-routes, resteasy-reactive, resteasy-reactive-jackson, smallrye-context-propagation, smallrye-health, vertx]
+2026-06-19 09:55:53,001 WARN  [org.keycloak.quarkus.runtime.KeycloakMain] (main) Running the server in development mode. DO NOT use this configuration in production.
 
 === pureflow-keycloak-db-1 ===
-PostgreSQL Database directory appears to contain a database; Skipping initialization
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "en_US.utf8".
+The default database encoding has accordingly been set to "UTF8".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /var/lib/postgresql/data ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... posix
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting default time zone ... UTC
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+
+Success. You can now start the database server using:
+
+    pg_ctl -D /var/lib/postgresql/data -l logfile start
+
+waiting for server to start....2026-06-19 09:55:28.139 UTC [40] LOG:  starting PostgreSQL 16.14 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-06-19 09:55:28.142 UTC [40] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-06-19 09:55:28.144 UTC [43] LOG:  database system was shut down at 2026-06-19 09:55:27 UTC
+2026-06-19 09:55:28.146 UTC [40] LOG:  database system is ready to accept connections
+ done
+server started
+CREATE DATABASE
+
+
+/usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+
+waiting for server to shut down...2026-06-19 09:55:28.245 UTC [40] LOG:  received fast shutdown request
+.2026-06-19 09:55:28.250 UTC [40] LOG:  aborting any active transactions
+2026-06-19 09:55:28.251 UTC [40] LOG:  background worker "logical replication launcher" (PID 46) exited with exit code 1
+2026-06-19 09:55:28.252 UTC [41] LOG:  shutting down
+2026-06-19 09:55:28.252 UTC [41] LOG:  checkpoint starting: shutdown immediate
+2026-06-19 09:55:28.275 UTC [41] LOG:  checkpoint complete: wrote 926 buffers (5.7%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.007 s, sync=0.015 s, total=0.023 s; sync files=301, longest=0.007 s, average=0.001 s; distance=4283 kB, estimate=4283 kB; lsn=0/1925D20, redo lsn=0/1925D20
+2026-06-19 09:55:28.277 UTC [40] LOG:  database system is shut down
+ done
+server stopped
+
+PostgreSQL init process complete; ready for start up.
 
 === pureflow-mailcatcher-1 ===
-time="2026/06/19 08:54:27" level=info msg="[smtpd] starting on [::]:1025 (no encryption)"
-time="2026/06/19 08:54:27" level=info msg="[http] starting on [::]:8025"
-time="2026/06/19 08:54:27" level=info msg="[http] accessible via http://localhost:8025/"
+time="2026/06/19 09:55:26" level=info msg="[smtpd] starting on [::]:1025 (no encryption)"
+time="2026/06/19 09:55:26" level=info msg="[http] starting on [::]:8025"
+time="2026/06/19 09:55:26" level=info msg="[http] accessible via http://localhost:8025/"
 
 === pureflow-nodejs-1 ===
 > broken-crystals@0.0.1 start:prod
 > node dist/main.js
 
-Primary 18 is running
-Worker 25 started
-Worker 26 started
-Worker 26 died with code 1 and signal null
-Starting a new worker
-Worker 25 died with code 1 and signal null
-Starting a new worker
-Worker 40 started
-Worker 40 died with code 1 and signal null
-Starting a new worker
-Worker 39 started
-Worker 39 died with code 1 and signal null
-Starting a new worker
-Worker 53 started
-Worker 53 died with code 1 and signal null
-Starting a new worker
-Worker 60 started
-Worker 60 died with code 1 and signal null
-Starting a new worker
-Worker 81 started
-Worker 81 died with code 1 and signal null
-Starting a new worker
-Worker 74 started
-Worker 74 died with code 1 and signal null
-Starting a new worker
-Worker 95 started
-Worker 95 died with code 1 and signal null
-Starting a new worker
-Worker 88 started
-Worker 88 died with code 1 and signal null
-Starting a new worker
-Worker 102 started
-Worker 102 died with code 1 and signal null
-Starting a new worker
-Worker 109 started
-Worker 109 died with code 1 and signal null
-Starting a new worker
-Worker 116 started
-Worker 116 died with code 1 and signal null
-Starting a new worker
-Worker 129 started
-Worker 129 died with code 1 and signal null
-Starting a new worker
-Worker 143 started
-Worker 143 died with code 1 and signal null
-Starting a new worker
-Worker 136 started
-Worker 136 died with code 1 and signal null
-Starting a new worker
-Worker 150 started
-Worker 150 died with code 1 and signal null
-Starting a new worker
-Worker 157 started
-Worker 157 died with code 1 and signal null
-Starting a new worker
-Worker 164 started
-Worker 164 died with code 1 and signal null
-Starting a new worker
-Worker 171 started
-Worker 171 died with code 1 and signal null
-Starting a new worker
-Worker 183 started
-Worker 183 died with code 1 and signal null
-Starting a new worker
-Worker 190 started
-Worker 190 died with code 1 and signal null
-Starting a new worker
-Worker 204 started
-Worker 204 died with code 1 and signal null
-Starting a new worker
-Worker 197 started
-Worker 197 died with code 1 and signal null
-Starting a new worker
-Worker 211 started
-Worker 211 died with code 1 and signal null
-Starting a new worker
-Worker 218 started
-Worker 218 died with code 1 and signal null
-Starting a new worker
-Worker 225 started
-Worker 225 died with code 1 and signal null
-Starting a new worker
-Worker 232 started
-Worker 232 died with code 1 and signal null
-Starting a new worker
-Worker 239 started
-Worker 239 died with code 1 and signal null
-Starting a new worker
-Worker 246 started
-Worker 246 died with code 1 and signal null
-Starting a new worker
-Worker 259 started
-Worker 259 died with code 1 and signal null
-Starting a new worker
-Worker 266 started
-Worker 266 died with code 1 and signal null
-Starting a new worker
-Worker 273 started
-Worker 273 died with code 1 and signal null
-Starting a new worker
-Worker 280 started
-Worker 280 died with code 1 and signal null
-Starting a new worker
-Worker 287 started
-Worker 287 died with code 1 and signal null
-Starting a new worker
-Worker 294 started
-Worker 294 died with code 1 and signal null
-Starting a new worker
-Worker 301 started
-Worker 301 died with code 1 and signal null
-Starting a new worker
-Worker 308 started
-Worker 308 died with code 1 and signal null
-Starting a new worker
-Worker 315 started
-Worker 315 died with code 1 and signal null
-Starting a new worker
-Worker 322 started
-Worker 322 died with code 1 and signal null
-Starting a new worker
-Worker 329 started
-Worker 329 died with code 1 and signal null
-Starting a new worker
-Worker 336 started
-Worker 336 died with code 1 and signal null
-Starting a new worker
-Worker 343 started
-Worker 343 died with code 1 and signal null
-Starting a new worker
-Worker 350 started
-Worker 350 died with code 1 and signal null
-Starting a new worker
-Worker 357 started
-Worker 357 died with code 1 and signal null
-Starting a new worker
-Worker 370 started
-Worker 370 died with code 1 and signal null
-Starting a new worker
-Worker 377 started
-Worker 377 died with code 1 and signal null
-Starting a new worker
-Worker 384 started
-Worker 384 died with code 1 and signal null
-Starting a new worker
-Worker 391 started
-Worker 391 died with code 1 and signal null
-Starting a new worker
-Worker 398 started
-Worker 398 died with code 1 and signal null
-Starting a new worker
-Worker 405 started
-Worker 405 died with code 1 and signal null
-Starting a new worker
-Worker 412 started
-Worker 412 died with code 1 and signal null
-Starting a new worker
-Worker 419 started
-Worker 419 died with code 1 and signal null
-Starting a new worker
-Worker 426 started
-Worker 426 died with code 1 and signal null
-Starting a new worker
-Worker 433 started
-Worker 433 died with code 1 and signal null
-Starting a new worker
-Worker 440 started
-Worker 440 died with code 1 and signal null
-Starting a new worker
-Worker 447 started
-Worker 447 died with code 1 and signal null
-Starting a new worker
-Worker 454 started
-Worker 454 died with code 1 and signal null
-Starting a new worker
-Worker 461 started
-Worker 461 died with code 1 and signal null
-Starting a new worker
-Worker 474 started
-Worker 474 died with code 1 and signal null
-Starting a new worker
-Worker 481 started
-Worker 481 died with code 1 and signal null
-Starting a new worker
-Worker 488 started
-Worker 488 died with code 1 and signal null
-Starting a new worker
-Worker 495 started
-Worker 495 died with code 1 and signal null
-Starting a new worker
-Worker 502 started
-Worker 502 died with code 1 and signal null
-Starting a new worker
-Worker 509 started
-Worker 509 died with code 1 and signal null
-Starting a new worker
-Worker 516 started
-Worker 516 died with code 1 and signal null
-Starting a new worker
-Worker 523 started
-Worker 523 died with code 1 and signal null
-Starting a new worker
-Worker 530 started
-Worker 530 died with code 1 and signal null
-Starting a new worker
-Worker 537 started
-Worker 537 died with code 1 and signal null
-Starting a new worker
-Worker 544 started
-Worker 544 died with code 1 and signal null
-Starting a new worker
-Worker 551 started
-Worker 551 died with code 1 and signal null
-Starting a new worker
-Worker 558 started
-Worker 558 died with code 1 and signal null
-Starting a new worker
-Worker 565 started
-Worker 565 died with code 1 and signal null
-Starting a new worker
-Worker 578 started
-Worker 578 died with code 1 and signal null
-Starting a new worker
-Worker 585 started
-Worker 585 died with code 1 and signal null
-Starting a new worker
-Worker 592 started
-Worker 592 died with code 1 and signal null
-Starting a new worker
-Worker 599 started
-Worker 599 died with code 1 and signal null
-Starting a new worker
-Worker 606 started
-Worker 606 died with code 1 and signal null
-Starting a new worker
-Worker 613 started
-Worker 613 died with code 1 and signal null
-Starting a new worker
-Worker 620 started
-Worker 620 died with code 1 and signal null
-Starting a new worker
-Worker 627 started
-Worker 627 died with code 1 and signal null
-Starting a new worker
-Worker 634 started
-Worker 634 died with code 1 and signal null
-Starting a new worker
-Worker 641 started
-Worker 641 died with code 1 and signal null
-Starting a new worker
-Worker 648 started
-Worker 648 died with code 1 and signal null
-Starting a new worker
-Worker 655 started
-Worker 655 died with code 1 and signal null
-Starting a new worker
-Worker 662 started
-Worker 662 died with code 1 and signal null
-Starting a new worker
-Worker 669 started
-Worker 669 died with code 1 and signal null
-Starting a new worker
-Worker 681 started
-Worker 681 died with code 1 and signal null
-Starting a new worker
-Worker 688 started
-Worker 688 died with code 1 and signal null
-Starting a new worker
-Worker 695 started
-Worker 695 died with code 1 and signal null
-Starting a new worker
-Worker 702 started
-Worker 702 died with code 1 and signal null
-Starting a new worker
-Worker 709 started
-Worker 709 died with code 1 and signal null
-Starting a new worker
-Worker 716 started
-Worker 716 died with code 1 and signal null
-Starting a new worker
-Worker 723 started
-Worker 723 died with code 1 and signal null
-Starting a new worker
-Worker 730 started
-Worker 730 died with code 1 and signal null
-Starting a new worker
-Worker 737 started
-Worker 737 died with code 1 and signal null
-Starting a new worker
-Worker 744 started
-Worker 744 died with code 1 and signal null
-Starting a new worker
-Worker 751 started
-Worker 751 died with code 1 and signal null
-Starting a new worker
-Worker 758 started
-Worker 758 died with code 1 and signal null
-Starting a new worker
-Worker 765 started
-Worker 765 died with code 1 and signal null
-Starting a new worker
-Worker 772 started
-Worker 772 died with code 1 and signal null
-Starting a new worker
-Worker 786 started
-Worker 786 died with code 1 and signal null
-Starting a new worker
-Worker 793 started
-Worker 793 died with code 1 and signal null
-Starting a new worker
-Worker 800 started
-Worker 800 died with code 1 and signal null
-Starting a new worker
-Worker 807 started
-Worker 807 died with code 1 and signal null
-Starting a new worker
-Worker 814 started
-Worker 814 died with code 1 and signal null
-Starting a new worker
-Worker 821 started
-Worker 821 died with code 1 and signal null
-Starting a new worker
-Worker 828 started
-Worker 828 died with code 1 and signal null
-Starting a new worker
-Worker 835 started
-Worker 835 died with code 1 and signal null
-Starting a new worker
-Worker 842 started
-Worker 842 died with code 1 and signal null
-Starting a new worker
-Worker 849 started
-Worker 849 died with code 1 and signal null
-Starting a new worker
-Worker 856 started
-Worker 856 died with code 1 and signal null
-Starting a new worker
-Worker 863 started
-Worker 863 died with code 1 and signal null
-Starting a new worker
-Worker 870 started
-Worker 870 died with code 1 and signal null
-Starting a new worker
-Worker 883 started
-Worker 883 died with code 1 and signal null
-Starting a new worker
-Worker 890 started
-Worker 890 died with code 1 and signal null
-Starting a new worker
-Worker 897 started
-Worker 897 died with code 1 and signal null
-Starting a new worker
-Worker 904 started
-Worker 904 died with code 1 and signal null
-Starting a new worker
-Worker 911 started
-Worker 911 died with code 1 and signal null
-Starting a new worker
-Worker 918 started
-Worker 918 died with code 1 and signal null
-Starting a new worker
-Worker 925 started
-Worker 925 died with code 1 and signal null
-Starting a new worker
-Worker 932 started
-Worker 932 died with code 1 and signal null
-Starting a new worker
-Worker 939 started
-Worker 939 died with code 1 and signal null
-Starting a new worker
-Worker 946 started
-Worker 946 died with code 1 and signal null
-Starting a new worker
-Worker 953 started
-Worker 953 died with code 1 and signal null
-Starting a new worker
-Worker 960 started
-Worker 960 died with code 1 and signal null
-Starting a new worker
-Worker 967 started
-Worker 967 died with code 1 and signal null
-Starting a new worker
-Worker 974 started
-Worker 974 died with code 1 and signal null
-Starting a new worker
-Worker 987 started
-Worker 987 died with code 1 and signal null
-Starting a new worker
-Worker 994 started
-Worker 994 died with code 1 and signal null
-Starting a new worker
-Worker 1001 started
-Worker 1001 died with code 1 and signal null
-Starting a new worker
-Worker 1008 started
-Worker 1008 died with code 1 and signal null
-Starting a new worker
-Worker 1015 started
-Worker 1015 died with code 1 and signal null
-Starting a new worker
-Worker 1022 started
-Worker 1022 died with code 1 and signal null
-Starting a new worker
-Worker 1029 started
-Worker 1029 died with code 1 and signal null
-Starting a new worker
-Worker 1036 started
-Worker 1036 died with code 1 and signal null
-Starting a new worker
-Worker 1043 started
-Worker 1043 died with code 1 and signal null
-Starting a new worker
-Worker 1050 started
-Worker 1050 died with code 1 and signal null
-Starting a new worker
-Worker 1057 started
-Worker 1057 died with code 1 and signal null
-Starting a new worker
-Worker 1064 started
-Worker 1064 died with code 1 and signal null
-Starting a new worker
-Worker 1071 started
-Worker 1071 died with code 1 and signal null
-Starting a new worker
-Worker 1078 started
-Worker 1078 died with code 1 and signal null
-Starting a new worker
-Worker 1091 started
-Worker 1091 died with code 1 and signal null
-Starting a new worker
-Worker 1098 started
-Worker 1098 died with code 1 and signal null
-Starting a new worker
-Worker 1105 started
-Worker 1105 died with code 1 and signal null
-Starting a new worker
-Worker 1112 started
-Worker 1112 died with code 1 and signal null
-Starting a new worker
-Worker 1119 started
-Worker 1119 died with code 1 and signal null
-Starting a new worker
-Worker 1126 started
-Worker 1126 died with code 1 and signal null
-Starting a new worker
-Worker 1133 started
-Worker 1133 died with code 1 and signal null
-Starting a new worker
-Worker 1140 started
-Worker 1140 died with code 1 and signal null
-Starting a new worker
-Worker 1147 started
-Worker 1147 died with code 1 and signal null
-Starting a new worker
-Worker 1154 started
-Worker 1154 died with code 1 and signal null
-Starting a new worker
-Worker 1161 started
-Worker 1161 died with code 1 and signal null
-Starting a new worker
-Worker 1168 started
-Worker 1168 died with code 1 and signal null
-Starting a new worker
-Worker 1175 started
-Worker 1175 died with code 1 and signal null
-Starting a new worker
-Worker 1182 started
-Worker 1182 died with code 1 and signal null
-Starting a new worker
-Worker 1194 started
-Worker 1194 died with code 1 and signal null
-Starting a new worker
-Worker 1201 started
-Worker 1201 died with code 1 and signal null
-Starting a new worker
-Worker 1208 started
-Worker 1208 died with code 1 and signal null
-Starting a new worker
-Worker 1215 started
-Worker 1215 died with code 1 and signal null
-Starting a new worker
-Worker 1222 started
-Worker 1222 died with code 1 and signal null
-Starting a new worker
-Worker 1229 started
-Worker 1229 died with code 1 and signal null
-Starting a new worker
-Worker 1236 started
-Worker 1236 died with code 1 and signal null
-Starting a new worker
-Worker 1243 started
-Worker 1243 died with code 1 and signal null
-Starting a new worker
-Worker 1250 started
-Worker 1250 died with code 1 and signal null
-Starting a new worker
-Worker 1257 started
-Worker 1257 died with code 1 and signal null
-Starting a new worker
-Worker 1264 started
-Worker 1264 died with code 1 and signal null
-Starting a new worker
-Worker 1271 started
-Worker 1271 died with code 1 and signal null
-Starting a new worker
-Worker 1278 started
-Worker 1278 died with code 1 and signal null
-Starting a new worker
-Worker 1285 started
-Worker 1285 died with code 1 and signal null
-Starting a new worker
-Worker 1298 started
-Worker 1298 died with code 1 and signal null
-Starting a new worker
-Worker 1305 started
-Worker 1305 died with code 1 and signal null
-Starting a new worker
-Worker 1312 started
-Worker 1312 died with code 1 and signal null
-Starting a new worker
-Worker 1319 started
-Worker 1319 died with code 1 and signal null
-Starting a new worker
-Worker 1326 started
-Worker 1326 died with code 1 and signal null
-Starting a new worker
-Worker 1333 started
-Worker 1333 died with code 1 and signal null
-Starting a new worker
-Worker 1340 started
-Worker 1340 died with code 1 and signal null
-Starting a new worker
-Worker 1347 started
-Worker 1347 died with code 1 and signal null
-Starting a new worker
-Worker 1354 started
-Worker 1354 died with code 1 and signal null
-Starting a new worker
-Worker 1361 started
-Worker 1361 died with code 1 and signal null
-Starting a new worker
-Worker 1368 started
-Worker 1368 died with code 1 and signal null
-Starting a new worker
-Worker 1375 started
-Worker 1375 died with code 1 and signal null
-Starting a new worker
-Worker 1388 started
-Worker 1388 died with code 1 and signal null
-Starting a new worker
-Worker 1395 started
-Worker 1395 died with code 1 and signal null
-Starting a new worker
-Worker 1402 started
-Worker 1402 died with code 1 and signal null
-Starting a new worker
-Worker 1409 started
-Worker 1409 died with code 1 and signal null
-Starting a new worker
-Worker 1416 started
-Worker 1416 died with code 1 and signal null
-Starting a new worker
-Worker 1423 started
-Worker 1423 died with code 1 and signal null
-Starting a new worker
-Worker 1430 started
-Worker 1430 died with code 1 and signal null
-Starting a new worker
-Worker 1437 started
-Worker 1437 died with code 1 and signal null
-Starting a new worker
-Worker 1444 started
-Worker 1444 died with code 1 and signal null
-Starting a new worker
-Worker 1451 started
-Worker 1451 died with code 1 and signal null
-Starting a new worker
-Worker 1458 started
-Worker 1458 died with code 1 and signal null
-Starting a new worker
-Worker 1465 started
-Worker 1465 died with code 1 and signal null
-Starting a new worker
-Worker 1472 started
-Worker 1472 died with code 1 and signal null
-Starting a new worker
-Worker 1485 started
-Worker 1485 died with code 1 and signal null
-Starting a new worker
-Worker 1492 started
-Worker 1492 died with code 1 and signal null
-Starting a new worker
-Worker 1512 started
-Worker 1512 died with code 1 and signal null
-Starting a new worker
-Worker 1519 started
-Worker 1519 died with code 1 and signal null
-Starting a new worker
-Worker 1540 started
-Worker 1540 died with code 1 and signal null
-Starting a new worker
-Worker 1547 started
-Worker 1547 died with code 1 and signal null
-Starting a new worker
-Worker 1568 started
-Worker 1568 died with code 1 and signal null
-Starting a new worker
-Worker 1575 started
-Worker 1575 died with code 1 and signal null
-Starting a new worker
-Worker 1588 started
-Worker 1588 died with code 1 and signal null
-Starting a new worker
-Worker 1609 started
-Worker 1609 died with code 1 and signal null
-Starting a new worker
-Worker 1616 started
-Worker 1616 died with code 1 and signal null
-Starting a new worker
-Worker 1637 started
-Worker 1637 died with code 1 and signal null
-Starting a new worker
-Worker 1651 started
-Worker 1651 died with code 1 and signal null
-Starting a new worker
-Worker 1665 started
-Worker 1665 died with code 1 and signal null
-Starting a new worker
-Worker 1686 started
-Worker 1686 died with code 1 and signal null
-Starting a new worker
-Worker 1693 started
-Worker 1693 died with code 1 and signal null
-Starting a new worker
-Worker 1720 started
-Worker 1720 died with code 1 and signal null
-Starting a new worker
-Worker 1727 started
-Worker 1727 died with code 1 and signal null
-Starting a new worker
-Worker 1741 started
-Worker 1741 died with code 1 and signal null
-Starting a new worker
-Worker 1755 started
-Worker 1755 died with code 1 and signal null
-Starting a new worker
-Worker 1769 started
-Worker 1769 died with code 1 and signal null
-Starting a new worker
-Worker 1783 started
-Worker 1783 died with code 1 and signal null
-Starting a new worker
-Worker 1804 started
-Worker 1804 died with code 1 and signal null
-Starting a new worker
-Worker 1824 started
-Worker 1824 died with code 1 and signal null
-Starting a new worker
-Worker 1838 started
-Worker 1838 died with code 1 and signal null
-Starting a new worker
-Worker 1852 started
-Worker 1852 died with code 1 and signal null
-Starting a new worker
-Worker 1866 started
-Worker 1866 died with code 1 and signal null
-Starting a new worker
-Worker 1894 started
-Worker 1894 died with code 1 and signal null
-Starting a new worker
-Worker 1886 started
-Worker 1886 died with code 1 and signal null
-Starting a new worker
-Worker 1906 started
-Worker 1906 died with code 1 and signal null
-Starting a new worker
-Worker 1914 started
-Worker 1914 died with code 1 and signal null
-Starting a new worker
-Worker 1955 started
-Worker 1955 died with code 1 and signal null
-Starting a new worker
-Worker 1948 started
-Worker 1948 died with code 1 and signal null
-Starting a new worker
-Worker 1962 started
-Worker 1962 died with code 1 and signal null
-Starting a new worker
-Worker 1983 started
-Worker 1983 died with code 1 and signal null
-Starting a new worker
-Worker 1990 started
-Worker 1990 died with code 1 and signal null
-Starting a new worker
-Worker 2017 started
-Worker 2017 died with code 1 and signal null
-Starting a new worker
-Worker 2024 started
-Worker 2024 died with code 1 and signal null
-Starting a new worker
-Worker 2045 started
-Worker 2045 died with code 1 and signal null
-Starting a new worker
-Worker 2059 started
-Worker 2059 died with code 1 and signal null
-Starting a new worker
-Worker 2073 started
-Worker 2073 died with code 1 and signal null
-Starting a new worker
-Worker 2087 started
-Worker 2087 died with code 1 and signal null
-Starting a new worker
-Worker 2101 started
-Worker 2101 died with code 1 and signal null
-Starting a new worker
-Worker 2122 started
-Worker 2122 died with code 1 and signal null
-Starting a new worker
-Worker 2136 started
-Worker 2136 died with code 1 and signal null
-Starting a new worker
-Worker 2150 started
-Worker 2150 died with code 1 and signal null
-Starting a new worker
-Worker 2164 started
-Worker 2164 died with code 1 and signal null
-Starting a new worker
-Worker 2178 started
-Worker 2178 died with code 1 and signal null
-Starting a new worker
-Worker 2185 started
-Worker 2185 died with code 1 and signal null
-Starting a new worker
-Worker 2212 started
-Worker 2212 died with code 1 and signal null
-Starting a new worker
-Worker 2226 started
-Worker 2226 died with code 1 and signal null
-Starting a new worker
-Worker 2240 started
-Worker 2240 died with code 1 and signal null
-Starting a new worker
-Worker 2247 started
-Worker 2247 died with code 1 and signal null
-Starting a new worker
-Worker 2268 started
-Worker 2268 died with code 1 and signal null
-Starting a new worker
-Worker 2282 started
-Worker 2282 died with code 1 and signal null
-Starting a new worker
-Worker 2309 started
-Worker 2309 died with code 1 and signal null
-Starting a new worker
-Worker 2316 started
-Worker 2316 died with code 1 and signal null
-Starting a new worker
-Worker 2337 started
-Worker 2343 started
-Worker 2343 died with code 1 and signal null
-Starting a new worker
-Worker 2337 died with code 1 and signal null
-Starting a new worker
-Worker 2365 started
-Worker 2365 died with code 1 and signal null
-Starting a new worker
-Worker 2366 started
-Worker 2366 died with code 1 and signal null
-Starting a new worker
-Worker 2400 started
-Worker 2400 died with code 1 and signal null
-Starting a new worker
-Worker 2393 started
-Worker 2393 died with code 1 and signal null
-Starting a new worker
-Worker 2427 started
-Worker 2427 died with code 1 and signal null
-Starting a new worker
-Worker 2434 started
-Worker 2434 died with code 1 and signal null
-Starting a new worker
-Worker 2462 started
-Worker 2462 died with code 1 and signal null
-Starting a new worker
-Worker 2455 started
-Worker 2455 died with code 1 and signal null
-Starting a new worker
-Worker 2483 started
-Worker 2483 died with code 1 and signal null
-Starting a new worker
-Worker 2490 started
-Worker 2490 died with code 1 and signal null
-Starting a new worker
-Worker 2517 started
-Worker 2517 died with code 1 and signal null
-Starting a new worker
-Worker 2524 started
-Worker 2524 died with code 1 and signal null
-Starting a new worker
-Worker 2545 started
-Worker 2545 died with code 1 and signal null
-Starting a new worker
-Worker 2552 started
-Worker 2552 died with code 1 and signal null
-Starting a new worker
-Worker 2580 started
-Worker 2580 died with code 1 and signal null
-Starting a new worker
-Worker 2573 started
-Worker 2573 died with code 1 and signal null
-Starting a new worker
-Worker 2614 started
-Worker 2614 died with code 1 and signal null
-Starting a new worker
-Worker 2607 started
-Worker 2607 died with code 1 and signal null
-Starting a new worker
-Worker 2642 started
-Worker 2642 died with code 1 and signal null
-Starting a new worker
-Worker 2635 started
-Worker 2635 died with code 1 and signal null
-Starting a new worker
-Worker 2663 started
-Worker 2663 died with code 1 and signal null
-Starting a new worker
-Worker 2670 started
-Worker 2670 died with code 1 and signal null
-Starting a new worker
-Worker 2691 started
-Worker 2691 died with code 1 and signal null
-Starting a new worker
-Worker 2698 started
-Worker 2698 died with code 1 and signal null
-Starting a new worker
-Worker 2724 started
-Worker 2724 died with code 1 and signal null
-Starting a new worker
-Worker 2731 started
-Worker 2731 died with code 1 and signal null
-Starting a new worker
-Worker 2752 started
-Worker 2752 died with code 1 and signal null
-Starting a new worker
-Worker 2759 started
-Worker 2759 died with code 1 and signal null
-Starting a new worker
-Worker 2780 started
-Worker 2780 died with code 1 and signal null
-Starting a new worker
-Worker 2787 started
-Worker 2787 died with code 1 and signal null
-Starting a new worker
-Worker 2821 started
-Worker 2821 died with code 1 and signal null
-Starting a new worker
-Worker 2814 started
-Worker 2814 died with code 1 and signal null
-Starting a new worker
-Worker 2842 started
-Worker 2842 died with code 1 and signal null
-Starting a new worker
-Worker 2849 started
-Worker 2849 died with code 1 and signal null
-Starting a new worker
-Worker 2883 started
-Worker 2883 died with code 1 and signal null
-Starting a new worker
-Worker 2877 started
-Worker 2877 died with code 1 and signal null
-Starting a new worker
-Worker 2918 started
-Worker 2918 died with code 1 and signal null
-Starting a new worker
-Worker 2911 started
-Worker 2911 died with code 1 and signal null
-Starting a new worker
-Worker 2939 started
-Worker 2939 died with code 1 and signal null
-Starting a new worker
-Worker 2932 started
-Worker 2932 died with code 1 and signal null
-Starting a new worker
-Worker 2960 started
-Worker 2960 died with code 1 and signal null
-Starting a new worker
-Worker 2967 started
-Worker 2967 died with code 1 and signal null
-Starting a new worker
-Worker 2988 started
-Worker 2988 died with code 1 and signal null
-Starting a new worker
-Worker 2995 started
-Worker 2995 died with code 1 and signal null
-Starting a new worker
-Worker 3023 started
-Worker 3023 died with code 1 and signal null
-Starting a new worker
-Worker 3030 started
-Worker 3030 died with code 1 and signal null
-Starting a new worker
-Worker 3051 started
-Worker 3051 died with code 1 and signal null
-Starting a new worker
-Worker 3058 started
-Worker 3058 died with code 1 and signal null
-Starting a new worker
-Worker 3079 started
-Worker 3079 died with code 1 and signal null
-Starting a new worker
-Worker 3086 started
-Worker 3086 died with code 1 and signal null
-Starting a new worker
-Worker 3114 started
-Worker 3114 died with code 1 and signal null
-Starting a new worker
-Worker 3128 started
-Worker 3128 died with code 1 and signal null
-Starting a new worker
-Worker 3142 started
-Worker 3142 died with code 1 and signal null
-Starting a new worker
-Worker 3156 started
-Worker 3156 died with code 1 and signal null
-Starting a new worker
-Worker 3170 started
-Worker 3170 died with code 1 and signal null
-Starting a new worker
-Worker 3184 started
-Worker 3184 died with code 1 and signal null
-Starting a new worker
-Worker 3198 started
-Worker 3198 died with code 1 and signal null
-Starting a new worker
-Worker 3218 started
-Worker 3218 died with code 1 and signal null
-Starting a new worker
-Worker 3232 started
-Worker 3232 died with code 1 and signal null
-Starting a new worker
-Worker 3246 started
-Worker 3246 died with code 1 and signal null
-Starting a new worker
-Worker 3260 started
-Worker 3260 died with code 1 and signal null
-Starting a new worker
-Worker 3274 started
-Worker 3274 died with code 1 and signal null
-Starting a new worker
-Worker 3288 started
-Worker 3288 died with code 1 and signal null
-Starting a new worker
-Worker 3309 started
-Worker 3309 died with code 1 and signal null
-Starting a new worker
-Worker 3322 started
-Worker 3322 died with code 1 and signal null
-Starting a new worker
-Worker 3343 started
-Worker 3343 died with code 1 and signal null
-Starting a new worker
-Worker 3350 started
-Worker 3350 died with code 1 and signal null
-Starting a new worker
-Worker 3371 started
-Worker 3371 died with code 1 and signal null
-Starting a new worker
-Worker 3378 started
-Worker 3378 died with code 1 and signal null
-Starting a new worker
-Worker 3399 started
-Worker 3399 died with code 1 and signal null
-Starting a new worker
-Worker 3406 started
-Worker 3406 died with code 1 and signal null
-Starting a new worker
-Worker 3426 started
-Worker 3426 died with code 1 and signal null
-Starting a new worker
-Worker 3447 started
-Worker 3447 died with code 1 and signal null
-Starting a new worker
-Worker 3454 started
-Worker 3454 died with code 1 and signal null
-Starting a new worker
-Worker 3475 started
-Worker 3475 died with code 1 and signal null
-Starting a new worker
-Worker 3482 started
-Worker 3482 died with code 1 and signal null
-Starting a new worker
-Worker 3523 started
-Worker 3523 died with code 1 and signal null
-Starting a new worker
-Worker 3516 started
-Worker 3516 died with code 1 and signal null
-Starting a new worker
-Worker 3537 started
-Worker 3551 started
-Worker 3537 died with code 1 and signal null
-Starting a new worker
-Worker 3551 died with code 1 and signal null
-Starting a new worker
-Worker 3572 started
-Worker 3573 started
-Worker 3572 died with code 1 and signal null
-Starting a new worker
-Worker 3573 died with code 1 and signal null
-Starting a new worker
-Worker 3601 started
-Worker 3601 died with code 1 and signal null
-Starting a new worker
-Worker 3600 started
-Worker 3600 died with code 1 and signal null
-Starting a new worker
-Worker 3634 started
-Worker 3634 died with code 1 and signal null
-Starting a new worker
-Worker 3641 started
-Worker 3641 died with code 1 and signal null
-Starting a new worker
-Worker 3662 started
-Worker 3662 died with code 1 and signal null
-Starting a new worker
-Worker 3669 started
-Worker 3669 died with code 1 and signal null
-Starting a new worker
-Worker 3690 started
-Worker 3690 died with code 1 and signal null
-Starting a new worker
-Worker 3697 started
-Worker 3697 died with code 1 and signal null
-Starting a new worker
-Worker 3704 started
-Worker 3704 died with code 1 and signal null
-Starting a new worker
-Worker 3731 started
-Worker 3731 died with code 1 and signal null
-Starting a new worker
-Worker 3738 started
-Worker 3738 died with code 1 and signal null
-Starting a new worker
-Worker 3759 started
-Worker 3759 died with code 1 and signal null
-Starting a new worker
-Worker 3766 started
-Worker 3766 died with code 1 and signal null
-Starting a new worker
-Worker 3787 started
-Worker 3787 died with code 1 and signal null
-Starting a new worker
-Worker 3794 started
-Worker 3794 died with code 1 and signal null
-Starting a new worker
-Worker 3820 started
-Worker 3820 died with code 1 and signal null
-Starting a new worker
-Worker 3827 started
-Worker 3827 died with code 1 and signal null
-Starting a new worker
-Worker 3848 started
-Worker 3848 died with code 1 and signal null
-Starting a new worker
-Worker 3855 started
-Worker 3855 died with code 1 and signal null
-Starting a new worker
-Worker 3876 started
-Worker 3876 died with code 1 and signal null
-Starting a new worker
-Worker 3883 started
-Worker 3883 died with code 1 and signal null
-Starting a new worker
+Worker 18 started
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mOrmModule dependencies initialized[39m[38;5;3m +13ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMikroOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHttpClientModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSubscriptionsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFileModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPartnersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEmailModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mChatModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mKeyCloakModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[MikroORM] [39m[32m[90m[info] [39mMikroORM version: [32m6.3.13[39m[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[MikroORM] [39m[32m[90m[discovery] [39mORM entity discovery started, using [36mReflectMetadataProvider[39m[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mGraphQLSchemaBuilderModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mGraphQLModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[MikroORM] [39m[32m[90m[discovery] [39m- processing [36m8[39m files[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[MikroORM] [39m[32m[90m[discovery] [39m- ignoring file base.entity.js.map[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[MikroORM] [39m[32m[90m[discovery] [39m- ignoring file product.entity.js.map[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[MikroORM] [39m[32m[90m[discovery] [39m- ignoring file testimonial.entity.js.map[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[MikroORM] [39m[32m[90m[discovery] [39m- ignoring file user.entity.js.map[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[MikroORM] [39m[32m[90m[discovery] [39m- processing entity [36mBase[39m[90m (/usr/src/app/dist/model/base.entity.js)[39m[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[MikroORM] [39m[32m[90m[discovery] [39m- processing entity [36mProduct[39m[90m (/usr/src/app/dist/model/product.entity.js)[39m[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[MikroORM] [39m[32m[90m[discovery] [39m- processing entity [36mTestimonial[39m[90m (/usr/src/app/dist/model/testimonial.entity.js)[39m[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[MikroORM] [39m[32m[90m[discovery] [39m- processing entity [36mUser[39m[90m (/usr/src/app/dist/model/user.entity.js)[39m[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[MikroORM] [39m[32m[90m[discovery] [39m- entity discovery finished, found [32m4[39m entities, took [32m12 ms[39m[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[MikroORM] [39m[32m[90m[query] [39m[37m[1mselect[22m[39m [32m1[39m [37m[1mfrom[22m[39m pg_database [37m[1mwhere[22m[39m datname [0m=[0m [33m'bc'[39m[90m [took 11 ms, 1 result][39m[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[MikroORM] [39m[32m[90m[info] [39mMikroORM successfully connected to database [32mbc on postgresql://bc:*****@db:5432[39m[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMikroOrmCoreModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMikroOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTestimonialsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mProductsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAppController {/api}:[39m[38;5;3m +72ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/render, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/goto, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/metadata, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api, OPTIONS} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/spawn, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/config, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/secrets, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/userinfo/:email, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v2/userinfo/:email, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/nestedJson, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/admin/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/jwt/rsa/signature/validate, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/dom-csrf-flow, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/simple-csrf-flow, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/oidc-client, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/jwt/kid-sql/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/jwt/kid-sql/validate, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/jwt/weak-key/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/jwt/weak-key/validate, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/jwt/jku/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/jwt/jku/validate, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/jwt/jwk/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/jwt/jwk/validate, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/jwt/x5c/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/jwt/x5c/validate, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/jwt/x5u/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/jwt/x5u/validate, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/jwt/hmac/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/jwt/hmac/validate, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/api/users}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users, OPTIONS} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/one/:email, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/id/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/fullinfo/:email, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/search/:name, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/one/:email/photo, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/one/:id/photo, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/ldap, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/basic, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/oidc, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/one/:email/info, PUT} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/one/:email/info, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/one/:email/adminpermission, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/one/:email/photo, PUT} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mFileController {/api/file}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/file, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/file/google, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/file/aws, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/file/azure, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/file/digital_ocean, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/file, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/file/raw, PUT} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/file/raw, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSubscriptionsController {/api/subscriptions}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/subscriptions, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTestimonialsController {/api/testimonials}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/testimonials, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/testimonials, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/testimonials/count, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mProductsController {/api/products}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/products, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/products/latest, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/products/views, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mPartnersController {/api/partners}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/partners/query, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/partners/partnerLogin, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/partners/:partnerId/profile, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/partners/searchPartners, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mEmailController {/api/email}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/sendSupportEmail, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/getEmails, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/deleteEmails, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mChatController {/api/chat}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat/query, POST} route[39m[38;5;3m +1ms[39m
+[95m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [95m  DEBUG[39m [38;5;3m[HttpClientService] [39m[95mLoaded remote JSON resource[39m
+[95m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [95m  DEBUG[39m [38;5;3m[HttpClientService] [39m[95mLoaded remote JSON resource[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:14 AM [32m    LOG[39m [38;5;3m[GraphQLModule] [39m[32mMapped {/graphql, POST} route[39m[38;5;3m +32ms[39m
+
+> broken-crystals@0.0.1 start:prod
+> node dist/main.js
+
+Worker 18 started
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mOrmModule dependencies initialized[39m[38;5;3m +14ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMikroOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHttpClientModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSubscriptionsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFileModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPartnersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEmailModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mChatModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mKeyCloakModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[MikroORM] [39m[32m[90m[info] [39mMikroORM version: [32m6.3.13[39m[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[MikroORM] [39m[32m[90m[discovery] [39mORM entity discovery started, using [36mReflectMetadataProvider[39m[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mGraphQLSchemaBuilderModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mGraphQLModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[MikroORM] [39m[32m[90m[discovery] [39m- processing [36m8[39m files[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[MikroORM] [39m[32m[90m[discovery] [39m- ignoring file base.entity.js.map[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[MikroORM] [39m[32m[90m[discovery] [39m- ignoring file product.entity.js.map[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[MikroORM] [39m[32m[90m[discovery] [39m- ignoring file testimonial.entity.js.map[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[MikroORM] [39m[32m[90m[discovery] [39m- ignoring file user.entity.js.map[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[MikroORM] [39m[32m[90m[discovery] [39m- processing entity [36mBase[39m[90m (/usr/src/app/dist/model/base.entity.js)[39m[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[MikroORM] [39m[32m[90m[discovery] [39m- processing entity [36mProduct[39m[90m (/usr/src/app/dist/model/product.entity.js)[39m[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[MikroORM] [39m[32m[90m[discovery] [39m- processing entity [36mTestimonial[39m[90m (/usr/src/app/dist/model/testimonial.entity.js)[39m[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[MikroORM] [39m[32m[90m[discovery] [39m- processing entity [36mUser[39m[90m (/usr/src/app/dist/model/user.entity.js)[39m[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[MikroORM] [39m[32m[90m[discovery] [39m- entity discovery finished, found [32m4[39m entities, took [32m13 ms[39m[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[MikroORM] [39m[32m[90m[query] [39m[37m[1mselect[22m[39m [32m1[39m [37m[1mfrom[22m[39m pg_database [37m[1mwhere[22m[39m datname [0m=[0m [33m'bc'[39m[90m [took 8 ms, 1 result][39m[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[MikroORM] [39m[32m[90m[info] [39mMikroORM successfully connected to database [32mbc on postgresql://bc:*****@db:5432[39m[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMikroOrmCoreModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMikroOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTestimonialsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mProductsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAppController {/api}:[39m[38;5;3m +64ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/render, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/goto, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/metadata, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api, OPTIONS} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/spawn, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/config, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/secrets, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/userinfo/:email, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v2/userinfo/:email, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/nestedJson, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/admin/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/jwt/rsa/signature/validate, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/dom-csrf-flow, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/simple-csrf-flow, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/oidc-client, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/jwt/kid-sql/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/jwt/kid-sql/validate, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/jwt/weak-key/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/jwt/weak-key/validate, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/jwt/jku/login, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/jwt/jku/validate, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/jwt/jwk/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/jwt/jwk/validate, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/jwt/x5c/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/jwt/x5c/validate, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/jwt/x5u/login, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/jwt/x5u/validate, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/jwt/hmac/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/jwt/hmac/validate, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/api/users}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users, OPTIONS} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/one/:email, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/id/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/fullinfo/:email, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/search/:name, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/one/:email/photo, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/one/:id/photo, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/ldap, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/basic, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/oidc, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/one/:email/info, PUT} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/one/:email/info, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/one/:email/adminpermission, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/one/:email/photo, PUT} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mFileController {/api/file}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/file, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/file/google, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/file/aws, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/file/azure, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/file/digital_ocean, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/file, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/file/raw, PUT} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/file/raw, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSubscriptionsController {/api/subscriptions}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/subscriptions, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTestimonialsController {/api/testimonials}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/testimonials, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/testimonials, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/testimonials/count, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mProductsController {/api/products}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/products, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/products/latest, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/products/views, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mPartnersController {/api/partners}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/partners/query, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/partners/partnerLogin, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/partners/:partnerId/profile, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/partners/searchPartners, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mEmailController {/api/email}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/sendSupportEmail, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/getEmails, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/email/deleteEmails, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mChatController {/api/chat}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat/query, POST} route[39m[38;5;3m +0ms[39m
+[95m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [95m  DEBUG[39m [38;5;3m[HttpClientService] [39m[95mLoaded remote JSON resource[39m
+[95m[Nest] 18  - [39m06/19/2026, 9:56:15 AM [95m  DEBUG[39m [38;5;3m[HttpClientService] [39m[95mLoaded remote JSON resource[39m
+[32m[Nest] 18  - [39m06/19/2026, 9:56:16 AM [32m    LOG[39m [38;5;3m[GraphQLModule] [39m[32mMapped {/graphql, POST} route[39m[38;5;3m +31ms[39m
+
+> broken-crystals@0.0.1 start:prod
+> node dist/main.js
 
 === pureflow-ollama-1 ===
 Couldn't find '/root/.ollama/id_ed25519'. Generating new private key.
 Your new public key is: 
 
-ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIL6ZF7hcn4mufJ+PANszLYlOhG7pWGQVxGZlnWNi5PlS
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO5+PfnZDcn9vx8MSTx1B1X7eLKpJUxz4CzPGRzBKEkM
 
-[GIN] 2026/06/19 - 08:54:32 | 200 |      72.041µs |       127.0.0.1 | HEAD     "/"
-[GIN] 2026/06/19 - 08:54:32 | 200 |     290.042µs |       127.0.0.1 | GET      "/api/tags"
-[GIN] 2026/06/19 - 08:55:02 | 200 |       14.75µs |       127.0.0.1 | HEAD     "/"
-[GIN] 2026/06/19 - 08:55:02 | 200 |      38.083µs |       127.0.0.1 | GET      "/api/tags"
-[GIN] 2026/06/19 - 08:55:32 | 200 |      13.875µs |       127.0.0.1 | HEAD     "/"
-[GIN] 2026/06/19 - 08:55:32 | 200 |      32.959µs |       127.0.0.1 | GET      "/api/tags"
-[GIN] 2026/06/19 - 08:56:02 | 200 |      20.625µs |       127.0.0.1 | HEAD     "/"
-[GIN] 2026/06/19 - 08:56:02 | 200 |      35.875µs |       127.0.0.1 | GET      "/api/tags"
-[GIN] 2026/06/19 - 08:56:32 | 200 |      28.292µs |       127.0.0.1 | HEAD     "/"
-[GIN] 2026/06/19 - 08:56:32 | 200 |       46.25µs |       127.0.0.1 | GET      "/api/tags"
-[GIN] 2026/06/19 - 08:57:02 | 200 |      15.583µs |       127.0.0.1 | HEAD     "/"
-[GIN] 2026/06/19 - 08:57:02 | 200 |        42.5µs |       127.0.0.1 | GET      "/api/tags"
-[GIN] 2026/06/19 - 08:57:32 | 200 |      12.875µs |       127.0.0.1 | HEAD     "/"
-[GIN] 2026/06/19 - 08:57:32 | 200 |       35.75µs |       127.0.0.1 | GET      "/api/tags"
+[GIN] 2026/06/19 - 09:55:31 | 200 |     130.792µs |       127.0.0.1 | HEAD     "/"
+[GIN] 2026/06/19 - 09:55:31 | 200 |     434.583µs |       127.0.0.1 | GET      "/api/tags"
+[GIN] 2026/06/19 - 09:56:01 | 200 |      60.542µs |       127.0.0.1 | HEAD     "/"
+[GIN] 2026/06/19 - 09:56:01 | 200 |     150.958µs |       127.0.0.1 | GET      "/api/tags"

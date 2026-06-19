@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 import { BaseExceptionFilter, HttpAdapterHost } from '@nestjs/core';
 import { GqlContextType } from '@nestjs/graphql';
-import { JwtError } from '@nestjs/jwt';
 
 @Catch()
 export class GlobalExceptionFilter extends BaseExceptionFilter {
@@ -25,15 +24,14 @@ export class GlobalExceptionFilter extends BaseExceptionFilter {
     }
 
     if (
-      exception instanceof JwtError ||
-      (exception instanceof Error &&
-        (exception.name === 'JsonWebTokenError' ||
-          exception.name === 'TokenExpiredError' ||
-          exception.name === 'NotBeforeError' ||
-          exception.name === 'JOSEError' ||
-          exception.name === 'JWSInvalid' ||
-          exception.name === 'JWKInvalid' ||
-          exception.name === 'JWKSInvalid'))
+      exception instanceof Error &&
+      (exception.name === 'JsonWebTokenError' ||
+        exception.name === 'TokenExpiredError' ||
+        exception.name === 'NotBeforeError' ||
+        exception.name === 'JOSEError' ||
+        exception.name === 'JWSInvalid' ||
+        exception.name === 'JWKInvalid' ||
+        exception.name === 'JWKSInvalid')
     ) {
       return new UnauthorizedException({
         statusCode: HttpStatus.UNAUTHORIZED,

@@ -19,8 +19,7 @@ import * as https from 'https';
 import fastify from 'fastify';
 import { fastifyStatic } from '@fastify/static';
 import { join } from 'path';
-import rawbody from 'raw-body';
-import { ValidationPipe, BadRequestException, HttpAdapterHost } from '@nestjs/common';
+import { ValidationPipe, BadRequestException } from '@nestjs/common';
 
 async function bootstrap() {
   http.globalAgent.maxSockets = Infinity;
@@ -146,7 +145,7 @@ async function bootstrap() {
       normalizedPath = requestPath;
     }
 
-    normalizedPath = normalizedPath.replace(/\\/g, '/').replace(/\/+/g, '/').toLowerCase();
+    normalizedPath = normalizedPath.replace(/\\/g, '/').replace(/\/+?/g, '/').toLowerCase();
 
     if (
       normalizedPath.includes('/.git') ||
@@ -184,7 +183,7 @@ async function bootstrap() {
       normalizedPath = requestPath;
     }
 
-    normalizedPath = normalizedPath.replace(/\\/g, '/').replace(/\/+/g, '/').toLowerCase();
+    normalizedPath = normalizedPath.replace(/\\/g, '/').replace(/\/+?/g, '/').toLowerCase();
 
     if (
       normalizedPath.includes('/.git') ||
@@ -261,7 +260,7 @@ async function bootstrap() {
         normalizedPath = requestPath;
       }
 
-      normalizedPath = normalizedPath.replace(/\\/g, '/').replace(/\/+/g, '/').toLowerCase();
+      normalizedPath = normalizedPath.replace(/\\/g, '/').replace(/\/+?/g, '/').toLowerCase();
 
       return !(
         normalizedPath.includes('/.git') ||
@@ -276,7 +275,6 @@ async function bootstrap() {
       );
     }
   });
-
 
   const adapter = new FastifyAdapter(server);
   adapter.setErrorHandler((error, request, reply) => {
@@ -338,19 +336,9 @@ async function bootstrap() {
         : ['debug', 'log', 'warn', 'error'],
     abortOnError: false,
     bufferLogs: false,
-    bodyParser: false,
     rawBody: true,
     cors: false,
     snapshot: false
-  });
-  app.useBodyParser('json', {
-    bodyLimit: 1048576,
-    onProtoPoisoning: 'error'
-  });
-  app.useBodyParser('urlencoded', {
-    bodyLimit: 1048576,
-    extended: false,
-    onProtoPoisoning: 'error'
   });
 
   await server.register(fastifyCookie);
@@ -363,20 +351,10 @@ async function bootstrap() {
       httpOnly: false
     }
   });
-  server.addContentTypeParser('*', (_req, payload, done) => {
-    rawbody(payload, {
-      limit: '1mb'
-    })
-      .then((body) => done(null, body))
-      .catch(() => done(null, undefined));
-  });
-
-  const httpAdapter = app.getHttpAdapter();
-  const httpAdapterHost = app.get(HttpAdapterHost);
 
   app
     .useGlobalInterceptors(new HeadersConfiguratorInterceptor())
-    .useGlobalFilters(new GlobalExceptionFilter(httpAdapterHost))
+    .useGlobalFilters(new GlobalExceptionFilter(app.getHttpAdapter()))
     .useGlobalPipes(
       new ValidationPipe({
         transform: true,
@@ -469,22 +447,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, options);
 
   SwaggerModule.setup('swagger', app, document);
-
-  const httpServer = app.getHttpAdapter().getInstance();
-  httpServer.setNotFoundHandler((request, reply) => {
-    const requestPath = request.url ? request.url.split('?')[0] : '';
-    reply
-      .code(404)
-      .type('application/json; charset=utf-8')
-      .header('Cache-Control', 'no-store')
-      .header('X-Content-Type-Options', 'nosniff')
-      .header('Content-Security-Policy', "default-src 'none'")
-      .send({
-        statusCode: 404,
-        error: 'Not Found',
-        message: requestPath.startsWith('/api') ? 'Not Found' : 'Request failed'
-      });
-  });
 
   await app.listen(3000, '0.0.0.0');
 }
