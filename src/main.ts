@@ -77,8 +77,7 @@ async function bootstrap() {
       name: error?.name,
       statusCode,
       path: requestPath,
-      message: error instanceof Error ? error.message : undefined,
-      stack: error instanceof Error ? error.stack : undefined
+      details: error instanceof Error ? error.stack : String(error)
     });
 
     if (!reply.sent) {
@@ -89,7 +88,11 @@ async function bootstrap() {
         .header('Cache-Control', 'no-store')
         .header('X-Content-Type-Options', 'nosniff')
         .header('Content-Security-Policy', "default-src 'none'")
-        .send({ error: sanitizedErrorMessage });
+        .send({
+          statusCode,
+          error: sanitizedErrorMessage,
+          message: sanitizedErrorMessage
+        });
     }
   });
 
