@@ -93,6 +93,24 @@ async function bootstrap() {
         : null
   });
 
+  server.setErrorHandler((error, _request, reply) => {
+    server.log.error(error);
+
+    if (!reply.sent) {
+      reply
+        .code(error?.statusCode && error.statusCode < 500 ? error.statusCode : 500)
+        .type('application/json; charset=utf-8')
+        .send({
+          error:
+            error?.statusCode === 401
+              ? 'Unauthorized'
+              : error?.statusCode && error.statusCode < 500
+                ? 'Request failed'
+                : 'Internal server error'
+        });
+    }
+  });
+
   server.addHook('onRequest', (req, res, done) => {
     const requestPath = req.url ? req.url.split('?')[0] : '';
     let normalizedPath = requestPath;
