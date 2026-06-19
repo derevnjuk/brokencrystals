@@ -77,6 +77,7 @@ export class GlobalExceptionFilter extends BaseExceptionFilter {
       }
 
       if (response?.header) {
+        response.header('Content-Type', 'application/json; charset=utf-8');
         response.header('Cache-Control', 'no-store');
         response.header('X-Content-Type-Options', 'nosniff');
         response.header('Content-Security-Policy', "default-src 'none'");
@@ -106,6 +107,7 @@ export class GlobalExceptionFilter extends BaseExceptionFilter {
     }
 
     if (response?.header) {
+      response.header('Content-Type', 'application/json; charset=utf-8');
       response.header('Cache-Control', 'no-store');
       response.header('X-Content-Type-Options', 'nosniff');
       response.header('Content-Security-Policy', "default-src 'none'");

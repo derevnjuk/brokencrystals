@@ -159,12 +159,12 @@ async function bootstrap() {
     ) {
       res.statusCode = 404;
       res.header('Content-Type', 'application/json; charset=utf-8');
+      res.header('Cache-Control', 'no-store');
+      res.header('X-Content-Type-Options', 'nosniff');
       res.send({
-        success: false,
-        error: {
-          kind: 'user_input',
-          message: 'Not Found'
-        }
+        statusCode: 404,
+        error: 'Not Found',
+        message: 'Not Found'
       });
       return;
     }
@@ -196,26 +196,28 @@ async function bootstrap() {
       normalizedPath.startsWith('.svn/')
     ) {
       res.statusCode = 404;
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
+      res.setHeader('Cache-Control', 'no-store');
+      res.setHeader('X-Content-Type-Options', 'nosniff');
       return res.end(
         JSON.stringify({
-          success: false,
-          error: {
-            kind: 'user_input',
-            message: 'Not Found'
-          }
+          statusCode: 404,
+          error: 'Not Found',
+          message: 'Not Found'
         })
       );
     }
 
     if (requestPath.startsWith('/api')) {
       res.statusCode = 404;
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
+      res.setHeader('Cache-Control', 'no-store');
+      res.setHeader('X-Content-Type-Options', 'nosniff');
       return res.end(
         JSON.stringify({
-          success: false,
-          error: {
-            kind: 'user_input',
-            message: 'Not Found'
-          }
+          statusCode: 404,
+          error: 'Not Found',
+          message: 'Not Found'
         })
       );
     }
@@ -223,15 +225,18 @@ async function bootstrap() {
     readFile(
       join(__dirname, '..', 'client', 'dist', 'index.html'),
       'utf8',
-      (err, data) => {
-        if (err) {
-          res.statusCode = 500;
-          res.end('Internal Server Error');
-          return;
-        }
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'text/html');
-        res.end(data);
+      () => {
+        res.statusCode = 404;
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
+        res.setHeader('Cache-Control', 'no-store');
+        res.setHeader('X-Content-Type-Options', 'nosniff');
+        res.end(
+          JSON.stringify({
+            statusCode: 404,
+            error: 'Not Found',
+            message: 'Not Found'
+          })
+        );
       }
     );
   });
