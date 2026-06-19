@@ -2,6 +2,7 @@ import {
   ArgumentsHost,
   Catch,
   HttpException,
+  HttpStatus,
   InternalServerErrorException
 } from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
@@ -17,7 +18,23 @@ export class GlobalExceptionFilter extends BaseExceptionFilter {
         throw exception;
       }
 
-      return super.catch(exception, host);
+      const applicationRef =
+        this.applicationRef ||
+        (this.httpAdapterHost && this.httpAdapterHost.httpAdapter);
+      const status = exception.getStatus();
+
+      return applicationRef.reply(
+        host.getArgByIndex(1),
+        {
+          error:
+            status === HttpStatus.UNAUTHORIZED
+              ? 'Unauthorized'
+              : status >= HttpStatus.INTERNAL_SERVER_ERROR
+                ? 'Internal server error'
+                : 'Request failed'
+        },
+        status
+      );
     }
 
     const unprocessableException = new InternalServerErrorException(
