@@ -21,13 +21,14 @@ services:
     # image: dull/pureflow  # replaced — must build from source
     build:
       context: .
-    restart: always
+    restart: on-failure
     healthcheck:
       interval: 5s
       retries: 10
       test:
         ['CMD', 'wget', '--spider', '-q', 'http://127.0.0.1:3000/api/config']
       timeout: 30s
+      start_period: 120s
     env_file:
       - .env
     environment:
