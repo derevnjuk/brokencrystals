@@ -25,8 +25,18 @@ import { PartnersService } from './partners.service';
 @ApiTags('Partners controller')
 export class PartnersController {
   private readonly logger = new Logger(PartnersController.name);
+  private readonly PARTNER_CREDENTIAL_REGEX = /^[A-Za-z0-9_!@#$%^&*.-]{1,64}$/;
+  private readonly PARTNER_SEARCH_KEYWORD_REGEX = /^[A-Za-z0-9\s.-]{1,64}$/;
 
   constructor(private readonly partnersService: PartnersService) {}
+
+  private isValidPartnerCredential(value: string): boolean {
+    return this.PARTNER_CREDENTIAL_REGEX.test(value);
+  }
+
+  private isValidPartnerSearchKeyword(value: string): boolean {
+    return this.PARTNER_SEARCH_KEYWORD_REGEX.test(value);
+  }
 
   private toXPathLiteral(value: string): string {
     if (!value.includes("'")) {
@@ -34,7 +44,7 @@ export class PartnersController {
     }
 
     if (!value.includes('"')) {
-      return `"${value}";
+      return `"${value}"`;
     }
 
     return `concat('${value.split("'").join("', \"'\", '")}')`;
@@ -98,6 +108,13 @@ export class PartnersController {
     );
 
     try {
+      if (
+        !this.isValidPartnerCredential(username) ||
+        !this.isValidPartnerCredential(password)
+      ) {
+        throw new Error('Invalid credentials format');
+      }
+
       const usernameLiteral = this.toXPathLiteral(username);
       const passwordLiteral = this.toXPathLiteral(password);
       const xpath = `//partners/partner[username/text()=${usernameLiteral} and password/text()=${passwordLiteral}]/*`;
@@ -166,6 +183,10 @@ export class PartnersController {
     this.logger.debug(`Searching partner names by the keyword "${keyword}"`);
 
     try {
+      if (!this.isValidPartnerSearchKeyword(keyword)) {
+        throw new Error('Invalid search keyword format');
+      }
+
       const keywordLiteral = this.toXPathLiteral(keyword);
       const xpath = `//partners/partner/name[contains(., ${keywordLiteral})]`;
       return this.partnersService.getPartnersProperties(xpath);
