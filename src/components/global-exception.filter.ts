@@ -36,7 +36,12 @@ export class GlobalExceptionFilter extends BaseExceptionFilter {
         path: request?.url ? request.url.split('?')[0] : undefined,
         method: request?.method,
         headers: sanitizedHeaders,
-        stack: exception instanceof Error ? exception.stack : undefined
+        error:
+          exception instanceof Error
+            ? exception.name
+            : typeof exception === 'string'
+              ? exception
+              : 'Unhandled exception'
       })
     );
 

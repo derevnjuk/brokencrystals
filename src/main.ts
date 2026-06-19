@@ -60,7 +60,7 @@ async function bootstrap() {
         name: error?.name,
         path: req.url ? req.url.split('?')[0] : '',
         method: req.method,
-        details: error instanceof Error ? error.stack : String(error)
+        error: error instanceof Error ? error.name : String(error)
       });
 
       if (!res.headersSent) {
@@ -114,7 +114,7 @@ async function bootstrap() {
       path: requestPath,
       method: request.method,
       headers: sanitizedHeaders,
-      details: error instanceof Error ? error.stack : String(error)
+      error: error instanceof Error ? error.name : String(error)
     });
 
     if (!reply.sent) {
@@ -303,7 +303,7 @@ async function bootstrap() {
       path: requestPath,
       method: request.method,
       headers: sanitizedHeaders,
-      details: error instanceof Error ? error.stack : String(error)
+      error: error instanceof Error ? error.name : String(error)
     });
 
     if (!reply.sent) {

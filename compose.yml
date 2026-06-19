@@ -49,10 +49,14 @@ services:
         max-file: '5'
         max-size: '10m'
     depends_on:
-      - db
-      - mailcatcher
-      - keycloak
-      - ollama
+      db:
+        condition: service_healthy
+      mailcatcher:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
     ports:
       - '3000:3000'
 
@@ -99,7 +103,8 @@ services:
       retries: 3
       start_period: 5s
     depends_on:
-      - keycloak-db
+      keycloak-db:
+        condition: service_healthy
 
   mailcatcher:
     image: 'axllent/mailpit:v1.20'

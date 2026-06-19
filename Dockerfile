@@ -53,7 +53,7 @@ RUN npm install -g npm@10
 
 WORKDIR /usr/src/app
 
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat libstdc++
 
 COPY --chown=node:node .env ./
 COPY --chown=node:node config ./config
