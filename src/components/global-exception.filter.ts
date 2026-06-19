@@ -14,15 +14,26 @@ export class GlobalExceptionFilter extends BaseExceptionFilter {
   private readonly logger = new Logger(GlobalExceptionFilter.name);
 
   public catch(exception: unknown, host: ArgumentsHost) {
+    const gql = host.getType<GqlContextType>() === 'graphql';
+
     this.logger.error(
       exception instanceof Error ? exception.message : 'Unhandled exception',
       exception instanceof Error ? exception.stack : undefined
     );
-    const gql = host.getType<GqlContextType>() === 'graphql';
 
     if (exception instanceof HttpException) {
       if (gql) {
-        throw exception;
+        throw new HttpException(
+          {
+            error:
+              exception.getStatus() === HttpStatus.UNAUTHORIZED
+                ? 'Unauthorized'
+                : exception.getStatus() >= HttpStatus.INTERNAL_SERVER_ERROR
+                  ? 'Internal server error'
+                  : 'Request failed'
+          },
+          exception.getStatus()
+        );
       }
 
       const applicationRef =
