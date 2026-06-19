@@ -334,7 +334,9 @@ async function bootstrap() {
         ? ['error']
         : ['debug', 'log', 'warn', 'error'],
     abortOnError: false,
-    bufferLogs: false
+    bufferLogs: false,
+    bodyParser: false,
+    rawBody: true
   });
 
   await server.register(fastifyCookie);
@@ -347,13 +349,56 @@ async function bootstrap() {
       httpOnly: false
     }
   });
-  server.addContentTypeParser('*', (req) => rawbody(req.raw));
+  server.addContentTypeParser('*', (_req, payload, done) => {
+    rawbody(payload, {
+      limit: '1mb'
+    })
+      .then((body) => done(null, body))
+      .catch(() => done(null, undefined));
+  });
 
   const httpAdapter = app.getHttpAdapter();
 
   app
     .useGlobalInterceptors(new HeadersConfiguratorInterceptor())
     .useGlobalFilters(new GlobalExceptionFilter(httpAdapter));
+
+  app.getHttpAdapter().getInstance().addHook('onError', (request, reply, error, done) => {
+    if (!reply.sent) {
+      const statusCode =
+        Number.isInteger((error as { statusCode?: unknown })?.statusCode) &&
+        Number((error as { statusCode?: unknown })?.statusCode) >= 400 &&
+        Number((error as { statusCode?: unknown })?.statusCode) < 500
+          ? Number((error as { statusCode?: unknown })?.statusCode)
+          : 500;
+      const sanitizedMessage =
+        statusCode === 401
+          ? 'Unauthorized'
+          : statusCode === 404
+            ? 'Not Found'
+            : statusCode === 403
+              ? 'Forbidden'
+              : statusCode >= 500
+                ? 'Internal server error'
+                : 'Request failed';
+
+      reply.raw.removeHeader('X-Powered-By');
+      reply.header('Content-Type', 'application/json; charset=utf-8');
+      reply.header('Cache-Control', 'no-store');
+      reply.header('X-Content-Type-Options', 'nosniff');
+      reply.header('Content-Security-Policy', "default-src 'none'");
+      reply.header('X-Frame-Options', 'DENY');
+      reply.header('Referrer-Policy', 'no-referrer');
+      reply.code(statusCode).send({
+        statusCode,
+        error: sanitizedMessage,
+        message: sanitizedMessage
+      });
+      return;
+    }
+
+    done();
+  });
 
   const options = new DocumentBuilder()
     .setTitle('Pure Flow')
