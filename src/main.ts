@@ -246,16 +246,64 @@ async function bootstrap() {
   });
 
 
-  const app: NestFastifyApplication = await NestFactory.create(
-    AppModule,
-    new FastifyAdapter(server),
-    {
-      logger:
-        process.env.NODE_ENV === 'production'
-          ? ['error']
-          : ['debug', 'log', 'warn', 'error']
+  const adapter = new FastifyAdapter(server);
+  adapter.setErrorHandler((error, request, reply) => {
+    const requestPath = request.url ? request.url.split('?')[0] : '';
+    const rawStatusCode = Number((error as { statusCode?: unknown })?.statusCode);
+    const statusCode =
+      Number.isInteger(rawStatusCode) && rawStatusCode >= 400 && rawStatusCode < 500
+        ? rawStatusCode
+        : 500;
+
+    const sanitizedErrorMessage =
+      statusCode === 401
+        ? 'Unauthorized'
+        : statusCode < 500
+          ? 'Request failed'
+          : 'Internal server error';
+
+    const sanitizedHeaders: Record<string, string | string[] | undefined> = {};
+    const rawHeaders = request.headers || {};
+
+    for (const [key, value] of Object.entries(rawHeaders)) {
+      sanitizedHeaders[key] =
+        key.toLowerCase() === 'authorization' || key.toLowerCase() === 'cookie'
+          ? '[REDACTED]'
+          : value;
     }
-  );
+
+    server.log.error({
+      name: error?.name,
+      statusCode,
+      path: requestPath,
+      method: request.method,
+      headers: sanitizedHeaders,
+      details: error instanceof Error ? error.stack : String(error)
+    });
+
+    if (!reply.sent) {
+      reply
+        .code(statusCode)
+        .type('application/json; charset=utf-8')
+        .header('Cache-Control', 'no-store')
+        .header('X-Content-Type-Options', 'nosniff')
+        .header('Content-Security-Policy', "default-src 'none'")
+        .header('X-Frame-Options', 'DENY')
+        .header('Referrer-Policy', 'no-referrer')
+        .send({
+          statusCode,
+          error: sanitizedErrorMessage,
+          message: sanitizedErrorMessage
+        });
+    }
+  });
+
+  const app: NestFastifyApplication = await NestFactory.create(AppModule, adapter, {
+    logger:
+      process.env.NODE_ENV === 'production'
+        ? ['error']
+        : ['debug', 'log', 'warn', 'error']
+  });
 
   await server.register(fastifyCookie);
   await server.register(fmp);

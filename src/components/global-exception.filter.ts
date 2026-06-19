@@ -76,10 +76,11 @@ export class GlobalExceptionFilter extends BaseExceptionFilter {
       return applicationRef.reply(response, responseBody, status);
     }
 
-    const unprocessableException = new InternalServerErrorException(
-      { error: 'Internal server error' },
-      'An internal error has occurred, and the API was unable to service your request.'
-    );
+    const unprocessableException = new InternalServerErrorException({
+      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      error: 'Internal server error',
+      message: 'Internal server error'
+    });
 
     if (gql) {
       throw unprocessableException;
