@@ -115,10 +115,10 @@ export class PartnersController {
         throw new Error('Invalid credentials format');
       }
 
-      const usernameLiteral = this.toXPathLiteral(username);
-      const passwordLiteral = this.toXPathLiteral(password);
-      const xpath = `//partners/partner[username/text()=${usernameLiteral} and password/text()=${passwordLiteral}]/*`;
-      const xmlStr = this.partnersService.getPartnersProperties(xpath);
+      const xmlStr = this.partnersService.getPartnerPropertiesByCredentials(
+        username,
+        password
+      );
 
       // Check if account's data contains any information - If not, the login failed!
       if (

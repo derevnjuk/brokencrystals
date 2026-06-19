@@ -70,6 +70,28 @@ export class PartnersService {
     return `${this.XML_HEADER}\n<root>\n${xmlNodes.join('\n')}\n</root>`;
   }
 
+  getPartnerPropertiesByCredentials(username: string, password: string): string {
+    const partnersXMLObj = this.getPartnersXMLObj();
+    const partners = xpath.select('//partners/partner', partnersXMLObj) as Node[];
+
+    const matchedPartner = partners.find((partnerNode) => {
+      const usernameNodes = xpath.select('username/text()', partnerNode) as Node[];
+      const passwordNodes = xpath.select('password/text()', partnerNode) as Node[];
+
+      const partnerUsername = usernameNodes[0]?.nodeValue;
+      const partnerPassword = passwordNodes[0]?.nodeValue;
+
+      return partnerUsername === username && partnerPassword === password;
+    });
+
+    if (!matchedPartner) {
+      return this.getFormattedXMLOutput([]);
+    }
+
+    const partnerProperties = xpath.select('*', matchedPartner) as Node[];
+    return this.getFormattedXMLOutput(partnerProperties);
+  }
+
   getPartnersProperties(xpathExpression: string): string {
     let xmlNodes = this.selectPartnerPropertiesByXPATH(xpathExpression);
 
