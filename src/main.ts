@@ -95,8 +95,12 @@ async function bootstrap() {
 
   server.addHook('onRequest', (req, res, done) => {
     const requestPath = req.url ? req.url.split('?')[0] : '';
+    const normalizedPath = decodeURIComponent(requestPath).replace(/\/+/g, '/');
 
-    if (/^\/(?:\.(?:git|hg|svn))(?:\/|$)/.test(requestPath)) {
+    if (
+      /(?:^|\/)\.(?:git|hg|svn)(?:\/|$)/i.test(normalizedPath) ||
+      /^\/(?:\.(?:git|hg|svn))(?:\/|$)/.test(requestPath)
+    ) {
       res.statusCode = 404;
       res.header('Content-Type', 'application/json; charset=utf-8');
       res.send({
@@ -114,8 +118,12 @@ async function bootstrap() {
 
   server.setDefaultRoute((req, res) => {
     const requestPath = req.url ? req.url.split('?')[0] : '';
+    const normalizedPath = decodeURIComponent(requestPath).replace(/\/+/g, '/');
 
-    if (/^\/(?:\.(?:git|hg|svn))(?:\/|$)/.test(requestPath)) {
+    if (
+      /(?:^|\/)\.(?:git|hg|svn)(?:\/|$)/i.test(normalizedPath) ||
+      /^\/(?:\.(?:git|hg|svn))(?:\/|$)/.test(requestPath)
+    ) {
       res.statusCode = 404;
       return res.end(
         JSON.stringify({
@@ -166,7 +174,8 @@ async function bootstrap() {
     serveDotFiles: false,
     allowedPath: (_pathName, root, request) => {
       const requestPath = request.url.split('?')[0];
-      return !/^\/(?:\.(?:git|hg|svn))(?:\/|$)/.test(requestPath);
+      const normalizedPath = decodeURIComponent(requestPath).replace(/\/+/g, '/');
+      return !/(?:^|\/)\.(?:git|hg|svn)(?:\/|$)/i.test(normalizedPath);
     }
   });
 
