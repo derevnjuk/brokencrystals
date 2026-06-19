@@ -4,14 +4,50 @@ import {
   HttpException,
   HttpStatus,
   InternalServerErrorException,
-  Logger
+  Logger,
+  UnauthorizedException
 } from '@nestjs/common';
-import { BaseExceptionFilter } from '@nestjs/core';
+import { BaseExceptionFilter, HttpAdapterHost } from '@nestjs/core';
 import { GqlContextType } from '@nestjs/graphql';
+import { JwtError } from '@nestjs/jwt';
 
 @Catch()
 export class GlobalExceptionFilter extends BaseExceptionFilter {
   private readonly logger = new Logger(GlobalExceptionFilter.name);
+
+  constructor(protected readonly httpAdapterHost?: HttpAdapterHost) {
+    super(httpAdapterHost?.httpAdapter);
+  }
+
+  private normalizeException(exception: unknown): HttpException | InternalServerErrorException {
+    if (exception instanceof HttpException) {
+      return exception;
+    }
+
+    if (
+      exception instanceof JwtError ||
+      (exception instanceof Error &&
+        (exception.name === 'JsonWebTokenError' ||
+          exception.name === 'TokenExpiredError' ||
+          exception.name === 'NotBeforeError' ||
+          exception.name === 'JOSEError' ||
+          exception.name === 'JWSInvalid' ||
+          exception.name === 'JWKInvalid' ||
+          exception.name === 'JWKSInvalid'))
+    ) {
+      return new UnauthorizedException({
+        statusCode: HttpStatus.UNAUTHORIZED,
+        error: 'Unauthorized',
+        message: 'Unauthorized'
+      });
+    }
+
+    return new InternalServerErrorException({
+      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      error: 'Internal server error',
+      message: 'Internal server error'
+    });
+  }
 
   public catch(exception: unknown, host: ArgumentsHost) {
     const gql = host.getType<GqlContextType>() === 'graphql';
@@ -45,8 +81,10 @@ export class GlobalExceptionFilter extends BaseExceptionFilter {
       })
     );
 
-    if (exception instanceof HttpException) {
-      const rawStatus = exception.getStatus();
+    const normalizedException = this.normalizeException(exception);
+
+    if (normalizedException instanceof HttpException) {
+      const rawStatus = normalizedException.getStatus();
       const status =
         [
           HttpStatus.BAD_REQUEST,
@@ -100,14 +138,8 @@ export class GlobalExceptionFilter extends BaseExceptionFilter {
       return applicationRef.reply(response, responseBody, status);
     }
 
-    const unprocessableException = new InternalServerErrorException({
-      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-      error: 'Internal server error',
-      message: 'Internal server error'
-    });
-
     if (gql) {
-      throw unprocessableException;
+      throw normalizedException;
     }
 
     const applicationRef =
@@ -129,8 +161,8 @@ export class GlobalExceptionFilter extends BaseExceptionFilter {
 
     return applicationRef.reply(
       response,
-      unprocessableException.getResponse(),
-      unprocessableException.getStatus()
+      normalizedException.getResponse(),
+      normalizedException.getStatus()
     );
   }
 }

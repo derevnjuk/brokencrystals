@@ -20,7 +20,7 @@ import fastify from 'fastify';
 import { fastifyStatic } from '@fastify/static';
 import { join } from 'path';
 import rawbody from 'raw-body';
-import { ValidationPipe, BadRequestException } from '@nestjs/common';
+import { ValidationPipe, BadRequestException, HttpAdapterHost } from '@nestjs/common';
 
 async function bootstrap() {
   http.globalAgent.maxSockets = Infinity;
@@ -340,7 +340,8 @@ async function bootstrap() {
     bufferLogs: false,
     bodyParser: false,
     rawBody: true,
-    cors: false
+    cors: false,
+    snapshot: false
   });
   app.useBodyParser('json', {
     bodyLimit: 1048576,
@@ -371,10 +372,11 @@ async function bootstrap() {
   });
 
   const httpAdapter = app.getHttpAdapter();
+  const httpAdapterHost = app.get(HttpAdapterHost);
 
   app
     .useGlobalInterceptors(new HeadersConfiguratorInterceptor())
-    .useGlobalFilters(new GlobalExceptionFilter(httpAdapter))
+    .useGlobalFilters(new GlobalExceptionFilter(httpAdapterHost))
     .useGlobalPipes(
       new ValidationPipe({
         transform: true,
