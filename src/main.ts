@@ -95,11 +95,26 @@ async function bootstrap() {
 
   server.addHook('onRequest', (req, res, done) => {
     const requestPath = req.url ? req.url.split('?')[0] : '';
-    const normalizedPath = decodeURIComponent(requestPath).replace(/\/+/g, '/');
+    let normalizedPath = requestPath;
+
+    try {
+      normalizedPath = decodeURIComponent(requestPath);
+    } catch {
+      normalizedPath = requestPath;
+    }
+
+    normalizedPath = normalizedPath.replace(/\\/g, '/').replace(/\/+/g, '/').toLowerCase();
 
     if (
-      /(?:^|\/)\.(?:git|hg|svn)(?:\/|$)/i.test(normalizedPath) ||
-      /^\/(?:\.(?:git|hg|svn))(?:\/|$)/.test(requestPath)
+      normalizedPath.includes('/.git') ||
+      normalizedPath === '.git' ||
+      normalizedPath.startsWith('.git/') ||
+      normalizedPath.includes('/.hg') ||
+      normalizedPath === '.hg' ||
+      normalizedPath.startsWith('.hg/') ||
+      normalizedPath.includes('/.svn') ||
+      normalizedPath === '.svn' ||
+      normalizedPath.startsWith('.svn/')
     ) {
       res.statusCode = 404;
       res.header('Content-Type', 'application/json; charset=utf-8');
@@ -118,11 +133,26 @@ async function bootstrap() {
 
   server.setDefaultRoute((req, res) => {
     const requestPath = req.url ? req.url.split('?')[0] : '';
-    const normalizedPath = decodeURIComponent(requestPath).replace(/\/+/g, '/');
+    let normalizedPath = requestPath;
+
+    try {
+      normalizedPath = decodeURIComponent(requestPath);
+    } catch {
+      normalizedPath = requestPath;
+    }
+
+    normalizedPath = normalizedPath.replace(/\\/g, '/').replace(/\/+/g, '/').toLowerCase();
 
     if (
-      /(?:^|\/)\.(?:git|hg|svn)(?:\/|$)/i.test(normalizedPath) ||
-      /^\/(?:\.(?:git|hg|svn))(?:\/|$)/.test(requestPath)
+      normalizedPath.includes('/.git') ||
+      normalizedPath === '.git' ||
+      normalizedPath.startsWith('.git/') ||
+      normalizedPath.includes('/.hg') ||
+      normalizedPath === '.hg' ||
+      normalizedPath.startsWith('.hg/') ||
+      normalizedPath.includes('/.svn') ||
+      normalizedPath === '.svn' ||
+      normalizedPath.startsWith('.svn/')
     ) {
       res.statusCode = 404;
       return res.end(
@@ -174,8 +204,27 @@ async function bootstrap() {
     serveDotFiles: false,
     allowedPath: (_pathName, root, request) => {
       const requestPath = request.url.split('?')[0];
-      const normalizedPath = decodeURIComponent(requestPath).replace(/\/+/g, '/');
-      return !/(?:^|\/)\.(?:git|hg|svn)(?:\/|$)/i.test(normalizedPath);
+      let normalizedPath = requestPath;
+
+      try {
+        normalizedPath = decodeURIComponent(requestPath);
+      } catch {
+        normalizedPath = requestPath;
+      }
+
+      normalizedPath = normalizedPath.replace(/\\/g, '/').replace(/\/+/g, '/').toLowerCase();
+
+      return !(
+        normalizedPath.includes('/.git') ||
+        normalizedPath === '.git' ||
+        normalizedPath.startsWith('.git/') ||
+        normalizedPath.includes('/.hg') ||
+        normalizedPath === '.hg' ||
+        normalizedPath.startsWith('.hg/') ||
+        normalizedPath.includes('/.svn') ||
+        normalizedPath === '.svn' ||
+        normalizedPath.startsWith('.svn/')
+      );
     }
   });
 
