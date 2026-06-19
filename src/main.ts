@@ -44,11 +44,14 @@ async function bootstrap() {
   });
 
   server.setErrorHandler((error, _request, reply) => {
-    const statusCode = error?.statusCode && error.statusCode < 500 ? error.statusCode : 500;
+    const rawStatusCode = Number(error?.statusCode);
+    const statusCode =
+      Number.isInteger(rawStatusCode) && rawStatusCode >= 400 && rawStatusCode < 500
+        ? rawStatusCode
+        : 500;
 
     server.log.error({
       name: error?.name,
-      message: error?.message,
       stack: error?.stack,
       statusCode
     });

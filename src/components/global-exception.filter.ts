@@ -17,7 +17,11 @@ export class GlobalExceptionFilter extends BaseExceptionFilter {
     const gql = host.getType<GqlContextType>() === 'graphql';
 
     this.logger.error(
-      exception instanceof Error ? exception.message : 'Unhandled exception',
+      exception instanceof HttpException
+        ? `HTTP ${exception.getStatus()} exception`
+        : exception instanceof Error
+          ? exception.name
+          : 'Unhandled exception',
       exception instanceof Error ? exception.stack : undefined
     );
 
