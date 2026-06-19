@@ -94,20 +94,27 @@ async function bootstrap() {
   });
 
   server.setErrorHandler((error, _request, reply) => {
-    server.log.error(error);
+    const statusCode = error?.statusCode && error.statusCode < 500 ? error.statusCode : 500;
+
+    server.log.error({
+      name: error?.name,
+      message: error?.message,
+      stack: error?.stack,
+      statusCode
+    });
 
     if (!reply.sent) {
       reply
-        .code(error?.statusCode && error.statusCode < 500 ? error.statusCode : 500)
+        .code(statusCode)
         .type('application/json; charset=utf-8')
-        .send({
-          error:
-            error?.statusCode === 401
-              ? 'Unauthorized'
-              : error?.statusCode && error.statusCode < 500
-                ? 'Request failed'
-                : 'Internal server error'
-        });
+        .header('Cache-Control', 'no-store')
+        .send(
+          statusCode === 401
+            ? { error: 'Unauthorized' }
+            : statusCode < 500
+              ? { error: 'Request failed' }
+              : { error: 'Internal server error' }
+        );
     }
   });
 
