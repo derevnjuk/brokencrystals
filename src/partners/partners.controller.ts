@@ -34,7 +34,7 @@ export class PartnersController {
     }
 
     if (!value.includes('"')) {
-      return `"${value}";
+      return `"${value}"`;
     }
 
     const valueParts = value.split("'");
@@ -177,10 +177,24 @@ export class PartnersController {
     this.logger.debug(`Searching partner names by the keyword "${keyword}"`);
 
     try {
+      const hasControlChars = /[\u0000-\u001F\u007F]/.test(keyword);
+      const isValidKeyword = /^[\p{L}\p{N}\s.'-]+$/u.test(keyword);
+
+      if (hasControlChars || !isValidKeyword) {
+        throw new HttpException(
+          'Invalid search keyword format',
+          HttpStatus.BAD_REQUEST
+        );
+      }
+
       const escapedKeyword = this.toXPathLiteral(keyword);
       const xpath = `//partners/partner/name[contains(., ${escapedKeyword})]`;
       return this.partnersService.getPartnersProperties(xpath);
     } catch (err) {
+      if (err instanceof HttpException) {
+        throw err;
+      }
+
       const errStr = err.toString();
       const errorMessage =
         errStr.includes('XPath parse error') ||
