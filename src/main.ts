@@ -88,7 +88,8 @@ async function bootstrap() {
     const requestPath = request.url ? request.url.split('?')[0] : '';
     const rawStatusCode = Number(error?.statusCode);
     const statusCode =
-      Number.isInteger(rawStatusCode) && rawStatusCode >= 400 && rawStatusCode < 500
+      Number.isInteger(rawStatusCode) &&
+      [400, 401, 403, 404, 405, 413, 415, 422, 429].includes(rawStatusCode)
         ? rawStatusCode
         : 500;
 
@@ -282,7 +283,8 @@ async function bootstrap() {
     const requestPath = request.url ? request.url.split('?')[0] : '';
     const rawStatusCode = Number((error as { statusCode?: unknown })?.statusCode);
     const statusCode =
-      Number.isInteger(rawStatusCode) && rawStatusCode >= 400 && rawStatusCode < 500
+      Number.isInteger(rawStatusCode) &&
+      [400, 401, 403, 404, 405, 413, 415, 422, 429].includes(rawStatusCode)
         ? rawStatusCode
         : 500;
 
@@ -389,11 +391,11 @@ async function bootstrap() {
 
   app.getHttpAdapter().getInstance().addHook('onError', (request, reply, error, done) => {
     if (!reply.sent) {
+      const rawStatusCode = Number((error as { statusCode?: unknown })?.statusCode);
       const statusCode =
-        Number.isInteger((error as { statusCode?: unknown })?.statusCode) &&
-        Number((error as { statusCode?: unknown })?.statusCode) >= 400 &&
-        Number((error as { statusCode?: unknown })?.statusCode) < 500
-          ? Number((error as { statusCode?: unknown })?.statusCode)
+        Number.isInteger(rawStatusCode) &&
+        [400, 401, 403, 404, 405, 413, 415, 422, 429].includes(rawStatusCode)
+          ? rawStatusCode
           : 500;
       const sanitizedMessage =
         statusCode === 401

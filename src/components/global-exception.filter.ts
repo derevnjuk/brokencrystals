@@ -46,7 +46,21 @@ export class GlobalExceptionFilter extends BaseExceptionFilter {
     );
 
     if (exception instanceof HttpException) {
-      const status = exception.getStatus();
+      const rawStatus = exception.getStatus();
+      const status =
+        [
+          HttpStatus.BAD_REQUEST,
+          HttpStatus.UNAUTHORIZED,
+          HttpStatus.FORBIDDEN,
+          HttpStatus.NOT_FOUND,
+          HttpStatus.METHOD_NOT_ALLOWED,
+          HttpStatus.PAYLOAD_TOO_LARGE,
+          HttpStatus.UNSUPPORTED_MEDIA_TYPE,
+          HttpStatus.UNPROCESSABLE_ENTITY,
+          HttpStatus.TOO_MANY_REQUESTS
+        ].includes(rawStatus)
+          ? rawStatus
+          : HttpStatus.INTERNAL_SERVER_ERROR;
       const sanitizedMessage =
         status === HttpStatus.UNAUTHORIZED
           ? 'Unauthorized'
