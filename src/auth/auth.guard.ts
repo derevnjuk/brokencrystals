@@ -29,31 +29,38 @@ export class AuthGuard implements CanActivate {
       const token = this.extractToken(request);
 
       if (!token) {
-        return false;
+        throw new UnauthorizedException({
+          error: 'Unauthorized'
+        });
       }
 
       return await this.verifyToken(token, context);
-    } catch (err) {
-      this.logger.debug(`Failed to validate token: ${err.message}`);
+    } catch {
+      this.logger.debug('Failed to validate token');
       throw new UnauthorizedException({
-        error: 'Unauthorized',
-        line: __filename
+        error: 'Unauthorized'
       });
     }
   }
 
   private extractToken(request: FastifyRequest): string | undefined {
-    let token = request.headers[AuthGuard.AUTH_HEADER];
+    const headerValue = request.headers[AuthGuard.AUTH_HEADER];
+    let token = Array.isArray(headerValue) ? headerValue[0] : headerValue;
 
-    if (!token?.length) {
-      token = request.cookies[AuthGuard.AUTH_HEADER];
+    if (typeof token !== 'string' || !token.length) {
+      const cookieValue = request.cookies?.[AuthGuard.AUTH_HEADER];
+      token = typeof cookieValue === 'string' ? cookieValue : undefined;
+    }
+
+    if (typeof token !== 'string') {
+      return undefined;
     }
 
     if (this.checkIsBearer(token)) {
       token = token.substring(AuthGuard.BEARER_PREFIX.length).trim();
     }
 
-    return token?.length ? token : undefined;
+    return token.length ? token : undefined;
   }
 
   private getRequest(context: ExecutionContext): FastifyRequest {
@@ -71,14 +78,7 @@ export class AuthGuard implements CanActivate {
       context.getHandler()
     );
 
-    try {
-      return !!(await this.authService.validateToken(token, processorType));
-    } catch {
-      return !!(await this.authService.validateToken(
-        token,
-        JwtProcessorType.BEARER
-      ));
-    }
+    return !!(await this.authService.validateToken(token, processorType));
   }
 
   private checkIsBearer(bearer: string): boolean {

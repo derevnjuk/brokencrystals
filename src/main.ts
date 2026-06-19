@@ -6,7 +6,7 @@ import fastifyCookie from '@fastify/cookie';
 import session from '@fastify/session';
 import { GlobalExceptionFilter } from './components/global-exception.filter';
 import * as os from 'os';
-import { readFileSync, readFile, readdirSync } from 'fs';
+import { readFileSync, readFile } from 'fs';
 import cluster from 'cluster';
 import {
   FastifyAdapter,
@@ -17,63 +17,36 @@ import { randomBytes } from 'crypto';
 import * as http from 'http';
 import * as https from 'https';
 import fastify from 'fastify';
-import { fastifyStatic, ListRender } from '@fastify/static';
-import { join, dirname } from 'path';
-import rawbody from 'raw-body';
-
-const renderDirList: ListRender = (dirs, files) => {
-  const currDir = dirname((dirs[0] || files[0]).href);
-  const parentDir = dirname(currDir);
-  return `
-    <head><title>Index of ${currDir}/</title></head>
-    <html><body>
-      <h1>Index of ${currDir}/</h1>
-      <hr>
-      <table style="width: max(450px, 50%);">
-        <tr>
-          <td>
-            <a href="${parentDir}">../</a>
-          </td>
-          <td></td><td></td>
-        </tr>
-        ${dirs.map(
-          (dir) =>
-            `<tr>
-              <td>
-                <a href="${dir.href}">${dir.name}</a>
-              </td>
-              <td>
-                ${dir.stats.ctime.toLocaleString()}
-              </td>
-              <td>
-                -
-              </td>
-            </tr>`
-        )}
-        <br/>
-        ${files.map(
-          (file) =>
-            `<tr>
-              <td>
-                <a href="${file.href}">${file.name}</a>
-              </td>
-              <td>
-                ${file.stats.ctime.toLocaleString()}
-              </td>
-              <td>
-                ${file.stats.size}
-              </td>
-            </tr>`
-        )}
-      </table>
-      <hr>
-    </body></html>
-  `;
-};
+import { fastifyStatic } from '@fastify/static';
+import { join } from 'path';
+import { ValidationPipe, BadRequestException } from '@nestjs/common';
 
 async function bootstrap() {
   http.globalAgent.maxSockets = Infinity;
   https.globalAgent.maxSockets = Infinity;
+
+  const letsEncryptCertPath =
+    process.env.TLS_CERT_PATH || '/etc/letsencrypt/live/pureflow.com/fullchain.pem';
+  const letsEncryptKeyPath =
+    process.env.TLS_KEY_PATH || '/etc/letsencrypt/live/pureflow.com/privkey.pem';
+  const useHttps =
+    process.env.NODE_ENV === 'production' &&
+    process.env.DISABLE_HTTPS !== 'true' &&
+    process.env.URL?.startsWith('https://');
+
+  let httpsOptions;
+
+  if (useHttps) {
+    try {
+      httpsOptions = {
+        cert: readFileSync(letsEncryptCertPath),
+        key: readFileSync(letsEncryptKeyPath)
+      };
+    } catch {
+      console.error('Failed to initialize HTTPS certificates');
+      process.exit(1);
+    }
+  }
 
   const server = fastify({
     logger:
@@ -82,27 +55,170 @@ async function bootstrap() {
         : false,
     trustProxy: true,
     onProtoPoisoning: 'ignore',
-    https:
-      process.env.NODE_ENV === 'production'
-        ? {
-            cert: readFileSync(
-              '/etc/letsencrypt/live/pureflow.com/fullchain.pem'
-            ),
-            key: readFileSync('/etc/letsencrypt/live/pureflow.com/privkey.pem')
-          }
-        : null
+    frameworkErrors: (error, req, res) => {
+      server.log.error({
+        name: error?.name,
+        path: req.url ? req.url.split('?')[0] : '',
+        method: req.method,
+        error: error instanceof Error ? error.name : String(error)
+      });
+
+      if (!res.headersSent) {
+        res.statusCode = 400;
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
+        res.setHeader('Cache-Control', 'no-store');
+        res.setHeader('X-Content-Type-Options', 'nosniff');
+        res.setHeader('Content-Security-Policy', "default-src 'none'");
+        res.end(
+          JSON.stringify({
+            statusCode: 400,
+            error: 'Request failed',
+            message: 'Request failed'
+          })
+        );
+      }
+
+      return error;
+    },
+    https: httpsOptions
+  });
+
+  server.setErrorHandler((error, request, reply) => {
+    const requestPath = request.url ? request.url.split('?')[0] : '';
+    const rawStatusCode = Number(error?.statusCode);
+    const statusCode =
+      Number.isInteger(rawStatusCode) &&
+      [400, 401, 403, 404, 405, 413, 415, 422, 429].includes(rawStatusCode)
+        ? rawStatusCode
+        : 500;
+
+    const sanitizedErrorMessage =
+      statusCode === 401
+        ? 'Unauthorized'
+        : statusCode < 500
+          ? 'Request failed'
+          : 'Internal server error';
+
+    const sanitizedHeaders: Record<string, string | string[] | undefined> = {};
+    const rawHeaders = request.headers || {};
+
+    for (const [key, value] of Object.entries(rawHeaders)) {
+      sanitizedHeaders[key] =
+        key.toLowerCase() === 'authorization' || key.toLowerCase() === 'cookie'
+          ? '[REDACTED]'
+          : value;
+    }
+
+    server.log.error({
+      name: error?.name,
+      statusCode,
+      path: requestPath,
+      method: request.method,
+      headers: sanitizedHeaders,
+      error: error instanceof Error ? error.name : String(error)
+    });
+
+    if (!reply.sent) {
+      reply
+        .code(statusCode)
+        .type('application/json; charset=utf-8')
+        .header('Cache-Control', 'no-store')
+        .header('X-Content-Type-Options', 'nosniff')
+        .header('Content-Security-Policy', "default-src 'none'")
+        .header('X-Frame-Options', 'DENY')
+        .header('Referrer-Policy', 'no-referrer')
+        .send({
+          statusCode,
+          error: sanitizedErrorMessage,
+          message: sanitizedErrorMessage
+        });
+    }
+  });
+
+  server.addHook('onRequest', (req, res, done) => {
+    const requestPath = req.url ? req.url.split('?')[0] : '';
+    let normalizedPath = requestPath;
+
+    try {
+      normalizedPath = decodeURIComponent(requestPath);
+    } catch {
+      normalizedPath = requestPath;
+    }
+
+    normalizedPath = normalizedPath.replace(/\\/g, '/').replace(/\/+?/g, '/').toLowerCase();
+
+    if (
+      normalizedPath.includes('/.git') ||
+      normalizedPath === '.git' ||
+      normalizedPath.startsWith('.git/') ||
+      normalizedPath.includes('/.hg') ||
+      normalizedPath === '.hg' ||
+      normalizedPath.startsWith('.hg/') ||
+      normalizedPath.includes('/.svn') ||
+      normalizedPath === '.svn' ||
+      normalizedPath.startsWith('.svn/')
+    ) {
+      res.statusCode = 404;
+      res.header('Content-Type', 'application/json; charset=utf-8');
+      res.header('Cache-Control', 'no-store');
+      res.header('X-Content-Type-Options', 'nosniff');
+      res.send({
+        statusCode: 404,
+        error: 'Not Found',
+        message: 'Not Found'
+      });
+      return;
+    }
+
+    done();
   });
 
   server.setDefaultRoute((req, res) => {
-    if (req.url && req.url.startsWith('/api')) {
+    const requestPath = req.url ? req.url.split('?')[0] : '';
+    let normalizedPath = requestPath;
+
+    try {
+      normalizedPath = decodeURIComponent(requestPath);
+    } catch {
+      normalizedPath = requestPath;
+    }
+
+    normalizedPath = normalizedPath.replace(/\\/g, '/').replace(/\/+?/g, '/').toLowerCase();
+
+    if (
+      normalizedPath.includes('/.git') ||
+      normalizedPath === '.git' ||
+      normalizedPath.startsWith('.git/') ||
+      normalizedPath.includes('/.hg') ||
+      normalizedPath === '.hg' ||
+      normalizedPath.startsWith('.hg/') ||
+      normalizedPath.includes('/.svn') ||
+      normalizedPath === '.svn' ||
+      normalizedPath.startsWith('.svn/')
+    ) {
       res.statusCode = 404;
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
+      res.setHeader('Cache-Control', 'no-store');
+      res.setHeader('X-Content-Type-Options', 'nosniff');
       return res.end(
         JSON.stringify({
-          success: false,
-          error: {
-            kind: 'user_input',
-            message: 'Not Found'
-          }
+          statusCode: 404,
+          error: 'Not Found',
+          message: 'Not Found'
+        })
+      );
+    }
+
+    if (requestPath.startsWith('/api')) {
+      res.statusCode = 404;
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
+      res.setHeader('Cache-Control', 'no-store');
+      res.setHeader('X-Content-Type-Options', 'nosniff');
+      return res.end(
+        JSON.stringify({
+          statusCode: 404,
+          error: 'Not Found',
+          message: 'Not Found'
         })
       );
     }
@@ -110,15 +226,18 @@ async function bootstrap() {
     readFile(
       join(__dirname, '..', 'client', 'dist', 'index.html'),
       'utf8',
-      (err, data) => {
-        if (err) {
-          res.statusCode = 500;
-          res.end('Internal Server Error');
-          return;
-        }
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'text/html');
-        res.end(data);
+      () => {
+        res.statusCode = 404;
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
+        res.setHeader('Cache-Control', 'no-store');
+        res.setHeader('X-Content-Type-Options', 'nosniff');
+        res.end(
+          JSON.stringify({
+            statusCode: 404,
+            error: 'Not Found',
+            message: 'Not Found'
+          })
+        );
       }
     );
   });
@@ -129,47 +248,98 @@ async function bootstrap() {
     decorateReply: false,
     redirect: false,
     wildcard: false,
-    serveDotFiles: true
-  });
+    serveDotFiles: false,
+    ignoreTrailingSlash: true,
+    allowedPath: (_pathName, root, request) => {
+      const requestPath = request.url.split('?')[0];
+      let normalizedPath = requestPath;
 
-  for (const dir of readdirSync(join(__dirname, '..', 'client', 'vcs'))) {
-    await server.register(fastifyStatic, {
-      root: join(__dirname, '..', 'client', 'vcs', dir),
-      prefix: `/.${dir}`,
-      decorateReply: false,
-      redirect: true,
-      index: false,
-      list: {
-        format: 'html',
-        render: renderDirList
-      },
-      serveDotFiles: true
-    });
-  }
+      try {
+        normalizedPath = decodeURIComponent(requestPath);
+      } catch {
+        normalizedPath = requestPath;
+      }
 
-  await server.register(fastifyStatic, {
-    root: join(__dirname, '..', 'client', 'dist', 'vendor'),
-    prefix: `/vendor`,
-    decorateReply: false,
-    redirect: true,
-    index: false,
-    list: {
-      format: 'html',
-      render: renderDirList
-    },
-    serveDotFiles: true
-  });
+      normalizedPath = normalizedPath.replace(/\\/g, '/').replace(/\/+?/g, '/').toLowerCase();
 
-  const app: NestFastifyApplication = await NestFactory.create(
-    AppModule,
-    new FastifyAdapter(server),
-    {
-      logger:
-        process.env.NODE_ENV === 'production'
-          ? ['error']
-          : ['debug', 'log', 'warn', 'error']
+      return !(
+        normalizedPath.includes('/.git') ||
+        normalizedPath === '.git' ||
+        normalizedPath.startsWith('.git/') ||
+        normalizedPath.includes('/.hg') ||
+        normalizedPath === '.hg' ||
+        normalizedPath.startsWith('.hg/') ||
+        normalizedPath.includes('/.svn') ||
+        normalizedPath === '.svn' ||
+        normalizedPath.startsWith('.svn/')
+      );
     }
-  );
+  });
+
+  const adapter = new FastifyAdapter(server);
+  adapter.setErrorHandler((error, request, reply) => {
+    const requestPath = request.url ? request.url.split('?')[0] : '';
+    const rawStatusCode = Number((error as { statusCode?: unknown })?.statusCode);
+    const statusCode =
+      Number.isInteger(rawStatusCode) &&
+      [400, 401, 403, 404, 405, 413, 415, 422, 429].includes(rawStatusCode)
+        ? rawStatusCode
+        : 500;
+
+    const sanitizedErrorMessage =
+      statusCode === 401
+        ? 'Unauthorized'
+        : statusCode < 500
+          ? 'Request failed'
+          : 'Internal server error';
+
+    const sanitizedHeaders: Record<string, string | string[] | undefined> = {};
+    const rawHeaders = request.headers || {};
+
+    for (const [key, value] of Object.entries(rawHeaders)) {
+      sanitizedHeaders[key] =
+        key.toLowerCase() === 'authorization' || key.toLowerCase() === 'cookie'
+          ? '[REDACTED]'
+          : value;
+    }
+
+    server.log.error({
+      name: error?.name,
+      statusCode,
+      path: requestPath,
+      method: request.method,
+      headers: sanitizedHeaders,
+      error: error instanceof Error ? error.name : String(error)
+    });
+
+    if (!reply.sent) {
+      reply
+        .code(statusCode)
+        .type('application/json; charset=utf-8')
+        .header('Cache-Control', 'no-store')
+        .header('X-Content-Type-Options', 'nosniff')
+        .header('Content-Security-Policy', "default-src 'none'")
+        .header('X-Frame-Options', 'DENY')
+        .header('Referrer-Policy', 'no-referrer')
+        .send({
+          statusCode,
+          error: sanitizedErrorMessage,
+          message: sanitizedErrorMessage
+        });
+    }
+  });
+
+  const app: NestFastifyApplication = await NestFactory.create(AppModule, adapter, {
+    logger:
+      process.env.NODE_ENV === 'production'
+        ? ['error']
+        : ['debug', 'log', 'warn', 'error'],
+    abortOnError: false,
+    bufferLogs: false,
+    rawBody: true,
+    cors: false,
+    snapshot: false
+  });
 
   await server.register(fastifyCookie);
   await server.register(fmp);
@@ -181,13 +351,60 @@ async function bootstrap() {
       httpOnly: false
     }
   });
-  server.addContentTypeParser('*', (req) => rawbody(req.raw));
-
-  const httpAdapter = app.getHttpAdapter();
 
   app
     .useGlobalInterceptors(new HeadersConfiguratorInterceptor())
-    .useGlobalFilters(new GlobalExceptionFilter(httpAdapter));
+    .useGlobalFilters(new GlobalExceptionFilter(app.getHttpAdapter()))
+    .useGlobalPipes(
+      new ValidationPipe({
+        transform: true,
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        exceptionFactory: () =>
+          new BadRequestException({
+            statusCode: 400,
+            error: 'Request failed',
+            message: 'Request failed'
+          })
+      })
+    );
+
+  app.getHttpAdapter().getInstance().addHook('onError', (request, reply, error, done) => {
+    if (!reply.sent) {
+      const rawStatusCode = Number((error as { statusCode?: unknown })?.statusCode);
+      const statusCode =
+        Number.isInteger(rawStatusCode) &&
+        [400, 401, 403, 404, 405, 413, 415, 422, 429].includes(rawStatusCode)
+          ? rawStatusCode
+          : 500;
+      const sanitizedMessage =
+        statusCode === 401
+          ? 'Unauthorized'
+          : statusCode === 404
+            ? 'Not Found'
+            : statusCode === 403
+              ? 'Forbidden'
+              : statusCode >= 500
+                ? 'Internal server error'
+                : 'Request failed';
+
+      reply.raw.removeHeader('X-Powered-By');
+      reply.header('Content-Type', 'application/json; charset=utf-8');
+      reply.header('Cache-Control', 'no-store');
+      reply.header('X-Content-Type-Options', 'nosniff');
+      reply.header('Content-Security-Policy', "default-src 'none'");
+      reply.header('X-Frame-Options', 'DENY');
+      reply.header('Referrer-Policy', 'no-referrer');
+      reply.code(statusCode).send({
+        statusCode,
+        error: sanitizedMessage,
+        message: sanitizedMessage
+      });
+      return;
+    }
+
+    done();
+  });
 
   const options = new DocumentBuilder()
     .setTitle('Pure Flow')

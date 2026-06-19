@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Logger, UnauthorizedException } from '@nestjs/common';
 import * as jose from 'jose';
 import { JwtTokenProcessor as JwtTokenProcessor } from './jwt.token.processor';
 
@@ -12,23 +12,41 @@ export class JwtTokenWithJWKProcessor extends JwtTokenProcessor {
 
   async validateToken(token: string): Promise<unknown> {
     this.log.debug('Call validateToken');
-    const [header, payload] = this.parse(token);
 
-    if (!header.jwk) {
-      throw new Error('Unsupported token. JWK is not set');
+    if (typeof token !== 'string' || token.length > 8192) {
+      throw new UnauthorizedException({ error: 'Unauthorized' });
     }
 
-    if (!header.jwk.kty) {
-      return payload;
-    }
-    const keyLike = await jose.importJWK(header.jwk);
+    try {
+      const [header, payload] = this.parse(token);
+      const jwk =
+        header && typeof header === 'object' && !Array.isArray(header)
+          ? (header as { jwk?: unknown }).jwk
+          : undefined;
 
-    const res = await jose.jwtVerify(token, keyLike);
+      if (!jwk || typeof jwk !== 'object' || Array.isArray(jwk)) {
+        throw new UnauthorizedException({ error: 'Unauthorized' });
+      }
 
-    if (res) {
-      return payload;
+      if (!(jwk as { kty?: unknown }).kty || typeof (jwk as { kty?: unknown }).kty !== 'string') {
+        throw new UnauthorizedException({ error: 'Unauthorized' });
+      }
+
+      const keyLike = await jose.importJWK(jwk as jose.JWK);
+      const res = await jose.jwtVerify(token, keyLike);
+
+      if (res) {
+        return payload;
+      }
+      throw new UnauthorizedException({ error: 'Unauthorized' });
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      }
+
+      this.log.warn('Failed to validate JWT with JWK');
+      throw new UnauthorizedException({ error: 'Unauthorized' });
     }
-    throw new Error('Could not validate token');
   }
 
   async createToken(payload: jose.JWTPayload): Promise<string> {

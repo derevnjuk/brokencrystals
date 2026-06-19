@@ -2,41 +2,165 @@ import {
   ArgumentsHost,
   Catch,
   HttpException,
-  InternalServerErrorException
+  HttpStatus,
+  InternalServerErrorException,
+  Logger,
+  UnauthorizedException
 } from '@nestjs/common';
-import { BaseExceptionFilter } from '@nestjs/core';
+import { BaseExceptionFilter, HttpAdapterHost } from '@nestjs/core';
 import { GqlContextType } from '@nestjs/graphql';
 
 @Catch()
 export class GlobalExceptionFilter extends BaseExceptionFilter {
-  public catch(exception: unknown, host: ArgumentsHost) {
-    const gql = host.getType<GqlContextType>() === 'graphql';
+  private readonly logger = new Logger(GlobalExceptionFilter.name);
 
+  constructor(protected readonly httpAdapterHost?: HttpAdapterHost) {
+    super(httpAdapterHost?.httpAdapter);
+  }
+
+  private normalizeException(exception: unknown): HttpException | InternalServerErrorException {
     if (exception instanceof HttpException) {
-      if (gql) {
-        throw exception;
-      }
-
-      return super.catch(exception, host);
+      return exception;
     }
 
-    const unprocessableException = new InternalServerErrorException(
-      { error: (exception as Error).message },
-      'An internal error has occurred, and the API was unable to service your request.'
+    if (
+      exception instanceof Error &&
+      (exception.name === 'JsonWebTokenError' ||
+        exception.name === 'TokenExpiredError' ||
+        exception.name === 'NotBeforeError' ||
+        exception.name === 'JOSEError' ||
+        exception.name === 'JWSInvalid' ||
+        exception.name === 'JWKInvalid' ||
+        exception.name === 'JWKSInvalid')
+    ) {
+      return new UnauthorizedException({
+        statusCode: HttpStatus.UNAUTHORIZED,
+        error: 'Unauthorized',
+        message: 'Unauthorized'
+      });
+    }
+
+    return new InternalServerErrorException({
+      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      error: 'Internal server error',
+      message: 'Internal server error'
+    });
+  }
+
+  public catch(exception: unknown, host: ArgumentsHost) {
+    const gql = host.getType<GqlContextType>() === 'graphql';
+    const request = !gql ? host.switchToHttp().getRequest() : undefined;
+    const sanitizedHeaders: Record<string, string | string[] | undefined> = {};
+    const rawHeaders = request?.headers || {};
+
+    for (const [key, value] of Object.entries(rawHeaders)) {
+      sanitizedHeaders[key] =
+        key.toLowerCase() === 'authorization' || key.toLowerCase() === 'cookie'
+          ? '[REDACTED]'
+          : value;
+    }
+
+    this.logger.error(
+      exception instanceof HttpException
+        ? `HTTP ${exception.getStatus()} exception`
+        : exception instanceof Error
+          ? exception.name
+          : 'Unhandled exception',
+      JSON.stringify({
+        path: request?.url ? request.url.split('?')[0] : undefined,
+        method: request?.method,
+        headers: sanitizedHeaders,
+        error:
+          exception instanceof Error
+            ? exception.name
+            : typeof exception === 'string'
+              ? exception
+              : 'Unhandled exception'
+      })
     );
 
+    const normalizedException = this.normalizeException(exception);
+
+    if (normalizedException instanceof HttpException) {
+      const rawStatus = normalizedException.getStatus();
+      const status =
+        [
+          HttpStatus.BAD_REQUEST,
+          HttpStatus.UNAUTHORIZED,
+          HttpStatus.FORBIDDEN,
+          HttpStatus.NOT_FOUND,
+          HttpStatus.METHOD_NOT_ALLOWED,
+          HttpStatus.PAYLOAD_TOO_LARGE,
+          HttpStatus.UNSUPPORTED_MEDIA_TYPE,
+          HttpStatus.UNPROCESSABLE_ENTITY,
+          HttpStatus.TOO_MANY_REQUESTS
+        ].includes(rawStatus)
+          ? rawStatus
+          : HttpStatus.INTERNAL_SERVER_ERROR;
+      const sanitizedMessage =
+        status === HttpStatus.UNAUTHORIZED
+          ? 'Unauthorized'
+          : status === HttpStatus.NOT_FOUND
+            ? 'Not Found'
+            : status === HttpStatus.FORBIDDEN
+              ? 'Forbidden'
+              : status >= HttpStatus.INTERNAL_SERVER_ERROR
+                ? 'Internal server error'
+                : 'Request failed';
+      const responseBody = {
+        statusCode: status,
+        error: sanitizedMessage,
+        message: sanitizedMessage
+      };
+
+      if (gql) {
+        throw new HttpException(responseBody, status);
+      }
+
+      const applicationRef =
+        this.applicationRef ||
+        (this.httpAdapterHost && this.httpAdapterHost.httpAdapter);
+      const response = host.getArgByIndex(1);
+
+      if (response?.raw?.headersSent || response?.sent) {
+        return;
+      }
+
+      if (response?.header) {
+        response.header('Content-Type', 'application/json; charset=utf-8');
+        response.header('Cache-Control', 'no-store');
+        response.header('X-Content-Type-Options', 'nosniff');
+        response.header('Content-Security-Policy', "default-src 'none'");
+      }
+
+      return applicationRef.reply(response, responseBody, status);
+    }
+
     if (gql) {
-      throw unprocessableException;
+      throw normalizedException;
     }
 
     const applicationRef =
       this.applicationRef ||
       (this.httpAdapterHost && this.httpAdapterHost.httpAdapter);
 
+    const response = host.getArgByIndex(1);
+
+    if (response?.raw?.headersSent || response?.sent) {
+      return;
+    }
+
+    if (response?.header) {
+      response.header('Content-Type', 'application/json; charset=utf-8');
+      response.header('Cache-Control', 'no-store');
+      response.header('X-Content-Type-Options', 'nosniff');
+      response.header('Content-Security-Policy', "default-src 'none'");
+    }
+
     return applicationRef.reply(
-      host.getArgByIndex(1),
-      unprocessableException.getResponse(),
-      unprocessableException.getStatus()
+      response,
+      normalizedException.getResponse(),
+      normalizedException.getStatus()
     );
   }
 }

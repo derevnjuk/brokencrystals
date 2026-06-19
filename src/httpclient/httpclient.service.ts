@@ -6,18 +6,18 @@ export class HttpClientService {
   private readonly log: Logger = new Logger(HttpClientService.name);
 
   async loadJSON<T = unknown>(url: string): Promise<T> {
-    const resp = await axios.get<T>(url, {
-      responseType: 'json'
-    });
-    if (resp.status != 200) {
-      throw new Error(`Failed to load url: ${url}. Status ${resp.status}`);
+    try {
+      const resp = await axios.get<T>(url, {
+        responseType: 'json'
+      });
+      if (resp.status != 200) {
+        throw new Error('Failed to load remote resource');
+      }
+      this.log.debug('Loaded remote JSON resource');
+      return resp.data;
+    } catch {
+      throw new Error('Failed to load remote resource');
     }
-    this.log.debug(
-      `Loaded: ${
-        typeof resp.data === 'string' ? resp.data : JSON.stringify(resp.data)
-      }`
-    );
-    return resp.data;
   }
 
   async post<T = unknown>(
@@ -43,18 +43,22 @@ export class HttpClientService {
   }
 
   async loadPlain(url: string): Promise<string> {
-    const resp = await axios.get<ArrayBuffer>(url, {
-      responseType: 'arraybuffer'
-    });
+    try {
+      const resp = await axios.get<ArrayBuffer>(url, {
+        responseType: 'arraybuffer'
+      });
 
-    if (resp.status != 200) {
-      throw new Error(`Failed to load url: ${url}. Status ${resp.status}`);
+      if (resp.status != 200) {
+        throw new Error('Failed to load remote resource');
+      }
+
+      const buffer = Buffer.from(resp.data);
+      const text = buffer.toString();
+      this.log.debug('Loaded remote plain resource');
+      return text;
+    } catch {
+      throw new Error('Failed to load remote resource');
     }
-
-    const buffer = Buffer.from(resp.data);
-    const text = buffer.toString();
-    this.log.debug(`Loaded: ${text}`);
-    return text;
   }
 
   async loadAny(url: string): Promise<{

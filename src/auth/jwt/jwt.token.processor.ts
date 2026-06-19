@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtHeader } from './jwt.header';
 
 export abstract class JwtTokenProcessor {
@@ -13,41 +13,61 @@ export abstract class JwtTokenProcessor {
   protected parse(token: string): [header: JwtHeader, payload: unknown] {
     this.log.debug('Call parse');
 
-    const parts = token.split('.');
-    if (parts.length != 3 || !parts[0]) {
-      throw new Error('Failed to parse jwt token header');
+    try {
+      const parts = token.split('.');
+      if (parts.length != 3 || !parts[0]) {
+        throw new UnauthorizedException({ error: 'Unauthorized' });
+      }
+      const headerStr = Buffer.from(parts[0], 'base64').toString('ascii');
+      const header: JwtHeader = JSON.parse(headerStr);
+
+      const payloadStr = Buffer.from(parts[1], 'base64').toString('ascii');
+      const payload = JSON.parse(payloadStr);
+
+      return [header, payload];
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      }
+
+      this.log.warn('Failed to parse JWT token');
+      throw new UnauthorizedException({ error: 'Unauthorized' });
     }
-    const headerStr = Buffer.from(parts[0], 'base64').toString('ascii');
-    this.log.debug(`Jwt token header is ${headerStr}`);
-    const header: JwtHeader = JSON.parse(headerStr);
-
-    const payloadStr = Buffer.from(parts[1], 'base64').toString('ascii');
-    this.log.debug(`Jwt token (None alg) payload is ${payloadStr}`);
-    const payload = JSON.parse(payloadStr);
-
-    return [header, payload];
   }
 
   protected parseCRTChain(chainText: string): string {
     this.log.debug('Call parseCRTChain');
 
-    let idx = -1;
-    if (
-      !chainText ||
-      (idx = Math.max(
-        chainText.indexOf(JwtTokenProcessor.END_CERTIFICATE_MARK),
-        chainText.indexOf(JwtTokenProcessor.END_PUBLIC_KEY_MARK)
-      )) === -1
-    ) {
-      throw new Error('Invalid certificate');
-    }
+    try {
+      let idx = -1;
+      if (
+        !chainText ||
+        (idx = Math.max(
+          chainText.indexOf(JwtTokenProcessor.END_CERTIFICATE_MARK),
+          chainText.indexOf(JwtTokenProcessor.END_PUBLIC_KEY_MARK)
+        )) === -1
+      ) {
+        throw new UnauthorizedException({ error: 'Unauthorized' });
+      }
 
-    const key = chainText.slice(
-      0,
-      idx + JwtTokenProcessor.END_CERTIFICATE_MARK.length
-    );
-    this.log.debug(`Extracted key\n${key}`);
-    return key;
+      const key = chainText.slice(
+        0,
+        idx + JwtTokenProcessor.END_CERTIFICATE_MARK.length
+      );
+
+      if (!key.trim().length) {
+        throw new UnauthorizedException({ error: 'Unauthorized' });
+      }
+
+      return key;
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      }
+
+      this.log.warn('Failed to parse certificate chain');
+      throw new UnauthorizedException({ error: 'Unauthorized' });
+    }
   }
 
   abstract validateToken(token: string): Promise<unknown>;
