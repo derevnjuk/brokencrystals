@@ -25,8 +25,38 @@ import { PartnersService } from './partners.service';
 @ApiTags('Partners controller')
 export class PartnersController {
   private readonly logger = new Logger(PartnersController.name);
+  private readonly PARTNER_USERNAME_PATTERN = /^[A-Za-z0-9_]{3,64}$/;
+  private readonly PARTNER_PASSWORD_PATTERN = /^[A-Za-z0-9!@#$%^&*()_+\-=]{3,128}$/;
 
   constructor(private readonly partnersService: PartnersService) {}
+
+  private validatePartnerLoginInput(username: string, password: string): void {
+    if (!this.PARTNER_USERNAME_PATTERN.test(username)) {
+      throw new HttpException(
+        "Access denied to partner's account. Invalid username format",
+        HttpStatus.FORBIDDEN
+      );
+    }
+
+    if (!this.PARTNER_PASSWORD_PATTERN.test(password)) {
+      throw new HttpException(
+        "Access denied to partner's account. Invalid password format",
+        HttpStatus.FORBIDDEN
+      );
+    }
+  }
+
+  private toXPathLiteral(input: string): string {
+    if (!input.includes("'")) {
+      return `'${input}'`;
+    }
+
+    if (!input.includes('"')) {
+      return `"${input}"`;
+    }
+
+    return `concat('${input.split("'").join(`',"'",'`)}')`;
+  }
 
   // **** This is a general XPATH injection EP - Will accept anything ****
   @Get('query')
@@ -81,6 +111,8 @@ export class PartnersController {
     @Query('username') username: string,
     @Query('password') password: string
   ): Promise<string> {
+    this.validatePartnerLoginInput(username, password);
+
     this.logger.debug(
       `Trying to login partner with username ${username} using password ${password}`
     );
@@ -152,7 +184,8 @@ export class PartnersController {
     this.logger.debug(`Searching partner names by the keyword "${keyword}"`);
 
     try {
-      const xpath = `//partners/partner/name[contains(., '${keyword}')]`;
+      const safeKeyword = this.toXPathLiteral(keyword);
+      const xpath = `//partners/partner/name[contains(., ${safeKeyword})]`;
       return this.partnersService.getPartnersProperties(xpath);
     } catch (err) {
       const errStr = err.toString();
