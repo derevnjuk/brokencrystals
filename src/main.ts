@@ -94,7 +94,9 @@ async function bootstrap() {
   });
 
   server.addHook('onRequest', (req, res, done) => {
-    if (req.url && /^\/(?:\.(?:git|hg|svn))(?:\/|$)/.test(req.url)) {
+    const requestPath = req.url ? req.url.split('?')[0] : '';
+
+    if (/^\/(?:\.(?:git|hg|svn))(?:\/|$)/.test(requestPath)) {
       res.statusCode = 404;
       res.header('Content-Type', 'application/json; charset=utf-8');
       res.send({
@@ -111,7 +113,9 @@ async function bootstrap() {
   });
 
   server.setDefaultRoute((req, res) => {
-    if (req.url && /^\/(?:\.(?:git|hg|svn))(?:\/|$)/.test(req.url)) {
+    const requestPath = req.url ? req.url.split('?')[0] : '';
+
+    if (/^\/(?:\.(?:git|hg|svn))(?:\/|$)/.test(requestPath)) {
       res.statusCode = 404;
       return res.end(
         JSON.stringify({
@@ -124,7 +128,7 @@ async function bootstrap() {
       );
     }
 
-    if (req.url && req.url.startsWith('/api')) {
+    if (requestPath.startsWith('/api')) {
       res.statusCode = 404;
       return res.end(
         JSON.stringify({
