@@ -60,20 +60,32 @@ async function bootstrap() {
     });
 
     if (!reply.sent) {
+      const responseBody =
+        statusCode === 401
+          ? { error: 'Unauthorized' }
+          : statusCode < 500
+            ? { error: 'Request failed' }
+            : { error: 'Internal server error' };
+
       reply
         .code(statusCode)
         .type('application/json; charset=utf-8')
         .header('Cache-Control', 'no-store')
-        .send(
-          isApiRequest
-            ? statusCode === 401
-              ? { error: 'Unauthorized' }
-              : statusCode < 500
-                ? { error: 'Request failed' }
-                : { error: 'Internal server error' }
-            : { error: 'Internal server error' }
-        );
+        .header('X-Content-Type-Options', 'nosniff')
+        .send(responseBody);
     }
+  });
+
+  server.setNotFoundHandler((request, reply) => {
+    const requestPath = request.url ? request.url.split('?')[0] : '';
+    const isApiRequest = requestPath === '/api' || requestPath.startsWith('/api/');
+
+    reply
+      .code(404)
+      .type('application/json; charset=utf-8')
+      .header('Cache-Control', 'no-store')
+      .header('X-Content-Type-Options', 'nosniff')
+      .send(isApiRequest ? { error: 'Request failed' } : { error: 'Internal server error' });
   });
 
   server.addHook('onRequest', (req, res, done) => {

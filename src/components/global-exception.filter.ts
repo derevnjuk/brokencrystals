@@ -49,6 +49,11 @@ export class GlobalExceptionFilter extends BaseExceptionFilter {
         return;
       }
 
+      if (response?.header) {
+        response.header('Cache-Control', 'no-store');
+        response.header('X-Content-Type-Options', 'nosniff');
+      }
+
       return applicationRef.reply(response, responseBody, status);
     }
 
@@ -65,8 +70,19 @@ export class GlobalExceptionFilter extends BaseExceptionFilter {
       this.applicationRef ||
       (this.httpAdapterHost && this.httpAdapterHost.httpAdapter);
 
+    const response = host.getArgByIndex(1);
+
+    if (response?.raw?.headersSent || response?.sent) {
+      return;
+    }
+
+    if (response?.header) {
+      response.header('Cache-Control', 'no-store');
+      response.header('X-Content-Type-Options', 'nosniff');
+    }
+
     return applicationRef.reply(
-      host.getArgByIndex(1),
+      response,
       unprocessableException.getResponse(),
       unprocessableException.getStatus()
     );
