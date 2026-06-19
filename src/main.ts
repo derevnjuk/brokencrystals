@@ -55,6 +55,31 @@ async function bootstrap() {
         : false,
     trustProxy: true,
     onProtoPoisoning: 'ignore',
+    frameworkErrors: (error, req, res) => {
+      server.log.error({
+        name: error?.name,
+        path: req.url ? req.url.split('?')[0] : '',
+        method: req.method,
+        details: error instanceof Error ? error.stack : String(error)
+      });
+
+      if (!res.headersSent) {
+        res.statusCode = 400;
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
+        res.setHeader('Cache-Control', 'no-store');
+        res.setHeader('X-Content-Type-Options', 'nosniff');
+        res.setHeader('Content-Security-Policy', "default-src 'none'");
+        res.end(
+          JSON.stringify({
+            statusCode: 400,
+            error: 'Request failed',
+            message: 'Request failed'
+          })
+        );
+      }
+
+      return error;
+    },
     https: httpsOptions
   });
 

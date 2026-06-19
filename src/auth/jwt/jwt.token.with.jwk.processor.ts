@@ -13,18 +13,26 @@ export class JwtTokenWithJWKProcessor extends JwtTokenProcessor {
   async validateToken(token: string): Promise<unknown> {
     this.log.debug('Call validateToken');
 
+    if (typeof token !== 'string' || token.length > 8192) {
+      throw new UnauthorizedException({ error: 'Unauthorized' });
+    }
+
     try {
       const [header, payload] = this.parse(token);
+      const jwk =
+        header && typeof header === 'object' && !Array.isArray(header)
+          ? (header as { jwk?: unknown }).jwk
+          : undefined;
 
-      if (!header.jwk) {
+      if (!jwk || typeof jwk !== 'object' || Array.isArray(jwk)) {
         throw new UnauthorizedException({ error: 'Unauthorized' });
       }
 
-      if (!header.jwk.kty) {
-        return payload;
+      if (!(jwk as { kty?: unknown }).kty || typeof (jwk as { kty?: unknown }).kty !== 'string') {
+        throw new UnauthorizedException({ error: 'Unauthorized' });
       }
-      const keyLike = await jose.importJWK(header.jwk);
 
+      const keyLike = await jose.importJWK(jwk as jose.JWK);
       const res = await jose.jwtVerify(token, keyLike);
 
       if (res) {

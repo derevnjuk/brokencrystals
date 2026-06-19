@@ -45,9 +45,13 @@ export class GlobalExceptionFilter extends BaseExceptionFilter {
       const sanitizedMessage =
         status === HttpStatus.UNAUTHORIZED
           ? 'Unauthorized'
-          : status >= HttpStatus.INTERNAL_SERVER_ERROR
-            ? 'Internal server error'
-            : 'Request failed';
+          : status === HttpStatus.NOT_FOUND
+            ? 'Not Found'
+            : status === HttpStatus.FORBIDDEN
+              ? 'Forbidden'
+              : status >= HttpStatus.INTERNAL_SERVER_ERROR
+                ? 'Internal server error'
+                : 'Request failed';
       const responseBody = {
         statusCode: status,
         error: sanitizedMessage,
