@@ -26,7 +26,7 @@ import { PartnersService } from './partners.service';
 export class PartnersController {
   private readonly logger = new Logger(PartnersController.name);
   private readonly credentialsPattern = /^[A-Za-z0-9_@.!$-]{1,64}$/;
-  private readonly partnerSearchKeywordPattern = /^[A-Za-z0-9 .'-]{1,64}$/;
+  private readonly partnerSearchKeywordPattern = /^[A-Za-z0-9 .-]{1,64}$/;
 
   constructor(private readonly partnersService: PartnersService) {}
 
@@ -175,7 +175,11 @@ export class PartnersController {
   async searchPartners(@Query('keyword') keyword: string): Promise<string> {
     this.logger.debug(`Searching partner names by the keyword "${keyword}"`);
 
-    if (!this.partnerSearchKeywordPattern.test(keyword)) {
+    if (
+      !keyword ||
+      keyword.includes('\0') ||
+      !this.partnerSearchKeywordPattern.test(keyword)
+    ) {
       throw new HttpException(
         'Invalid search keyword format',
         HttpStatus.BAD_REQUEST
@@ -183,8 +187,7 @@ export class PartnersController {
     }
 
     try {
-      const safeKeyword = this.toXPathLiteral(keyword);
-      const xpath = `//partners/partner/name[contains(., ${safeKeyword})]`;
+      const xpath = `//partners/partner/name[contains(., '${keyword}')]`;
       return this.partnersService.getPartnersProperties(xpath);
     } catch (err) {
       const errStr = err.toString();
