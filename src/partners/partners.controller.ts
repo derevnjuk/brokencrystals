@@ -187,7 +187,8 @@ export class PartnersController {
     }
 
     try {
-      const xpath = `//partners/partner/name[contains(., '${keyword}')]`;
+      const safeKeyword = this.toXPathLiteral(keyword);
+      const xpath = `//partners/partner/name[contains(., ${safeKeyword})]`;
       return this.partnersService.getPartnersProperties(xpath);
     } catch (err) {
       const errStr = err.toString();
