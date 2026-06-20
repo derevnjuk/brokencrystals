@@ -34,7 +34,7 @@ export class PartnersController {
     }
 
     if (!value.includes('"')) {
-      return `"${value}";
+      return `"${value}"`;
     }
 
     const parts = value.split("'");
@@ -174,10 +174,21 @@ export class PartnersController {
     type: String
   })
   async searchPartners(@Query('keyword') keyword: string): Promise<string> {
-    this.logger.debug(`Searching partner names by the keyword "${keyword}"`);
+    const normalizedKeyword = keyword?.trim();
+
+    if (!normalizedKeyword || !/^[\p{L}\s'\-]{1,100}$/u.test(normalizedKeyword)) {
+      throw new HttpException(
+        'Invalid search keyword format',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    this.logger.debug(
+      `Searching partner names by the keyword "${normalizedKeyword}"`
+    );
 
     try {
-      const keywordLiteral = this.toXPathLiteral(keyword);
+      const keywordLiteral = this.toXPathLiteral(normalizedKeyword);
       const xpath = `//partners/partner/name[contains(., ${keywordLiteral})]`;
       return this.partnersService.getPartnersProperties(xpath);
     } catch (err) {
