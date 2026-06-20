@@ -25,6 +25,7 @@ import { PartnersService } from './partners.service';
 @ApiTags('Partners controller')
 export class PartnersController {
   private readonly logger = new Logger(PartnersController.name);
+  private readonly credentialsPattern = /^[A-Za-z0-9_@.!$-]{1,64}$/;
 
   constructor(private readonly partnersService: PartnersService) {}
 
@@ -111,6 +112,13 @@ export class PartnersController {
     );
 
     try {
+      if (
+        !this.credentialsPattern.test(username) ||
+        !this.credentialsPattern.test(password)
+      ) {
+        throw new Error('Invalid credentials format');
+      }
+
       const safeUsername = this.toXPathLiteral(username);
       const safePassword = this.toXPathLiteral(password);
       const xpath = `//partners/partner[username/text()=${safeUsername} and password/text()=${safePassword}]/*`;
