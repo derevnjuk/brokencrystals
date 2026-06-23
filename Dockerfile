@@ -47,7 +47,7 @@ FROM node:18-alpine AS production
 
 WORKDIR /usr/src/app
 
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat wget
 
 COPY --chown=node:node .env ./
 COPY --chown=node:node config ./config
