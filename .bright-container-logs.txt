@@ -1,0 +1,53 @@
+=== pureflow-db-1 ===
+PostgreSQL Database directory appears to contain a database; Skipping initialization
+
+=== pureflow-keycloak-1 ===
+Updating the configuration and installing your custom providers, if any. Please wait.
+2026-06-23 12:58:00,577 INFO  [io.qua.hib.orm.dep.HibernateOrmProcessor] (build-55) A legacy persistence.xml file is present in the classpath. This file will be used to configure JPA/Hibernate ORM persistence units, and any configuration of the Hibernate ORM extension will be ignored. To ignore persistence.xml files instead, set the configuration property 'quarkus.hibernate-orm.persistence-xml.ignore' to 'true'.
+2026-06-23 12:58:02,963 INFO  [io.qua.dep.QuarkusAugmentor] (main) Quarkus augmentation completed in 4000ms
+Running the server in development mode. DO NOT use this configuration in production.
+2026-06-23 12:58:03,408 ERROR [org.keycloak.quarkus.runtime.configuration.mappers.PropertyMappers] (main) Hostname v1 options [hostname-strict-https] are still in use, please review your configuration
+2026-06-23 12:58:04,567 INFO  [org.keycloak.quarkus.runtime.storage.infinispan.CacheManagerFactory] (Thread-5) Starting Infinispan embedded cache manager
+2026-06-23 12:58:04,638 INFO  [org.infinispan.CONTAINER] (Thread-5) Virtual threads support enabled
+2026-06-23 12:58:04,751 INFO  [org.infinispan.CONTAINER] (Thread-5) ISPN000556: Starting user marshaller 'org.infinispan.commons.marshall.ImmutableProtoStreamMarshaller'
+2026-06-23 12:58:04,965 INFO  [org.infinispan.transaction.lookup.JBossStandaloneJTAManagerLookup] (Thread-5) ISPN000107: Retrieving transaction manager Transaction: unknown
+2026-06-23 12:58:05,168 INFO  [org.keycloak.connections.infinispan.DefaultInfinispanConnectionProviderFactory] (main) Node name: node_847342, Site name: null
+2026-06-23 12:58:05,170 INFO  [org.keycloak.broker.provider.AbstractIdentityProviderMapper] (main) Registering class org.keycloak.broker.provider.mappersync.ConfigSyncEventListener
+2026-06-23 12:58:05,591 INFO  [org.keycloak.exportimport.singlefile.SingleFileImportProvider] (main) Full importing from file /opt/keycloak/bin/../data/import/realm-export.json
+2026-06-23 12:58:05,718 INFO  [org.keycloak.exportimport.util.ImportUtils] (main) Realm 'pureflow' already exists. Import skipped
+2026-06-23 12:58:05,718 INFO  [org.keycloak.exportimport.dir.DirImportProvider] (main) Importing from directory /opt/keycloak/bin/../data/import
+2026-06-23 12:58:05,720 INFO  [org.keycloak.services] (main) KC-SERVICES0030: Full model import requested. Strategy: IGNORE_EXISTING
+2026-06-23 12:58:05,720 INFO  [org.keycloak.services] (main) KC-SERVICES0032: Import finished successfully
+2026-06-23 12:58:05,727 WARN  [io.agroal.pool] (main) Datasource '<default>': JDBC resources leaked: 3 ResultSet(s) and 0 Statement(s)
+2026-06-23 12:58:05,852 INFO  [io.quarkus] (main) Keycloak 26.1.2 on JVM (powered by Quarkus 3.15.3) started in 2.822s. Listening on: http://0.0.0.0:8080. Management interface listening on http://0.0.0.0:9000.
+2026-06-23 12:58:05,852 INFO  [io.quarkus] (main) Profile dev activated. 
+2026-06-23 12:58:05,852 INFO  [io.quarkus] (main) Installed features: [agroal, cdi, hibernate-orm, jdbc-postgresql, keycloak, narayana-jta, opentelemetry, reactive-routes, rest, rest-jackson, smallrye-context-propagation, smallrye-health, vertx]
+
+=== pureflow-keycloak-db-1 ===
+PostgreSQL Database directory appears to contain a database; Skipping initialization
+
+=== pureflow-mailcatcher-1 ===
+Starting MailCatcher v0.10.0
+==> smtp://0.0.0.0:1025
+==> http://0.0.0.0:1080
+
+=== pureflow-nodejs-1 ===
+> broken-crystals@0.0.1 start:prod
+> node dist/main.js
+
+Worker 18 started
+[32m[Nest] 18  - [39m06/23/2026, 12:58:08 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 18  - [39m06/23/2026, 12:58:08 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mOrmModule dependencies initialized[39m[38;5;3m +15ms[39m
+[32m[Nest] 18  - [39m06/23/2026, 12:58:08 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMikroOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/23/2026, 12:58:08 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHttpClientModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/23/2026, 12:58:08 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSubscriptionsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/23/2026, 12:58:08 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/23/2026, 12:58:08 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFileModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/23/2026, 12:58:08 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPartnersModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 18  - [39m06/23/2026, 12:58:08 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEmailModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/23/2026, 12:58:08 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18  - [39m06/23/2026, 12:58:08 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mChatModule dependencies initialized[39m[38;5;3m +0ms[39m
+
+=== pureflow-ollama-1 ===
+[GIN] 2026/06/23 - 12:58:02 | 200 |     748.125µs |       127.0.0.1 | HEAD     "/"
+[GIN] 2026/06/23 - 12:58:02 | 200 |    1.419875ms |       127.0.0.1 | GET      "/api/tags"

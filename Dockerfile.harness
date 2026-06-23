@@ -1,0 +1,25 @@
+FROM node:20-slim
+
+WORKDIR /app
+
+ENV NODE_ENV=production \
+    PORT=3001 \
+    HUSKY=0
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY package.json package-lock.json ./
+
+# Install all dependencies, including dev deps needed by ts-node.
+# Explicitly ignore lifecycle scripts so the "prepare" hook doesn't try to run husky
+# when devDependencies are omitted under NODE_ENV=production.
+RUN npm ci --ignore-scripts
+
+COPY . /app
+COPY harness.js /app/harness.js
+
+EXPOSE 3001
+
+CMD ["node", "-r", "ts-node/register/transpile-only", "harness.js"]
