@@ -1,0 +1,82 @@
+=== pureflow-db-1 ===
+PostgreSQL Database directory appears to contain a database; Skipping initialization
+
+=== pureflow-keycloak-1 ===
+Updating the configuration and installing your custom providers, if any. Please wait.
+2026-06-18 13:12:30,213 WARN  [io.qua.config] (build-46) Unrecognized configuration key "quarkus.smallrye-health.extensions.enabled" was provided; it will be ignored; verify that the dependency extension for this configuration is set or that you did not make a typo
+2026-06-18 13:12:32,431 INFO  [io.qua.hib.orm.dep.HibernateOrmProcessor] (build-45) A legacy persistence.xml file is present in the classpath. This file will be used to configure JPA/Hibernate ORM persistence units, and any configuration of the Hibernate ORM extension will be ignored. To ignore persistence.xml files instead, set the configuration property 'quarkus.hibernate-orm.persistence-xml.ignore' to 'true'.
+2026-06-18 13:12:36,498 INFO  [io.qua.dep.QuarkusAugmentor] (main) Quarkus augmentation completed in 7859ms
+Running the server in development mode. DO NOT use this configuration in production.
+2026-06-18 13:12:37,553 WARN  [io.quarkus.config] (main) Unrecognized configuration key "quarkus.smallrye-health.extensions.enabled" was provided; it will be ignored; verify that the dependency extension for this configuration is set or that you did not make a typo
+2026-06-18 13:12:38,994 INFO  [org.keycloak.quarkus.runtime.storage.infinispan.CacheManagerFactory] (Thread-5) Starting Infinispan embedded cache manager
+2026-06-18 13:12:39,046 INFO  [org.infinispan.CONTAINER] (Thread-5) Virtual threads support enabled
+2026-06-18 13:12:39,310 INFO  [org.infinispan.CONTAINER] (Thread-5) ISPN000556: Starting user marshaller 'org.infinispan.commons.marshall.ImmutableProtoStreamMarshaller'
+2026-06-18 13:12:39,603 INFO  [org.infinispan.transaction.lookup.JBossStandaloneJTAManagerLookup] (Thread-5) ISPN000107: Retrieving transaction manager Transaction: unknown
+2026-06-18 13:12:40,748 INFO  [org.keycloak.quarkus.runtime.storage.database.liquibase.QuarkusJpaUpdaterProvider] (main) Updating database. Using changelog META-INF/jpa-changelog-master.xml
+2026-06-18 13:12:42,631 WARN  [io.agroal.pool] (main) Datasource '<default>': JDBC resources leaked: 3 ResultSet(s) and 0 Statement(s)
+2026-06-18 13:12:42,633 WARN  [io.agroal.pool] (main) Datasource '<default>': JDBC resources leaked: 106 ResultSet(s) and 0 Statement(s)
+2026-06-18 13:12:43,045 INFO  [org.keycloak.connections.infinispan.DefaultInfinispanConnectionProviderFactory] (main) Node name: node_677344, Site name: null
+2026-06-18 13:12:43,253 INFO  [org.keycloak.broker.provider.AbstractIdentityProviderMapper] (main) Registering class org.keycloak.broker.provider.mappersync.ConfigSyncEventListener
+2026-06-18 13:12:43,423 INFO  [org.keycloak.exportimport.dir.DirImportProvider] (main) Importing from directory /opt/keycloak/bin/../data/import
+2026-06-18 13:12:43,429 INFO  [org.keycloak.services] (main) KC-SERVICES0050: Initializing master realm
+2026-06-18 13:12:45,212 INFO  [org.keycloak.exportimport.singlefile.SingleFileImportProvider] (main) Full importing from file /opt/keycloak/bin/../data/import/realm-export.json
+2026-06-18 13:12:47,099 WARN  [org.keycloak.representations.idm.RealmRepresentation] (main) Failed to deserialize client policies in the realm pureflow. Fallback to return empty profiles. Details: Unrecognized field "builtin" (class org.keycloak.representations.idm.ClientPolicyRepresentation), not marked as ignorable (5 known properties: "conditions", "enabled", "profiles", "name", "description"])
+ at [Source: UNKNOWN; byte offset: #UNKNOWN] (through reference chain: org.keycloak.representations.idm.ClientPoliciesRepresentation["policies"]->java.util.ArrayList[0]->org.keycloak.representations.idm.ClientPolicyRepresentation["builtin"])
+2026-06-18 13:12:47,100 INFO  [org.keycloak.exportimport.util.ImportUtils] (main) Realm 'pureflow' imported
+2026-06-18 13:12:47,100 INFO  [org.keycloak.services] (main) KC-SERVICES0030: Full model import requested. Strategy: IGNORE_EXISTING
+2026-06-18 13:12:47,100 INFO  [org.keycloak.services] (main) KC-SERVICES0032: Import finished successfully
+2026-06-18 13:12:47,271 INFO  [org.keycloak.services] (main) KC-SERVICES0077: Created temporary admin user with username admin
+2026-06-18 13:12:47,339 WARN  [io.agroal.pool] (main) Datasource '<default>': JDBC resources leaked: 3 ResultSet(s) and 0 Statement(s)
+2026-06-18 13:12:47,442 INFO  [io.quarkus] (main) Keycloak 26.1.2 on JVM (powered by Quarkus 3.15.3) started in 10.794s. Listening on: http://0.0.0.0:8080
+2026-06-18 13:12:47,445 INFO  [io.quarkus] (main) Profile dev activated. 
+2026-06-18 13:12:47,445 INFO  [io.quarkus] (main) Installed features: [agroal, cdi, hibernate-orm, jdbc-postgresql, keycloak, narayana-jta, opentelemetry, reactive-routes, rest, rest-jackson, smallrye-context-propagation, vertx]
+
+=== pureflow-keycloak-db-1 ===
+PostgreSQL Database directory appears to contain a database; Skipping initialization
+
+=== pureflow-mailcatcher-1 ===
+[HTTP] Binding to address: 0.0.0.0:8025
+Creating API v1 with WebPath: 
+Creating API v2 with WebPath:
+
+=== pureflow-nodejs-1 ===
+> broken-crystals@0.0.1 start:prod
+> node dist/main.js
+
+
+> broken-crystals@0.0.1 start:prod
+> node dist/main.js
+
+
+> broken-crystals@0.0.1 start:prod
+> node dist/main.js
+
+
+> broken-crystals@0.0.1 start:prod
+> node dist/main.js
+
+
+> broken-crystals@0.0.1 start:prod
+> node dist/main.js
+
+
+> broken-crystals@0.0.1 start:prod
+> node dist/main.js
+
+
+> broken-crystals@0.0.1 start:prod
+> node dist/main.js
+
+
+> broken-crystals@0.0.1 start:prod
+> node dist/main.js
+
+
+> broken-crystals@0.0.1 start:prod
+> node dist/main.js
+
+=== pureflow-ollama-1 ===
+Couldn't find '/root/.ollama/id_ed25519'. Generating new private key.
+Your new public key is: 
+
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDeUQJO9RJfWGD8qRNivBQFaEuxV8eADghx0lCFuoY8M
