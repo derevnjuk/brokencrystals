@@ -50,7 +50,7 @@ export class FileController {
 
   private async loadCPFile(cpBaseUrl: string, path: string) {
     if (!path.startsWith(cpBaseUrl)) {
-      throw new BadRequestException(`Invalid paramater 'path' ${path}`);
+      throw new BadRequestException(`Invalid parameter 'path' ${path}`);
     }
 
     const file: Stream = await this.fileService.getFile(path);
@@ -121,6 +121,14 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    // Validate the path to ensure it matches expected patterns
+    const validPaths = [
+      CloudProvidersMetaData.GOOGLE,
+    ];
+    if (!validPaths.some(validPath => path.startsWith(validPath))) {
+      throw new BadRequestException(`Invalid parameter 'path' ${path}`);
+    }
+
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.GOOGLE,
       path
@@ -159,6 +167,14 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    // Validate the path to ensure it matches expected patterns
+    const validPaths = [
+      CloudProvidersMetaData.AWS,
+    ];
+    if (!validPaths.some(validPath => path.startsWith(validPath))) {
+      throw new BadRequestException(`Invalid parameter 'path' ${path}`);
+    }
+
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.AWS,
       path
@@ -197,6 +213,14 @@ export class FileController {
     @Query('type') contentType: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
+    // Validate the path to ensure it matches expected patterns
+    const validPaths = [
+      CloudProvidersMetaData.AZURE,
+    ];
+    if (!validPaths.some(validPath => path.startsWith(validPath))) {
+      throw new BadRequestException(`Invalid parameter 'path' ${path}`);
+    }
+
     const file: Stream = await this.loadCPFile(
       CloudProvidersMetaData.AZURE,
       path

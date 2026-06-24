@@ -121,8 +121,21 @@ export class AuthService {
     );
   }
 
-  validateToken(token: string, processor: JwtProcessorType): Promise<unknown> {
+  async validateToken(token: string, processor: JwtProcessorType): Promise<unknown> {
+    const decodedToken = this.decodeToken(token);
+    if (decodedToken && decodedToken.header && decodedToken.header.alg === 'none') {
+      throw new Error('Tokens with "none" algorithm are not allowed.');
+    }
     return this.processors.get(processor).validateToken(token);
+  }
+
+  private decodeToken(token: string): any {
+    const parts = token.split('.');
+    if (parts.length !== 3) {
+      throw new Error('Invalid token format');
+    }
+    const header = JSON.parse(Buffer.from(parts[0], 'base64').toString('utf8'));
+    return { header };
   }
 
   createToken(payload: unknown, processor: JwtProcessorType): Promise<string> {

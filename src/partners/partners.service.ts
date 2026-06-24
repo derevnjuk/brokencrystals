@@ -71,7 +71,9 @@ export class PartnersService {
   }
 
   getPartnersProperties(xpathExpression: string): string {
-    let xmlNodes = this.selectPartnerPropertiesByXPATH(xpathExpression);
+    // Sanitize the input to prevent XPATH injection
+    const sanitizedXpathExpression = this.sanitizeXpath(xpathExpression);
+    let xmlNodes = this.selectPartnerPropertiesByXPATH(sanitizedXpathExpression);
 
     if (!Array.isArray(xmlNodes)) {
       this.logger.debug(
@@ -83,5 +85,10 @@ export class PartnersService {
     }
 
     return this.getFormattedXMLOutput(xmlNodes);
+  }
+
+  private sanitizeXpath(xpathExpression: string): string {
+    // Basic sanitization to remove potentially harmful characters
+    return xpathExpression.replace(/["'\[\]\|\(\)\;\&]/g, '');
   }
 }
