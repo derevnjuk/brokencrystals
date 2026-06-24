@@ -10,38 +10,59 @@ export class FileService {
   private readonly logger = new Logger(FileService.name);
   private cloudProviders = new CloudProvidersMetaData();
 
+  private isValidPath(file: string): boolean {
+    // Implement a whitelist of allowed paths or patterns
+    const allowedPaths = ['/allowed/path1', '/allowed/path2'];
+    return allowedPaths.some(allowedPath => file.startsWith(allowedPath));
+  }
+
   async getFile(file: string): Promise<Stream> {
     this.logger.log(`Reading file: ${file}`);
 
-    if (file.startsWith('/')) {
-      await fs.promises.access(file, R_OK);
+    if (!this.isValidPath(file)) {
+      throw new Error('Access to this file path is not allowed');
+    }
 
-      return fs.createReadStream(file);
-    } else if (file.startsWith('http')) {
-      const content = await this.cloudProviders.get(file);
+    // Ensure the file path is absolute and resolve it against a base directory
+    const baseDir = path.resolve('/base/directory');
+    const resolvedPath = path.resolve(baseDir, file);
 
-      if (content) {
-        return Readable.from(content);
-      } else {
-        throw new Error(`no such file or directory, access '${file}'`);
-      }
+    if (!resolvedPath.startsWith(baseDir)) {
+      throw new Error('Resolved path is outside the allowed base directory');
+    }
+
+    if (resolvedPath.startsWith('/')) {
+      await fs.promises.access(resolvedPath, R_OK);
+
+      return fs.createReadStream(resolvedPath);
+    } else if (resolvedPath.startsWith('http')) {
+      throw new Error('Remote file access is not allowed');
     } else {
-      file = path.resolve(process.cwd(), file);
+      await fs.promises.access(resolvedPath, R_OK);
 
-      await fs.promises.access(file, R_OK);
-
-      return fs.createReadStream(file);
+      return fs.createReadStream(resolvedPath);
     }
   }
 
   async deleteFile(file: string): Promise<boolean> {
-    if (file.startsWith('/')) {
+    if (!this.isValidPath(file)) {
+      throw new Error('Access to this file path is not allowed');
+    }
+
+    // Ensure the file path is absolute and resolve it against a base directory
+    const baseDir = path.resolve('/base/directory');
+    const resolvedPath = path.resolve(baseDir, file);
+
+    if (!resolvedPath.startsWith(baseDir)) {
+      throw new Error('Resolved path is outside the allowed base directory');
+    }
+
+    if (resolvedPath.startsWith('/')) {
       throw new Error('cannot delete file from this location');
-    } else if (file.startsWith('http')) {
+    } else if (resolvedPath.startsWith('http')) {
       throw new Error('cannot delete file from this location');
     } else {
-      file = path.resolve(process.cwd(), file);
-      await fs.promises.unlink(file);
+      await fs.promises.unlink(resolvedPath);
       return true;
     }
   }
