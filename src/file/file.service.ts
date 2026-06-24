@@ -10,23 +10,31 @@ export class FileService {
   private readonly logger = new Logger(FileService.name);
   private cloudProviders = new CloudProvidersMetaData();
 
+  private isValidLocalPath(filePath: string): boolean {
+    // Only allow access to files within a specific directory, e.g., 'uploads'
+    const baseDir = path.resolve(process.cwd(), 'uploads');
+    const resolvedPath = path.resolve(process.cwd(), filePath);
+    return resolvedPath.startsWith(baseDir);
+  }
+
   async getFile(file: string): Promise<Stream> {
     this.logger.log(`Reading file: ${file}`);
 
     if (file.startsWith('/')) {
+      if (!this.isValidLocalPath(file)) {
+        throw new Error('Access to this file path is not allowed');
+      }
       await fs.promises.access(file, R_OK);
 
       return fs.createReadStream(file);
     } else if (file.startsWith('http')) {
-      const content = await this.cloudProviders.get(file);
-
-      if (content) {
-        return Readable.from(content);
-      } else {
-        throw new Error(`no such file or directory, access '${file}'`);
-      }
+      throw new Error('Remote file access is not allowed');
     } else {
       file = path.resolve(process.cwd(), file);
+
+      if (!this.isValidLocalPath(file)) {
+        throw new Error('Access to this file path is not allowed');
+      }
 
       await fs.promises.access(file, R_OK);
 
