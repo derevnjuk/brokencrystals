@@ -47,6 +47,10 @@ export class PartnersController {
     this.logger.debug(`Getting partners with xpath expression "${xpath}"`);
 
     try {
+      // Sanitize the xpath input to prevent injection
+      if (!this.isValidXPath(xpath)) {
+        throw new HttpException('Invalid XPath expression', HttpStatus.BAD_REQUEST);
+      }
       return this.partnersService.getPartnersProperties(xpath);
     } catch (err) {
       throw new HttpException(
@@ -152,6 +156,10 @@ export class PartnersController {
     this.logger.debug(`Searching partner names by the keyword "${keyword}"`);
 
     try {
+      // Sanitize the keyword input to prevent injection
+      if (!this.isValidKeyword(keyword)) {
+        throw new HttpException('Invalid search keyword', HttpStatus.BAD_REQUEST);
+      }
       const xpath = `//partners/partner/name[contains(., '${keyword}')]`;
       return this.partnersService.getPartnersProperties(xpath);
     } catch (err) {
@@ -167,5 +175,23 @@ export class PartnersController {
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
+  }
+
+  private isValidXPath(xpath: string): boolean {
+    // Implement a basic validation for XPath expressions
+    // This is a placeholder for a more robust validation logic
+    const forbiddenPatterns = [
+      /\|/, // disallow union
+      /\[.*\]/, // disallow predicates
+      /\(.*\)/, // disallow functions
+      /\// // disallow path navigation
+    ];
+    return !forbiddenPatterns.some(pattern => pattern.test(xpath));
+  }
+
+  private isValidKeyword(keyword: string): boolean {
+    // Implement a basic validation for keywords
+    // This is a placeholder for a more robust validation logic
+    return /^[a-zA-Z0-9 ]+$/.test(keyword); // allow only alphanumeric and spaces
   }
 }
