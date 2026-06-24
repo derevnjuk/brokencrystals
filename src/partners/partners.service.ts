@@ -62,8 +62,39 @@ export class PartnersService {
   private selectPartnerPropertiesByXPATH(
     xpathExpression: string
   ): SelectReturnType {
+    // Validate and sanitize the XPath expression
+    if (!this.isValidXPath(xpathExpression)) {
+      throw new Error('Invalid XPath expression');
+    }
+
     const partnersXMLObj = this.getPartnersXMLObj();
     return xpath.select(xpathExpression, partnersXMLObj);
+  }
+
+  private isValidXPath(xpathExpression: string): boolean {
+    // Basic validation to prevent XPath injection
+    // This is a simple example, consider using a library for more robust validation
+    const forbiddenPatterns = [
+      /\bor\b/i, // prevent logical OR
+      /\band\b/i, // prevent logical AND
+      /\bunion\b/i, // prevent union
+      /\bancestor\b/i, // prevent ancestor axis
+      /\bdescendant\b/i, // prevent descendant axis
+      /\bpreceding\b/i, // prevent preceding axis
+      /\bfollowing\b/i, // prevent following axis
+      /\bself\b/i, // prevent self axis
+      /\bparent\b/i, // prevent parent axis
+      /\bchild\b/i, // prevent child axis
+      /\battribute\b/i, // prevent attribute axis
+      /\bnamespace\b/i, // prevent namespace axis
+      /\bprocessing-instruction\b/i, // prevent processing-instruction
+      /\bcomment\b/i, // prevent comment
+      /\btext\b/i, // prevent text
+      /\bnode\b/i, // prevent node
+      /\b\*\b/i // prevent wildcard
+    ];
+
+    return !forbiddenPatterns.some((pattern) => pattern.test(xpathExpression));
   }
 
   private getFormattedXMLOutput(xmlNodes): string {
