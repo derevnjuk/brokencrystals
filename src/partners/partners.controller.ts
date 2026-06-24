@@ -47,6 +47,10 @@ export class PartnersController {
     this.logger.debug(`Getting partners with xpath expression "${xpath}"`);
 
     try {
+      // Validate and sanitize the xpath input
+      if (!this.isValidXPath(xpath)) {
+        throw new HttpException('Invalid XPath expression', HttpStatus.BAD_REQUEST);
+      }
       return this.partnersService.getPartnersProperties(xpath);
     } catch (err) {
       throw new HttpException(
@@ -54,6 +58,14 @@ export class PartnersController {
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
+  }
+
+  // Method to validate and sanitize XPath expressions
+  private isValidXPath(xpath: string): boolean {
+    // Implement a basic validation logic or use a library to validate XPath expressions
+    // For demonstration, we are using a simple regex to allow only safe characters
+    const xpathRegex = /^[a-zA-Z0-9_\/\[\]\@\=\'\"\s]+$/;
+    return xpathRegex.test(xpath);
   }
 
   // **** This is a boolean based XPATH injection EP ****
