@@ -63,7 +63,9 @@ export class PartnersService {
     xpathExpression: string
   ): SelectReturnType {
     const partnersXMLObj = this.getPartnersXMLObj();
-    return xpath.select(xpathExpression, partnersXMLObj);
+    // Sanitize the XPath expression to prevent injection
+    const sanitizedXpathExpression = this.sanitizeXpath(xpathExpression);
+    return xpath.select(sanitizedXpathExpression, partnersXMLObj);
   }
 
   private getFormattedXMLOutput(xmlNodes): string {
@@ -82,6 +84,25 @@ export class PartnersService {
       this.logger.debug(`Raw xpath xmlNodes value is: ${xmlNodes}`);
     }
 
+    return this.getFormattedXMLOutput(xmlNodes);
+  }
+
+  private sanitizeXpath(xpathExpression: string): string {
+    // Basic sanitization: remove potentially dangerous characters
+    return xpathExpression.replace(/["'\[\]|]/g, '');
+  }
+
+  private escapeForXpath(value: string): string {
+    // Escape single quotes in the value for safe XPath usage
+    return value.replace(/'/g, "''");
+  }
+
+  getPartnersPropertiesByCredentials(username: string, password: string): string {
+    const partnersXMLObj = this.getPartnersXMLObj();
+    const escapedUsername = this.escapeForXpath(username);
+    const escapedPassword = this.escapeForXpath(password);
+    const xpathExpression = `//partners/partner[username/text()='${escapedUsername}' and password/text()='${escapedPassword}']/*`;
+    const xmlNodes = xpath.select(xpathExpression, partnersXMLObj);
     return this.getFormattedXMLOutput(xmlNodes);
   }
 }
