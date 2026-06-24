@@ -63,11 +63,16 @@ export class PartnersService {
     xpathExpression: string
   ): SelectReturnType {
     const partnersXMLObj = this.getPartnersXMLObj();
-    return xpath.select(xpathExpression, partnersXMLObj);
+    // Sanitize the XPath expression to prevent injection
+    const sanitizedXpathExpression = this.sanitizeXpath(xpathExpression);
+    return xpath.select(sanitizedXpathExpression, partnersXMLObj);
   }
 
   private getFormattedXMLOutput(xmlNodes): string {
-    return `${this.XML_HEADER}\n<root>\n${xmlNodes.join('\n')}\n</root>`;
+    return `${this.XML_HEADER}
+<root>
+${xmlNodes.join('\n')}
+</root>`;
   }
 
   getPartnersProperties(xpathExpression: string): string {
@@ -83,5 +88,16 @@ export class PartnersService {
     }
 
     return this.getFormattedXMLOutput(xmlNodes);
+  }
+
+  private sanitizeXpath(xpathExpression: string): string {
+    // Implement a basic allow-list of allowed characters and patterns
+    // This is a simple example and should be expanded based on actual requirements
+    const allowedPattern = /^[a-zA-Z0-9_\/\[\]\*\(\)\@\=\'\s\-]+$/;
+    if (!allowedPattern.test(xpathExpression)) {
+      this.logger.warn(`Invalid characters detected in XPath expression: ${xpathExpression}`);
+      throw new Error('Invalid XPath expression');
+    }
+    return xpathExpression;
   }
 }
