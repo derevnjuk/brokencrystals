@@ -87,7 +87,20 @@ export class AppController {
   })
   @Redirect()
   async redirect(@Query('url') url: string) {
+    if (!this.isValidUrl(url)) {
+      throw new HttpException('Invalid URL', HttpStatus.BAD_REQUEST);
+    }
     return { url };
+  }
+
+  private isValidUrl(url: string): boolean {
+    try {
+      const parsedUrl = new URL(url);
+      // Allow only specific protocols
+      return ['http:', 'https:'].includes(parsedUrl.protocol);
+    } catch (e) {
+      return false;
+    }
   }
 
   @Post('metadata')
