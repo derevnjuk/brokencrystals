@@ -13,24 +13,28 @@ export class FileService {
   async getFile(file: string): Promise<Stream> {
     this.logger.log(`Reading file: ${file}`);
 
+    // Validate the file path to prevent directory traversal
+    if (file.includes('..')) {
+      throw new Error('Invalid file path');
+    }
+
+    // Ensure the file path is within an allowed directory
+    const allowedBasePath = path.resolve(process.cwd(), 'allowed/directory');
+    const resolvedPath = path.resolve(process.cwd(), file);
+    if (!resolvedPath.startsWith(allowedBasePath)) {
+      throw new Error('Access to this file path is not allowed');
+    }
+
     if (file.startsWith('/')) {
       await fs.promises.access(file, R_OK);
 
       return fs.createReadStream(file);
     } else if (file.startsWith('http')) {
-      const content = await this.cloudProviders.get(file);
-
-      if (content) {
-        return Readable.from(content);
-      } else {
-        throw new Error(`no such file or directory, access '${file}'`);
-      }
+      throw new Error('Access to URLs is not allowed');
     } else {
-      file = path.resolve(process.cwd(), file);
+      await fs.promises.access(resolvedPath, R_OK);
 
-      await fs.promises.access(file, R_OK);
-
-      return fs.createReadStream(file);
+      return fs.createReadStream(resolvedPath);
     }
   }
 

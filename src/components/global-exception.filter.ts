@@ -17,11 +17,23 @@ export class GlobalExceptionFilter extends BaseExceptionFilter {
         throw exception;
       }
 
-      return super.catch(exception, host);
+      // Remove sensitive information from the error response
+      const response = exception.getResponse();
+      const sanitizedResponse = typeof response === 'object' && response !== null ? { ...response, location: undefined } : response;
+
+      const applicationRef =
+        this.applicationRef ||
+        (this.httpAdapterHost && this.httpAdapterHost.httpAdapter);
+
+      return applicationRef.reply(
+        host.getArgByIndex(1),
+        sanitizedResponse,
+        exception.getStatus()
+      );
     }
 
     const unprocessableException = new InternalServerErrorException(
-      { error: (exception as Error).message },
+      { error: 'An internal error has occurred.' },
       'An internal error has occurred, and the API was unable to service your request.'
     );
 
