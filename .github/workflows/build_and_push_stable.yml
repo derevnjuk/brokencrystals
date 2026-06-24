@@ -1,9 +1,10 @@
 name: "Build and Push Docker Image (On Push to Stable)"
-
 on:
-  push:
-    branches:
-      - stable
+  workflow_dispatch:
+# on:
+#   push:
+#     branches:
+#       - stable
 
 jobs:
   docker-build-push:
@@ -11,19 +12,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Login to DockerHub
         run: |
           docker login --username=${{ vars.DOCKERHUB_DULL_USER }} --password=${{ secrets.DOCKERHUB_DULL_TOKEN }}
-
       - name: Generate timestamp
         id: timestamp
         run: echo "TIMESTAMP=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
-
       - name: Generate short SHA
         id: sha
         run: echo "SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-6)" >> $GITHUB_ENV
-
       - name: Build and tag Docker images
         run: |
           for TAG_PREFIX in stable unstable; do
@@ -31,9 +28,8 @@ jobs:
             docker tag dull/pureflow:${TAG_PREFIX} brdullc/pureflow:${TAG_PREFIX}-${{ env.SHORT_SHA }}
             docker tag dull/pureflow:${TAG_PREFIX} brdullc/pureflow:${TAG_PREFIX}-${{ env.SHORT_SHA }}-${{ env.TIMESTAMP }}
           done
-
       - name: Push Docker images
-        run: |
+        run: |-
           for TAG_PREFIX in stable unstable; do
             docker push dull/pureflow:${TAG_PREFIX}
             docker push dull/pureflow:${TAG_PREFIX}-${{ env.SHORT_SHA }}
